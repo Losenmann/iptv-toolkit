@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 from jtv2xmltv import convert
 import urllib.request
+import subprocess
 import gzip
 import magic
 import os
@@ -13,9 +14,9 @@ import schedule
 import time
 
 parser = argparse.ArgumentParser(
-    prog='Python IPTV Utils',
+    prog='Python IPTV Toolkit',
     description='Toolkit Convert EPG, IPTV Playlists',
-    epilog='https://github.com/Losenmann/pyiptv-utils'
+    epilog='https://github.com/Losenmann/iptv-toolkit'
 )
 parser.add_argument('-E', '--path-dst-epg', type=str, help='Dst path tvguide')
 parser.add_argument('-P', '--path-dst-playlist', type=str, help='Dst path playlist')
@@ -38,7 +39,9 @@ class iptv():
         path_dst_playlist = "/www/iptv/playlist"
 
     def __init__(self):
-        self.job(args)
+        self.job()
+        self.subprocess()
+        self.scheduler()
 
     def buildTvguide(self, file, type):
         """ JTV TV Guide """
@@ -53,7 +56,7 @@ class iptv():
             shutil.copy2(file, '{}/tvguide.zip'.format(self.path_dst_tvguide))
             print("test1")
 
-        """ XMLTV TV Guide """
+        """ XML TV Guide """
         if type == "text/xml":
             xmltv = open(file, 'r', encoding='utf-8')
             data = xmltv.read()
@@ -64,7 +67,7 @@ class iptv():
             shutil.copy2(file, '{}/tvguide.xml'.format(self.path_dst_tvguide))
             print("test2")
 
-        """ XMLTV Compressed TV Guide """
+        """ XML Compressed TV Guide """
         if type == "application/gzip":
             xmltvgz = gzip.open(file, 'rt', encoding='utf-8')
             data = xmltvgz.read()
@@ -77,6 +80,7 @@ class iptv():
 
     def buildPlaylist(self, file, type, tvguide=None, udpxy=None):
         r_udp = '^udp://@'
+        """ XMLTV Playlist """
         if type == "text/plain":
             r_title = r',[^.].*$'
             r_id = 'tvg-name="[0-9]*"'
@@ -124,6 +128,7 @@ class iptv():
                 f.write(data)
                 f.close()
 
+        """ M3U/M3U8 Playlist """
         if type == "text/xml":
             data = '#EXTM3U{} cache=500 deinterlace=1'.format("" if not tvguide else ' url-tvg="' + tvguide + '" m3uautoload=1')
             data_udpxy = data
@@ -160,7 +165,7 @@ class iptv():
                 f.write(data_udpxy)
                 f.close()
 
-    def job(self, args):
+    def job(self):
         try:
             epg = args.epg_url if args.epg_url else os.environ['EPG_URL']
         except:
@@ -203,8 +208,15 @@ class iptv():
             except:
                 sys.exit(1)
 
-    def scheduler(self, cron):
-        print("test")
+    def scheduler(self):
+        schedule.every().day.at("06:30").do(self.job)
+        while True:
+            schedule.run_pending()
+            time.sleep(1)
+
+    def subprocess(self):
+        subprocess.run(["nginx"])
+        subprocess.run(["udpxy", "-p", "4023", "-vl", "/proc/1/fd/1"])
 
 if __name__ == "__main__":
     iptv()
