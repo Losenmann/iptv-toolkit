@@ -21,6 +21,7 @@ var (
 )
 
 type Playlist struct {
+    XMLName xml.Name `xml:"playlist"`
     Title string `xml:"title"`
     TrackList TrackList `xml:"trackList"`
 }
@@ -30,7 +31,7 @@ type TrackList struct {
 }
 
 type Track struct {
-    Channel_id string `xml:"channel_id"`
+    Channel_id int `xml:"channel_id"`
     Location string `xml:"location"`
     Title string `xml:"title"`
     Image string `xml:"image"`
@@ -78,8 +79,8 @@ func XmlToM3u(file []byte, udpxy string, epg string,) {
         location = ""
         location_udpxy = ""
 
-        if playlist.TrackList.Track[i].Channel_id != "" {
-            track = track + ",tvg-name=\"" + playlist.TrackList.Track[i].Channel_id + "\""
+        if playlist.TrackList.Track[i].Psfile != "" {
+            track = track + ",tvg-name=\"" + playlist.TrackList.Track[i].Psfile + "\""
         }
         if playlist.TrackList.Track[i].Image != "" {
             track = track + ",tvg-logo=\"" + playlist.TrackList.Track[i].Image + "\""
@@ -146,7 +147,8 @@ func XmlToM3u(file []byte, udpxy string, epg string,) {
 func M3uToXml(file []byte, udpxy string) {
     var playlist, playlist_udpxy Playlist
     var track []Track
-    var channel_id, image, title, location string
+    var image, title, psfile, location string
+    var channel_id int
     if udpxy != "" {
         udpxy = formatUdpxy(udpxy)
     }
@@ -154,11 +156,12 @@ func M3uToXml(file []byte, udpxy string) {
     scanner := bufio.NewScanner(bytes.NewReader(file))
     for scanner.Scan() {
         if extinf := regexp.MustCompile(`^#EXTINF`).FindStringSubmatch(scanner.Text()); len(extinf) > 0 {
-            channel_id = ""
+            channel_id++
             image = ""
             title = ""
+            psfile = ""
             if tvg_name := regexp.MustCompile(`tvg-name="[^"]*`).FindStringSubmatch(scanner.Text()); len(tvg_name) > 0 {
-                channel_id = tvg_name[0][10:]
+                psfile = tvg_name[0][10:]
             }
             if tvg_logo := regexp.MustCompile(`tvg-logo="[^"]*`).FindStringSubmatch(scanner.Text()); len(tvg_logo) > 0 {
                 image = tvg_logo[0][10:]
@@ -169,10 +172,10 @@ func M3uToXml(file []byte, udpxy string) {
         }
         if tvg_location := regexp.MustCompile(`^[^#]*$`).FindStringSubmatch(scanner.Text()); len(tvg_location) > 0 {
             location = tvg_location[0]
-            track = []Track{Track{Channel_id:channel_id,Image:image,Title:title,Location:location}}
+            track = []Track{Track{Channel_id:channel_id,Psfile:psfile,Image:image,Title:title,Location:location}}
             playlist.TrackList.Track = append(playlist.TrackList.Track, track...)
             if re := regexp.MustCompile("^udp://@").FindStringSubmatch(location); len(re) > 0 && udpxy != "" {
-                track = []Track{Track{Channel_id:channel_id,Image:image,Title:title,Location:regexp.MustCompile("^udp://@").ReplaceAllString(location, udpxy)}}
+                track = []Track{Track{Channel_id:channel_id,Psfile:psfile,Image:image,Title:title,Location:regexp.MustCompile("^udp://@").ReplaceAllString(location, udpxy)}}
                 playlist_udpxy.TrackList.Track = append(playlist_udpxy.TrackList.Track, track...)
             }
         }

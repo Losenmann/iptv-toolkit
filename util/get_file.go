@@ -3,6 +3,7 @@ package util
 import (
     "os"
     "net/http"
+    "crypto/tls"
     "log/slog"
     "io/ioutil"
     "iptv-toolkit/main/setup"
@@ -50,13 +51,18 @@ func getFileLocal(file string) ([]byte, error) {
 }
 
 func getFileRemote(url string) ([]byte, error) {
+    tr := &http.Transport{TLSClientConfig: &tls.Config{InsecureSkipVerify: true}}
+    client := &http.Client{Transport: tr}
     req, _ := http.NewRequest("GET", url, nil)
     res, err := http.DefaultClient.Do(req)
     if err != nil {
-        if *setup.LogLVL <= 2 {
-            slog.Warn(fmt.Sprintf("%v", err))
+        res, err = client.Get(url)
+        if err != nil {
+            if *setup.LogLVL <= 2 {
+                slog.Warn(fmt.Sprintf("%v", err))
+            }
+            return nil, err
         }
-        return nil, err
     }
     defer res.Body.Close()
 

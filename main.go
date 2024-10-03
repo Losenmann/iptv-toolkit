@@ -1,17 +1,12 @@
 package main
 
 import (
-//    "os"
-//    "fmt"
-//    "bufio"
-//    "compress/gzip"
-//    "bytes"
-//    "io/ioutil"
     "log/slog"
+    "os"
+    "fmt"
     "iptv-toolkit/main/setup"
-    "iptv-toolkit/main/convert"
-    "iptv-toolkit/main/util"
-//	"errors"
+    "iptv-toolkit/main/webserver"
+    "iptv-toolkit/main/scheduler"
 )
 
 func init() {
@@ -19,22 +14,18 @@ func init() {
 }
 
 func main() {
-    playlist, err := util.GetFile(*setup.Playlist)
-    if err != nil {
+    if err := os.MkdirAll(*setup.WebPath, 0744); err != nil {
         if *setup.LogLVL <= 2 {
-            slog.Warn("playlist file not specified")
+            slog.Warn(fmt.Sprintf("%v", err))
         }
-    } else {
-        convert.ConvertPlaylist(playlist, *setup.PlalistUdpxy, *setup.EmbedEPG)
+        os.Exit(1)
     }
-/*
-    epg, err := util.GetFile(*setup.Epg)
-    if err != nil {
-        if *setup.LogLVL <= 2 {
-            slog.Warn("epg file not specified")
-        }
-    } else {
-        convert.ConvertEpg(epg)
+
+    scheduler.Task()
+    if *setup.Schedule == true {
+        scheduler.Main(*setup.Crontab)
     }
-*/
+    if *setup.Web == true {
+        webserver.Main(*setup.WebPort, *setup.WebPath)
+    }
 }

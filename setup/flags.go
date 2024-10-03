@@ -7,20 +7,20 @@ import (
 
 var (
     LogLVL              = flag.Int("l", 1, "Log lvl")
-    Epg                 = flag.String("e", "", "Path out ")
-    EpgPathDst          = flag.String("E", "./", "Path EPGs storage")
-    Playlist            = flag.String("p", "", "Playlist URL")
-    PlaylistPathDst     = flag.String("P", "./", "Path playlists storage")
-    InputPlaylist       = flag.String("A", "./", "Input playlist")
-    InputEPG            = flag.String("B", "./", "Input EPG")
-    EmbedEPG            = flag.String("i", "/home/maxim/Документы/repo/iptv-toolkit/tmp/test.xml", "Embed a link to EPG in the playlist")
+    Epg                 = flag.String("e", "", "EPG URI")
+    EpgPathDst          = flag.String("E", "./files/tvguide", "Path EPGs storage")
+    Playlist            = flag.String("p", "", "Playlist URI")
+    PlaylistPathDst     = flag.String("P", "./files/playlist", "Path playlists storage")
+    WebPort             = flag.Int("w", 4023, "Web Server port")
+    WebPath             = flag.String("f", "./files", "Web Server path")
+    EmbedEPG            = flag.String("i", "", "Embed a link to EPG in the playlist")
     PlalistUdpxy        = flag.String("u", "", "Create a playlist with embedded udpxy")
     Health              = flag.Bool("H", false, "Start Healthcheck server")
     Udpxy               = flag.Bool("U", false, "Start UDPXY proxy")
     Schedule            = flag.Bool("S", false, "Start Schedule job")
-    Crontab             = flag.String("c", "*30 6 * * *", "Create a playlist with embedded udpxy")
+    Web                 = flag.Bool("W", false, "Start Web Server")
+    Crontab             = flag.String("c", "30 6 * * *", "Create a playlist with embedded udpxy")
 )
-
 
 func Initgo() {
     flag.Parse()
