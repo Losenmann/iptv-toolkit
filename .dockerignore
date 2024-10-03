@@ -1,0 +1,13 @@
+*
+!go.mod
+!go.sum
+!*.go
+!vendor
+!build-tools/upx/*
+!udpxy/
+!scheduler/
+!setup/
+!util/
+!setup/
+!webserver/
+!convert/
