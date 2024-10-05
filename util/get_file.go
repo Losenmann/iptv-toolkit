@@ -12,11 +12,6 @@ import (
     "errors"
 )
 
-var (
-    v_tvguide = *setup.EpgPathDst + "/tvguide"
-    v_playlist = *setup.PlaylistPathDst + "/playlist"
-)
-
 func GetFile(uri string) ([]byte, error) {
     if uri != "" {
         re := regexp.MustCompile("^(http[s]*://|./|/|[^(http://|https://)])").FindStringSubmatch(uri)

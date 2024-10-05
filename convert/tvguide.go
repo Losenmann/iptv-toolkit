@@ -7,6 +7,7 @@ import (
     "encoding/binary"
     "compress/gzip"
     "fmt"
+    "os"
     "log"
     "bytes"
     "regexp"
@@ -45,6 +46,11 @@ type Programme struct {
 }
 
 func ConvertEpg(file []byte) {
+    if err := os.MkdirAll(*setup.EpgPathDst, 0777); err != nil {
+        if *setup.LogLVL <= 2 {
+            slog.Warn(fmt.Sprintf("%v", err))
+        }
+    }
     switch mimetype.Detect(file).Extension() {
     case ".zip":
         err := ioutil.WriteFile(v_epg_jtv, file, 0644)

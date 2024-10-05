@@ -1,11 +1,12 @@
-FROM golang:1.22.5-alpine3.20 AS build
+FROM --platform=$BUILDPLATFORM golang:1.22.5-alpine3.20 AS build
+ARG TARGETOS
+ARG TARGETARCH
 ARG ARG_COMPRESS=true
 ARG GOPROXY=direct
 COPY . /opt/src/
 WORKDIR /opt/src
 RUN apk add upx git \
-    && go get -u golang.org/x/text \
-    && go build -ldflags "-s -w" -o /usr/bin/iptv-toolkit /opt/src/main.go \
+    && GOOS=${TARGETOS} GOARCH=${TARGETARCH} go build -ldflags "-s -w" -o /usr/bin/iptv-toolkit /opt/src/main.go \
     && if [[ ${ARG_COMPRESS} == "true" ]]; then upx --best --lzma /usr/bin/iptv-toolkit; fi \
     && chmod +x /usr/bin/iptv-toolkit
 
@@ -20,7 +21,7 @@ RUN apk add git \
 
 FROM alpine:3.20.3 AS app
 ARG ARG_VERSION=latest
-ENV IPTVTOOLKIT_VERSION=${ARG_VERSION:-latest} \
+ENV IPTVTOOLKIT_VERSION=${ARG_VERSION} \
     IPTVTOOLKIT_EPG_DST=/www/iptv-toolkit/tvguide \
     IPTVTOOLKIT_PLAYLIST_DST=/www/iptv-toolkit/playlist \
     IPTVTOOLKIT_WEB_PATH=/www/iptv-toolkit
