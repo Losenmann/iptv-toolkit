@@ -1,5 +1,5 @@
 # IPTV Toolkit
-[![Python](https://img.shields.io/badge/python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54)](https://www.python.org)
+[![Golang](https://img.shields.io/badge/Go-00ADD8?style=for-the-badge&logo=go&logoColor=white)](https://go.dev)
 [![Docker](https://img.shields.io/badge/docker-%230db7ed.svg?style=for-the-badge&logo=docker&logoColor=white)](https://www.docker.com)
 [![Kubernetes](https://img.shields.io/badge/kubernetes-%23326ce5.svg?style=for-the-badge&logo=kubernetes&logoColor=white)](https://kubernetes.io)
 [![Maintainer](https://img.shields.io/badge/MAINTAINER-%40Losenmann-red?style=for-the-badge)](https://github.com/Losenmann)
@@ -11,96 +11,38 @@ Also, there is support for creating a playlist with a built-in udpxy link: from 
 Also in the background, the udpxy proxy server is launched, allowing you to convert Multicast traffic to HLS. Along with this, a simple file service is launched to download playlists and EPG.
 
 > [!NOTE]
-> Server file access endpoint: "/iptv/". For UDPXY: "/udp/" and "/status/"
+> Server file access endpoint: "/static/". For UDPXY: "/udp/" and "/status/"
+
+### Supported tools
++ Playlist converter in 2 formats (xml, m3u)
++ EPG converter in 3 formats (jtv, xml, xml.gz)
++ Scheduler
++ Web server for converted files
++ UDPXY proxy
 
 ## Quick start
-<details><summary>Docker Compose</summary>
++ [Docker Compose](./deploy/docker-compose.yaml)
+  ```bash
+  docker-compose up -d -f ./docker-compose.yaml
+  ```
++ [Kubernetes](./deploy/kubernetes.yaml)
+  ```bash
+  kubectl apply -n media -f https://raw.githubusercontent.com/Losenmann/iptv-toolkit/refs/heads/master/deploy/kubernetes.yaml
+  ```
 
-```yaml
-version: "3.9"
-services:
-  iptv-toolkit:
-    container_name: "IPTV-Toolkit"
-    image: "losenmann/iptv-toolkit:latest"
-    networks:
-      - network-multicast
-    expose:
-      - 4022
-    volumes:
-      - /etc/localtime:/etc/localtime:ro
-      - /etc/timezone:/etc/timezone:ro
-    environment:
-      - EPG_URL="http://localhost/epg.xml"
-      - PLAYLIST_URL="http://localhost/playlist.m3u"
-      - PLAYLIST_TVG_URL="http://localhost/epg.xml"
-      - PLAYLIST_UDPXY_URL="http://udpxy.local:4022"
-    tty: true
-    restart: on-failure:3
-
-networks:
-  network-multicast:
-    name: "network-multicast"
-    driver: "macvlan"
-    driver_opts:
-      parent: "eth0"
-    ipam:
-      config:
-        - subnet: "192.168.8.0/24"
-          gateway: "192.168.8.1"
-          ip_range: "192.168.8.24/29"
-```
-
-</details>
-
-<details><summary>kubernetes</summary>
-
-```yaml
----
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: iptv-toolkit
-  namespace: default
-  labels:
-    app: iptv-toolkit
-    name: iptv-toolkit
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: iptv-toolkit
-      task: iptv-toolkit
-  template:
-    metadata:
-      labels:
-        app: iptv-toolkit
-        task: iptv-toolkit
-    spec:
-      hostNetwork: true
-      terminationGracePeriodSeconds: 0
-      containers:
-        - name: iptv-toolkit
-          image: losenmann/iptv-toolkit:latest
-          ports:
-            - containerPort: 4022
-          env:
-            - name: EPG_URL
-              value: "http://localhost/epg.xml"
-            - name: PLAYLIST_URL
-              value: "http://localhost/playlist.m3u"
-            - name: PLAYLIST_TVG_URL
-              value: "http://localhost/epg.xml"
-            - name: PLAYLIST_UDPXY_URL
-              value: "http://udpxy.local:4022"
-```
-
-</details>
-
-## Environment Variables
-* `EPG_URL` - Link to tv guide
-* `PLAYLIST_URL` - Link to channels playlist
-* `PLAYLIST_TVG_URL` - Link to epg integrated into playlist (usually it is iptv-toolkit address)
-* `PLAYLIST_UDPXY_URL` - Create a playlist with a formatted udp link in udpxy format
+## Environment Variables and CLI Key
+Environmental variables and key CLI applicable in all operating modes.
+| Variables | Key  | Default | Description |
+| :-------- | :--: | :-----: | :---------- |
+| `IPTVTOOLKIT_EPG` | `-e` | `none` | Link to tv guide |
+| `IPTVTOOLKIT_EPG_DST` | `-E` | `./files/tvguide` | Path of export of EPGs |
+| `IPTVTOOLKIT_PLAYLIST` | `-p` | `none` | Link to channels playlist |
+| `IPTVTOOLKIT_PLAYLIST_DST` | `-P` | `./files/playlist` | Path of export of Playlists |
+| `IPTVTOOLKIT_PLAYLIST_UDPXY` | `-u` | `none` | Create a playlist with a formatted<br> udp link in udpxy format |
+| `IPTVTOOLKIT_PLAYLIST_EMBED_EPG` | `-i` | `none` | Link to epg integrated into playlist |
+| `IPTVTOOLKIT_WEB_PATH` | `-f` | `./files` | Path to display files by web server |
+| `IPTVTOOLKIT_WEB_PORT` | `-P` | `4022` | Web server port |
+| `IPTVTOOLKIT_CRONTAB` | `-c` | `30 6 * * *` | Сrontab style task schedule |
 
 > [!IMPORTANT]
 > Environment variables repeat CLI<br>
