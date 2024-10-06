@@ -25,6 +25,7 @@ Also in the background, the udpxy proxy server is launched, allowing you to conv
   ```bash
   docker-compose up -d -f ./docker-compose.yaml
   ```
+
 + [Kubernetes](./deploy/kubernetes.yaml)
   ```bash
   kubectl apply -n media -f https://raw.githubusercontent.com/Losenmann/iptv-toolkit/refs/heads/master/deploy/kubernetes.yaml
