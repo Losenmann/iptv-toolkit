@@ -23,8 +23,13 @@ spec:
       containers:
         - name: iptv-toolkit
           image: losenmann/iptv-toolkit:latest
+          args:
+            - -S
+            - -U
+            - -W
           ports:
             - containerPort: 4022
+            - containerPort: 4023
           env:
             - name: IPTVTOOLKIT_EPG
               value: "http://localhost/epg.xml"
@@ -34,6 +39,22 @@ spec:
               value: "http://localhost/epg.xml"
             - name: IPTVTOOLKIT_PLAYLIST_UDPXY
               value: "http://udpxy.local:4022"
+          volumeMounts:
+            - name: time-config
+              mountPath: /etc/localtime
+              readOnly: true
+            - name: tz-config
+              mountPath: /etc/timezone
+              readOnly: true
+      volumes:
+        - name: time-config
+          hostPath:
+            path: /etc/localtime
+            type: File
+        - name: tz-config
+          hostPath:
+            path: /etc/timezone
+            type: File
 ---
 apiVersion: v1
 kind: Service
@@ -43,6 +64,8 @@ spec:
   ports:
     - name: web
       port: 4022
+    - name: udpxy
+      port: 4023
   selector:
     app: iptv-toolkit
     task: iptv-toolkit
@@ -56,8 +79,13 @@ spec:
   entryPoints:
     - websecure
   routes:
-    - match: Host(`iptv.example.com`)
+    - match: Host(`iptv.example.com`) && PathPrefix(`/static`)
       kind: Rule
       services:
         - name: iptv-toolkit-service
           port: 4022
+    - match: Host(`iptv.example.com`) && PathPrefix(`/udp`)
+      kind: Rule
+      services:
+        - name: iptv-toolkit-service
+          port: 4023

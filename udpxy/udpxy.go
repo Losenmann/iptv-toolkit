@@ -3,9 +3,13 @@ package udpxy
 import (
 	"iptv-toolkit/main/setup"
 	"encoding/hex"
+	"log/slog"
+    "fmt"
 	"log"
 	"net"
 	"time"
+	"os/exec"
+	"os"
 )
 
 var (
@@ -60,5 +64,16 @@ func serveMulticastUDP(a string, h func(*net.UDPAddr, int, []byte)) {
 			log.Fatal("ReadFromUDP failed:", err)
 		}
 		h(src, n, b)
+	}
+}
+
+func UdpxyExt() {
+	cmd := exec.Command("udpxy", "-p", "4023", "-vl", "/proc/1/fd/1")
+	_, err := cmd.Output()
+	if err != nil {
+    	if *setup.LogLVL <= 2 {
+			slog.Warn(fmt.Sprintf("%v", err))
+		}
+		os.Exit(1)
 	}
 }

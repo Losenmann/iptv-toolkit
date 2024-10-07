@@ -7,6 +7,7 @@ services:
       - network-multicast
     expose:
       - 4022
+      - 4023
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - /etc/timezone:/etc/timezone:ro
@@ -15,6 +16,7 @@ services:
       - PLAYLIST_URL="http://localhost/playlist.m3u"
       - PLAYLIST_TVG_URL="http://localhost/epg.xml"
       - PLAYLIST_UDPXY_URL="http://udpxy.local:4022"
+    command: ["-S", "-U", "-W"]
     tty: true
     restart: on-failure:3
 

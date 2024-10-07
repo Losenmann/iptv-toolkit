@@ -7,6 +7,7 @@ import (
     "iptv-toolkit/main/setup"
     "iptv-toolkit/main/webserver"
     "iptv-toolkit/main/scheduler"
+    "iptv-toolkit/main/udpxy"
 )
 
 func init() {
@@ -24,6 +25,9 @@ func main() {
     scheduler.Task()
     if *setup.Schedule == true {
         scheduler.Main(*setup.Crontab)
+    }
+    if *setup.Udpxy == true {
+        go udpxy.UdpxyExt()
     }
     if *setup.Web == true {
         webserver.Main(*setup.WebPort, *setup.WebPath)

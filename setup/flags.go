@@ -16,7 +16,7 @@ var (
     PlalistUdpxy        = flag.String("u", getEnv("IPTVTOOLKIT_PLAYLIST_UDPXY", ""), "Create a playlist with embedded udpxy")
     EmbedEPG            = flag.String("i", getEnv("IPTVTOOLKIT_PLAYLIST_EMBED_EPG", ""), "Embed a link to EPG in the playlist")
     WebPath             = flag.String("f", getEnv("IPTVTOOLKIT_WEB_PATH", "./files"), "Web Server path")
-    WebPort             = flag.Int("w", aToi(getEnv("IPTVTOOLKIT_WEB_PORT", "4023")), "Web Server port")
+    WebPort             = flag.Int("w", aToi(getEnv("IPTVTOOLKIT_WEB_PORT", "4022")), "Web Server port")
     Health              = flag.Bool("H", false, "Start Healthcheck server")
     Udpxy               = flag.Bool("U", false, "Start UDPXY proxy")
     Schedule            = flag.Bool("S", false, "Start Schedule job")
