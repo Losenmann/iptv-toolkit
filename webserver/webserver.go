@@ -12,10 +12,11 @@ import (
 func Main(port int, path string) {
     mux := http.NewServeMux()
     fs := http.FileServer(http.Dir(path))
+    mux.Handle("/files/", http.StripPrefix("/files", fs))
     mux.Handle("/static/", http.StripPrefix("/static", fs))
 
     if *setup.LogLVL <= 1 {
-        slog.Info("starting web server on port: 4023")
+        slog.Info("starting web server on port: " + strconv.Itoa(port))
     }
     if err := http.ListenAndServe(":" + strconv.Itoa(port), mux); err != nil {
         if *setup.LogLVL <= 2 {
