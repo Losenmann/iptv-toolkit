@@ -4,10 +4,11 @@ import (
     "log/slog"
     "iptv-toolkit/main/setup"
     "iptv-toolkit/main/util"
-	"iptv-toolkit/main/convert"
+    "iptv-toolkit/main/convert"
 )
 
 func Task() {
+    //convert.XmlToJtv()
     if *setup.Playlist != "" {
         if playlist, err := util.GetFile(*setup.Playlist); err != nil {
             if *setup.LogLVL <= 2 {

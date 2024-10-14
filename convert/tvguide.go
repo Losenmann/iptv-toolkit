@@ -8,7 +8,6 @@ import (
     "compress/gzip"
     "fmt"
     "os"
-    "log"
     "bytes"
     "regexp"
     "io/ioutil"
@@ -41,97 +40,106 @@ type Programme struct {
 }
 
 func ConvertEpg(file []byte) {
-    fmt.Println(*setup.EpgPathDst)
-    if err := os.MkdirAll(*setup.EpgPathDst, 0777); err != nil {
-        if *setup.LogLVL <= 2 {
-            slog.Warn(fmt.Sprintf("%v", err))
-        }
-    }
+    var (
+        path_epg_jtv = *setup.EpgPathDst + "/epg.zip"
+        path_epg_xml = *setup.EpgPathDst + "/epg.xml"
+        path_epg_xmlgz = *setup.EpgPathDst + "/epg.xml.gz"
+        epg_jtv, epg_xml, epg_xmlgz []byte
+    )
+    
     switch mimetype.Detect(file).Extension() {
     case ".zip":
-        err := ioutil.WriteFile(*setup.EpgPathDst + "/tvguide.zip", file, 0644)
-        if err != nil {
-            if *setup.LogLVL <= 2 {
-                slog.Warn(fmt.Sprintf("%v", err))
-            }
-        } else {
-            if *setup.LogLVL <= 1 {
-                slog.Info("Successfully write " + *setup.EpgPathDst + "/tvguide.zip")
-            }
-        }
-        XmlToXmlGz(JtvToXml(*setup.EpgPathDst + "/tvguide.zip"))
+        epg_jtv = file
+        epg_xml = JtvToXml(file)
+        epg_xmlgz = XmlToXmlGz(epg_xml)
     case ".xml":
-        err := ioutil.WriteFile(*setup.EpgPathDst + "/tvguide.xml", file, 0644)
-        if err != nil {
-            if *setup.LogLVL <= 2 {
-                slog.Warn(fmt.Sprintf("%v", err))
-            }
-        } else {
-            if *setup.LogLVL <= 1 {
-                slog.Info("Successfully write " + *setup.EpgPathDst + "/tvguide.xml")
-            }
-        }
-        XmlToXmlGz(file)
-        XmlToJtv(file)
+        epg_xml = file
+        epg_xmlgz = XmlToXmlGz(file)
+        epg_jtv = XmlToJtv(file)
     case ".gz":
-        err := ioutil.WriteFile(*setup.EpgPathDst + "/tvguide.xml.gz", file, 0644)
-        if err != nil {
-            if *setup.LogLVL <= 2 {
-                slog.Warn(fmt.Sprintf("%v", err))
-            }
-        } else {
-            if *setup.LogLVL <= 1 {
-                slog.Info("Successfully write " + *setup.EpgPathDst + "/tvguide.xml.gz")
-            }
-        }
-        XmlToJtv(XmlGzToXml(file))
+        epg_xmlgz = file
+        epg_xml = XmlGzToXml(file)
+        epg_jtv = XmlToJtv(epg_xml)
     default:
         if *setup.LogLVL <= 2 {
             slog.Warn("Unknown type epg")
         }
     }
+    if err := os.MkdirAll(*setup.EpgPathDst, 0777); err != nil {
+        if *setup.LogLVL <= 2 {
+            slog.Warn(fmt.Sprintf("%v", err))
+        }
+    } else {
+        if err := ioutil.WriteFile(path_epg_jtv, epg_jtv, 0644); err != nil {
+            if *setup.LogLVL <= 2 {
+                slog.Warn(fmt.Sprintf("%v", err))
+            }
+        } else {
+            if *setup.LogLVL <= 1 {
+                slog.Info("Successfully write " + path_epg_jtv)
+            }
+        }
+        if err := ioutil.WriteFile(path_epg_xml, epg_xml, 0644); err != nil {
+            if *setup.LogLVL <= 2 {
+                slog.Warn(fmt.Sprintf("%v", err))
+            }
+        } else {
+            if *setup.LogLVL <= 1 {
+                slog.Info("Successfully write " + path_epg_xml)
+            }
+        }
+        if err := ioutil.WriteFile(path_epg_xmlgz, epg_xmlgz, 0644); err != nil {
+            if *setup.LogLVL <= 2 {
+                slog.Warn(fmt.Sprintf("%v", err))
+            }
+        } else {
+            if *setup.LogLVL <= 1 {
+                slog.Info("Successfully write " + path_epg_xmlgz)
+            }
+        }
+    }
 }
 
-func JtvToXml(file string) ([]byte) {
+func JtvToXml(file []byte) ([]byte) {
     var (
         epg Epg
         channel []Channel
         programme []Programme
         title []string
         duration []uint64
-        pdt, ndx []byte
-        channel_id int
-        main_data int
+        channel_id, main_data int
     )
 
-    r, err := zip.OpenReader(file)
+    reader := bytes.NewReader(file)
+    zipreader, err := zip.NewReader(reader, int64(len(file)))
     if err != nil {
-        log.Fatal(err)
+        if *setup.LogLVL <= 2 {
+            slog.Warn(fmt.Sprintf("%v", err))
+        }
+        return []byte{}
     }
-    defer r.Close()
 
-    for _, fpdt := range r.File {
-        if re := regexp.MustCompile("pdt$").FindStringSubmatch(fpdt.Name); len(re) > 0 {
-            file_name := regexp.MustCompile(`\.pdt$`).ReplaceAllString(fpdt.Name, "")
-            rc, err := fpdt.Open()
-            if err != nil {
-                log.Fatal(err)
-            }
-
-            pdt, _ = ioutil.ReadAll(rc)
-            title = jtvParseTitle(pdt)
-            rc.Close()
-            for _, fndx := range r.File {
-                if re2 := regexp.MustCompile("^" + file_name + ".ndx$").FindStringSubmatch(fndx.Name); len(re2) > 0 {
-                    rc2, err := fndx.Open()
-                    if err != nil {
-                        log.Fatal(err)
-                    }
-                    ndx, _ = ioutil.ReadAll(rc2)
-                    duration = jtvParseDuration(ndx)
-                    rc2.Close()
-                    break
+    for _, fpdt := range zipreader.File {
+        if ch_name := regexp.MustCompile(`\.pdt$`).ReplaceAllString(fpdt.Name, ""); ch_name != fpdt.Name {
+            if rc, err := zipreader.Open(ch_name + ".pdt"); err != nil {
+                if *setup.LogLVL <= 2 {
+                    slog.Warn(fmt.Sprintf("%v", err))
                 }
+                continue
+            } else {
+                pdt, _ := ioutil.ReadAll(rc)
+                title = jtvParseTitle(pdt)
+                rc.Close()
+            }
+            if rc, err := zipreader.Open(ch_name + ".ndx"); err != nil {
+                if *setup.LogLVL <= 2 {
+                    slog.Warn(fmt.Sprintf("%v", err))
+                }
+                continue
+            } else {
+                ndx, _ := ioutil.ReadAll(rc)
+                duration = jtvParseDuration(ndx)
+                rc.Close()
             }
 
             if len(title) <= len(duration) {
@@ -150,102 +158,63 @@ func JtvToXml(file string) ([]byte) {
                     }
                     epg.Programme = append(epg.Programme, programme...)
                 }
-                channel = []Channel{Channel{DisplayName:file_name,Id:channel_id}}
+                channel = []Channel{Channel{DisplayName:ch_name,Id:channel_id}}
                 epg.Channel = append(epg.Channel, channel...)
             }
         }
     }
 
     if data, err := xml.MarshalIndent(epg, "", "    "); err == nil {
-        data = []byte(xml.Header + string(data))
-        err := ioutil.WriteFile(*setup.EpgPathDst + "/tvguide.xml", data, 0644)
-        if err != nil {
+        return []byte(xml.Header + string(data))
+    }
+    return []byte{}
+}
+
+func XmlToJtv(data []byte) ([]byte) {
+    var epg Epg
+    xml.Unmarshal(data, &epg)
+    return jtvCreateFileFromXml(epg)
+}
+
+func XmlToXmlGz(data []byte) ([]byte) {
+    var buff bytes.Buffer
+    gz := gzip.NewWriter(&buff)
+    gz.Write(data)
+    gz.Close()
+    return buff.Bytes()
+}
+
+func XmlGzToXml(data []byte) ([]byte) {
+    reader := bytes.NewReader(data)
+    if gzreader, err := gzip.NewReader(reader); err != nil {
+        if *setup.LogLVL <= 2 {
+            slog.Warn(fmt.Sprintf("%v", err))
+        }
+    } else {
+        if data, err := ioutil.ReadAll(gzreader); err != nil {
             if *setup.LogLVL <= 2 {
                 slog.Warn(fmt.Sprintf("%v", err))
             }
         } else {
-            if *setup.LogLVL <= 1 {
-                slog.Info("Successfully write " + *setup.EpgPathDst + "/tvguide.xml")
-            }
             return data
         }
     }
     return []byte{}
 }
 
-func XmlToJtv(data []byte) {
-    var (
-        epg Epg
-    )
-
-    xml.Unmarshal(data, &epg)
-    jtvCreateFileFromXml(epg)
-}
-
-func XmlToXmlGz(data []byte) ([]byte) {
-    var b bytes.Buffer
-    gz := gzip.NewWriter(&b)
-    gz.Write(data)
-    gz.Close()
-    err := ioutil.WriteFile(*setup.EpgPathDst + "/tvguide.xml.gz", b.Bytes(), 0644)
-    if err != nil {
-        if *setup.LogLVL <= 2 {
-            slog.Warn(fmt.Sprintf("%v", err))
-        }
-        return []byte{}
-    } else {
-        if *setup.LogLVL <= 1 {
-            slog.Info("Successfully write " + *setup.EpgPathDst + "/tvguide.xml.gz")
-        }
-        return b.Bytes()
-    }
-    return []byte{}
-}
-
-func XmlGzToXml(data []byte) ([]byte) {
-    reader := bytes.NewReader(data)
-    gzreader, err := gzip.NewReader(reader);
-    if err != nil {
-        if *setup.LogLVL <= 2 {
-            slog.Warn(fmt.Sprintf("%v", err))
-        }
-        return []byte{}
-    }
-    data, err = ioutil.ReadAll(gzreader);
-    if err != nil {
-        if *setup.LogLVL <= 2 {
-            slog.Warn(fmt.Sprintf("%v", err))
-        }
-        return []byte{}
-    }
-
-    err = ioutil.WriteFile(*setup.EpgPathDst + "/tvguide.xml", data, 0644)
-    if err != nil {
-        if *setup.LogLVL <= 2 {
-            slog.Warn(fmt.Sprintf("%v", err))
-        }
-    } else {
-        if *setup.LogLVL <= 1 {
-            slog.Info("Successfully write " + *setup.EpgPathDst + "/tvguide.xml")
-        }
-        return data
-    }
-    return []byte{}
-}
-
 func getTime(data uint64) string {
-	maxd := time.Duration(math.MaxInt64).Truncate(100 * time.Nanosecond)
-	maxdUnits := uint64(maxd / 100) // number of 100-ns units
+    maxd := time.Duration(math.MaxInt64).Truncate(100 * time.Nanosecond)
+    maxdUnits := uint64(maxd / 100) // number of 100-ns units
 
-	t := time.Date(1601, 1, 1, 0, 0, 0, 0, time.UTC)
-	for data > maxdUnits {
-		t = t.Add(maxd)
-		data -= maxdUnits
-	}
-	if data != 0 {
-		t = t.Add(time.Duration(data * 100))
-	}
-	return t.Format("20060102150405")
+    t := time.Date(1601, 1, 1, 0, 0, 0, 0, time.UTC)
+    for data > maxdUnits {
+        t = t.Add(maxd)
+        data -= maxdUnits
+    }
+    if data != 0 {
+        t = t.Add(time.Duration(data * 100))
+    }
+    return t.Format("20060102150405")
 }
 
 func jtvParseTitle(pdt []byte) ([]string) {
@@ -293,7 +262,7 @@ func jtvParseDuration(ndx []byte) ([]uint64) {
     return duration
 }
 
-func jtvCreateFileFromXml(epg Epg) {
+func jtvCreateFileFromXml(epg Epg) ([]byte) {
     var (
         buff bytes.Buffer
         jtv_headers = [][]byte{[]byte("JTV 3.x TV Program Data\x0a\x0a\x0a"), []byte("JTV 3.x TV Program Data\xa0\xa0\xa0")}
@@ -325,36 +294,31 @@ func jtvCreateFileFromXml(epg Epg) {
             binary.LittleEndian.PutUint64(ndx_cnt, uint64(count))
             ndx = append(ndx_cnt[:2], ndx...) 
 
-            f, err := zipW.Create(ch.DisplayName + ".pdt")
-            if err != nil {
+            if f, err := zipW.Create(ch.DisplayName + ".pdt"); err != nil {
                 if *setup.LogLVL <= 2 {
                     slog.Warn(fmt.Sprintf("%v", err))
                 }
-                break
-            }
-
-            _, err = f.Write(pdt)
-            if err != nil {
-                if *setup.LogLVL <= 2 {
-                    slog.Warn(fmt.Sprintf("%v", err))
+                continue
+            } else {
+                if _, err := f.Write(pdt); err != nil {
+                    if *setup.LogLVL <= 2 {
+                        slog.Warn(fmt.Sprintf("%v", err))
+                    }
+                    continue
                 }
-                break
-            }
-
-            f, err = zipW.Create(ch.DisplayName + ".ndx")
-            if err != nil {
-                if *setup.LogLVL <= 2 {
-                    slog.Warn(fmt.Sprintf("%v", err))
+                if f, err := zipW.Create(ch.DisplayName + ".ndx"); err != nil {
+                    if *setup.LogLVL <= 2 {
+                        slog.Warn(fmt.Sprintf("%v", err))
+                    }
+                    continue
+                } else {
+                    if _, err := f.Write(ndx); err != nil {
+                        if *setup.LogLVL <= 2 {
+                            slog.Warn(fmt.Sprintf("%v", err))
+                        }
+                        continue
+                    }
                 }
-                break
-            }
-
-            _, err = f.Write(ndx)
-            if err != nil {
-                if *setup.LogLVL <= 2 {
-                    slog.Warn(fmt.Sprintf("%v", err))
-                }
-                break
             }
         }
     }
@@ -364,12 +328,8 @@ func jtvCreateFileFromXml(epg Epg) {
         if *setup.LogLVL <= 2 {
             slog.Warn(fmt.Sprintf("%v", err))
         }
+    } else {
+        return buff.Bytes()
     }
-
-    err = ioutil.WriteFile("data.zip", buff.Bytes(), os.ModePerm)
-    if err != nil {
-        if *setup.LogLVL <= 2 {
-            slog.Warn(fmt.Sprintf("%v", err))
-        }
-    }
+    return []byte{}
 }
