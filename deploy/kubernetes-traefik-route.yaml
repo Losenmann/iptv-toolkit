@@ -79,26 +79,21 @@ spec:
     task: iptv-toolkit
 
 ---
-apiVersion: networking.k8s.io/v1
-kind: Ingress
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
 metadata:
   name: iptv-toolkit-ingress
 spec:
-  rules:
-    - host: "foo.bar.com"
-      http:
-      paths:
-        - pathType: Prefix
-          path: /files
-          backend:
-            service:
-              name: iptv-toolkit-service
-              port:
-                number: 4023
-        - pathType: Prefix
-          path: /udp
-          backend:
-            service:
-              name: iptv-toolkit-service
-              port:
-                number: 4022
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`iptv.example.com`) && PathPrefix(`/static`)
+      kind: Rule
+      services:
+        - name: iptv-toolkit-service
+          port: 4023
+    - match: Host(`iptv.example.com`) && PathPrefix(`/udp`)
+      kind: Rule
+      services:
+        - name: iptv-toolkit-service
+          port: 4022
