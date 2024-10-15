@@ -1,10 +1,10 @@
-version: "3.9"
 services:
   iptv-toolkit:
     container_name: "IPTV-Toolkit"
     image: "losenmann/iptv-toolkit:latest"
-    networks:
-      - network-multicast
+    hostname: iptv-toolkit
+    command: ["-S", "-U", "-W"]
+    network_mode: host
     expose:
       - 4022
       - 4023
@@ -12,22 +12,17 @@ services:
       - /etc/localtime:/etc/localtime:ro
       - /etc/timezone:/etc/timezone:ro
     environment:
-      - EPG_URL="http://localhost/epg.xml"
-      - PLAYLIST_URL="http://localhost/playlist.m3u"
-      - PLAYLIST_TVG_URL="http://localhost/epg.xml"
-      - PLAYLIST_UDPXY_URL="http://udpxy.local:4022"
-    command: ["-S", "-U", "-W"]
+      - IPTVTOOLKIT_EPG=${IPTVTOOLKIT_EPG:-}
+      - IPTVTOOLKIT_PLAYLIST=${IPTVTOOLKIT_PLAYLIST:-}
+      - IPTVTOOLKIT_PLAYLIST_EMBED_EPG=${IPTVTOOLKIT_PLAYLIST_EMBED_EPG:-}
+      - IPTVTOOLKIT_PLAYLIST_UDPXY=${IPTVTOOLKIT_PLAYLIST_UDPXY:-}
+      - IPTVTOOLKIT_CRONTAB=${IPTVTOOLKIT_CRONTAB:-30 6 * * *}
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.iptv-toolkit.entrypoints=https
+      - traefik.http.routers.iptv-toolkit.rule=Host(`${IPTVTOOLKIT_HOST:-}`)
+      - traefik.http.routers.iptv-toolkit.tls=true
+      - traefik.http.services.iptv-toolkit.loadbalancer.server.port=4023
+      - traefik.docker.network=network-proxy
     tty: true
     restart: on-failure:3
-
-networks:
-  network-multicast:
-    name: "network-multicast"
-    driver: "macvlan"
-    driver_opts:
-      parent: "eth0"
-    ipam:
-      config:
-        - subnet: "192.168.8.0/24"
-          gateway: "192.168.8.1"
-          ip_range: "192.168.8.24/29"

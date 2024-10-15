@@ -11,7 +11,7 @@ Also, there is support for creating a playlist with a built-in udpxy link: from 
 Also in the background, the udpxy proxy server is launched, allowing you to convert Multicast traffic to HLS. Along with this, a simple file service is launched to download playlists and EPG.
 
 > [!NOTE]
-> Server file access endpoint: "/static/". For UDPXY: "/udp/" and "/status/"
+> Server file access endpoint: "/files/". For UDPXY: "/udp/" and "/status/"
 
 ### Supported tools
 + Playlist converter in 2 formats (xml, m3u)

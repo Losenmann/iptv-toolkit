@@ -68,7 +68,7 @@ func serveMulticastUDP(a string, h func(*net.UDPAddr, int, []byte)) {
 }
 
 func UdpxyExt() {
-	cmd := exec.Command("udpxy", "-p", "4023", "-vTSl", "/proc/1/fd/1")
+	cmd := exec.Command("udpxy", "-p", "4022", "-vTSl", "/proc/1/fd/1")
 	_, err := cmd.Output()
 	if err != nil {
     	if *setup.LogLVL <= 2 {
