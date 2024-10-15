@@ -1,0 +1,99 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: iptv-toolkit
+  labels:
+    app: iptv-toolkit
+    name: iptv-toolkit
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: iptv-toolkit
+      task: iptv-toolkit
+  template:
+    metadata:
+      labels:
+        app: iptv-toolkit
+        task: iptv-toolkit
+    spec:
+      hostNetwork: true
+      terminationGracePeriodSeconds: 0
+      containers:
+        - name: iptv-toolkit
+          image: losenmann/iptv-toolkit:latest
+          args:
+            - -S
+            - -U
+            - -W
+          ports:
+            - containerPort: 4022
+            - containerPort: 4023
+          resources:
+            requests:
+              memory: "50Mi"
+              cpu: "50m"
+            limits:
+              memory: "96Mi"
+              cpu: "75m"
+          env:
+            - name: IPTVTOOLKIT_EPG
+              value: "http://localhost/epg.xml"
+            - name: IPTVTOOLKIT_PLAYLIST
+              value: "http://localhost/playlist.m3u"
+            - name: IPTVTOOLKIT_PLAYLIST_EMBED_EPG
+              value: "http://localhost/epg.xml"
+            - name: IPTVTOOLKIT_PLAYLIST_UDPXY
+              value: "http://udpxy.local:4022"
+          volumeMounts:
+            - name: time-config
+              mountPath: /etc/localtime
+              readOnly: true
+            - name: tz-config
+              mountPath: /etc/timezone
+              readOnly: true
+      volumes:
+        - name: time-config
+          hostPath:
+            path: /etc/localtime
+            type: File
+        - name: tz-config
+          hostPath:
+            path: /etc/timezone
+            type: File
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: iptv-toolkit-service
+spec:
+  ports:
+    - name: web
+      port: 4023
+    - name: udpxy
+      port: 4022
+  selector:
+    app: iptv-toolkit
+    task: iptv-toolkit
+
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: iptv-toolkit-ingress
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`iptv.example.com`) && PathPrefix(`/static`)
+      kind: Rule
+      services:
+        - name: iptv-toolkit-service
+          port: 4023
+    - match: Host(`iptv.example.com`) && PathPrefix(`/udp`)
+      kind: Rule
+      services:
+        - name: iptv-toolkit-service
+          port: 4022

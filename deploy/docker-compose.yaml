@@ -1,0 +1,28 @@
+services:
+  iptv-toolkit:
+    container_name: "IPTV-Toolkit"
+    image: "losenmann/iptv-toolkit:latest"
+    hostname: iptv-toolkit
+    command: ["-S", "-U", "-W"]
+    network_mode: host
+    expose:
+      - 4022
+      - 4023
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
+    environment:
+      - IPTVTOOLKIT_EPG=${IPTVTOOLKIT_EPG:-}
+      - IPTVTOOLKIT_PLAYLIST=${IPTVTOOLKIT_PLAYLIST:-}
+      - IPTVTOOLKIT_PLAYLIST_EMBED_EPG=${IPTVTOOLKIT_PLAYLIST_EMBED_EPG:-}
+      - IPTVTOOLKIT_PLAYLIST_UDPXY=${IPTVTOOLKIT_PLAYLIST_UDPXY:-}
+      - IPTVTOOLKIT_CRONTAB=${IPTVTOOLKIT_CRONTAB:-30 6 * * *}
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.iptv-toolkit.entrypoints=https
+      - traefik.http.routers.iptv-toolkit.rule=Host(`${IPTVTOOLKIT_HOST:-}`)
+      - traefik.http.routers.iptv-toolkit.tls=true
+      - traefik.http.services.iptv-toolkit.loadbalancer.server.port=4023
+      - traefik.docker.network=network-proxy
+    tty: true
+    restart: on-failure:3
