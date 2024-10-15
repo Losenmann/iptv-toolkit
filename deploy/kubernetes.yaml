@@ -28,24 +28,20 @@ spec:
             - -U
             - -W
           ports:
-            - containerPort: 4022
-            - containerPort: 4023
+            - name: udpxy
+              containerPort: 4022
+            - name: web
+              containerPort: 4023
           resources:
             requests:
-              memory: "50Mi"
               cpu: "50m"
+              memory: "50Mi"
             limits:
-              memory: "96Mi"
               cpu: "75m"
-          env:
-            - name: IPTVTOOLKIT_EPG
-              value: "http://localhost/epg.xml"
-            - name: IPTVTOOLKIT_PLAYLIST
-              value: "http://localhost/playlist.m3u"
-            - name: IPTVTOOLKIT_PLAYLIST_EMBED_EPG
-              value: "http://localhost/epg.xml"
-            - name: IPTVTOOLKIT_PLAYLIST_UDPXY
-              value: "http://udpxy.local:4022"
+              memory: "96Mi"
+          envFrom:
+            - configMapRef:
+              name: iptv-toolkit-configmap
           volumeMounts:
             - name: time-config
               mountPath: /etc/localtime
