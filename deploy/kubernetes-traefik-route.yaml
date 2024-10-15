@@ -35,13 +35,13 @@ spec:
           resources:
             requests:
               cpu: "50m"
-              memory: "50Mi"
+              memory: "128Mi"
             limits:
               cpu: "75m"
-              memory: "96Mi"
+              memory: "192Mi"
           envFrom:
             - configMapRef:
-              name: iptv-toolkit-configmap
+                name: iptv-toolkit-configmap
           volumeMounts:
             - name: time-config
               mountPath: /etc/localtime

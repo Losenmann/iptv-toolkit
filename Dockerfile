@@ -20,12 +20,14 @@ RUN apk add git \
 FROM alpine:3.20.3 AS app
 ARG ARG_VERSION=latest
 ENV IPTVTOOLKIT_VERSION=${ARG_VERSION} \
-    IPTVTOOLKIT_EPG_DST=/www/iptv-toolkit/tvguide \
-    IPTVTOOLKIT_PLAYLIST_DST=/www/iptv-toolkit/playlist \
-    IPTVTOOLKIT_WEB_PATH=/www/iptv-toolkit
+    IPTVTOOLKIT_EPG_DST="/www/iptv-toolkit/tvguide" \
+    IPTVTOOLKIT_PLAYLIST_DST="/www/iptv-toolkit/playlist" \
+    IPTVTOOLKIT_WEB_PORT="4023" \
+    IPTVTOOLKIT_WEB_PATH="/www/iptv-toolkit" \
+    IPTVTOOLKIT_CRONTAB="30 6 * * *"
 COPY --from=builder-main /usr/bin/iptv-toolkit /usr/bin/iptv-toolkit
 COPY --from=builder-udpxy /opt/udpxy/chipmunk/udpxy /usr/bin/udpxy
 RUN mkdir -p /www/iptv-toolkit/tvguide /www/iptv-toolkit/tvrecord /www/iptv-toolkit/playlist
 WORKDIR /www/iptv-toolkit
 ENTRYPOINT ["iptv-toolkit"]
-CMD ["-S", "-W"]
+CMD ["-S", "-U", "-W"]
