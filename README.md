@@ -16,8 +16,8 @@ Also in the background, the udpxy proxy server is launched, allowing you to conv
 > Server file access endpoint: "/files/". For UDPXY: "/udp/" and "/status/".
 
 ### Supported tools
-+ Playlist converter in 2 formats (xml, m3u)
-+ EPG converter in 3 formats (jtv, xml, xml.gz)
++ Playlist converter in 2 formats ([xspf](https://xspf.org), [m3u/m3u8](https://wikipedia.org/wiki/M3U))
++ EPG converter in 3 formats (jtv, [xmltv/xmltv.gz](https://xmltv.org))
 + Scheduler
 + Web server for converted files
 + [UDPXY](https://github.com/pcherenkov/udpxy) proxy
@@ -58,17 +58,32 @@ Environmental variables and key CLI applicable in all operating modes.
 > CLI key take precedence over environment variables.
 
 ## Build from source
+### Build executable file from source
+There are two ways to build: with Docker or locally.<br>
+In Docker, everything you need is built into a container and then placed in the ./build directory.<br>
+Or you can build locally. The executables will also be located in the ./build directory.<br>
+Docker build is done and installed by default.
+
 > [!IMPORTANT]
-> Before starting the build, you need to install the executable packager [upx](https://github.com/upx/upx/releases). This step can be skipped if you are only building a Docker image.
+> Before building locally, you need to install the [Golang](https://go.dev/dl) environment and install the [upx](https://github.com/upx/upx/releases) packager before building.
 
-### Build executable file
-1. Install the latest version of [golang](https://go.dev/dl).
-2. Go to the project directory.
-3. Run `make` command.
+#### Build using Docker
+1. Go to the project directory
+2. Run `make build` command
+3. Check catalog `./build`
 
-### Build Docker image
-1. Go to the project directory.
-2. Run `make docker` command.
+#### Build local
+1. Go to the project directory
+2. Run `make build-local` command
+3. Check catalog `./build`
 > [!NOTE]
-> You can pass the `ARCH_ALL=true` argument to the `make` command for cross-compilation executable files.<br>
-> Example: `make build ARCH_ALL=true` or `make ARCH_ALL=true`
+> You can pass the `ARCH_ALL=true` argument to the `make build-local` command for cross-compilation executable files.<br>
+> Example: `make build-local ARCH_ALL=true`
+
+### Build Docker Image
+Build Docker Image Allows you to build a ready-to-deploy Docker image from sources.
+1. Go to the project directory
+2. Run `make docker` command
+2. Check the repository `docker image ls`
+
+Once the image build is complete, you can deploy it by running the command: `make docker-up` or `make docker-down`
