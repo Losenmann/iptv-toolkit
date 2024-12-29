@@ -42,13 +42,9 @@ jobs:
             ${{ env.REGISTRY_DOCKERHUB }}/${{ github.repository }}
             ${{ env.REGISTRY_GITHUB }}/${{ github.repository }}
           tags: |
-            type=schedule
-            type=ref,event=branch
-            type=ref,event=pr
-            type=semver,pattern={{version}}
-            type=semver,pattern={{major}}.{{minor}}
-            type=semver,pattern={{major}}
-            type=sha
+            type=raw,value=latest,priority=1000,enable=true
+            type=semver,pattern={{version}},priority=900,enable=true
+            type=sha,prefix=sha-,suffix=,format=short,priority=800,enable=true
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3.8.0
       - name: Build and push Docker image
