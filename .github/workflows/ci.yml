@@ -1,4 +1,4 @@
-name: Docker Image CI
+name: CI
 
 on:
   push:
@@ -12,7 +12,7 @@ env:
   IMAGE_NAME: ${{ github.repository }}
 
 jobs:
-  build:
+  release:
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -45,6 +45,10 @@ jobs:
             type=raw,value=latest,priority=100,enable=true
             type=semver,pattern={{version}},priority=300,enable=true
             type=sha,prefix=sha-,suffix=,format=short,priority=200,enable=true
+            
+  build:
+    runs-on: ubuntu-latest
+    steps:
       - name: ⚙️ Set up Docker Buildx
         uses: docker/setup-buildx-action@v3.8.0
       - name: 🌀 Build and push Docker image
