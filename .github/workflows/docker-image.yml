@@ -39,7 +39,7 @@ jobs:
         uses: docker/metadata-action@v3.3.0
         with:
           images: |
-            registry.hub.docker.com/${{ github.repository }}
+            ${{ github.repository }}
             ${{ env.REGISTRY_GITHUB }}/${{ github.repository }}
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3.8.0
