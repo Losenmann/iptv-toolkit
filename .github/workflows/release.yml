@@ -1,8 +1,6 @@
-name: CI
+name: Release
 
 on:
-  push:
-    branches: [ "master" ]
   pull_request:
     branches: [ "release" ]
 
@@ -64,15 +62,3 @@ jobs:
           subject-name: ${{ env.REGISTRY_GITHUB }}/${{ env.IMAGE_NAME}}
           subject-digest: ${{ steps.push.outputs.digest }}
           push-to-registry: false
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - name: 🔍 Checkout repository
-        uses: actions/checkout@v4.2.2
-      - name: 🌀 Build Docker image
-        uses: docker/build-push-action@v6.10.0
-        with:
-          context: .
-          platforms: ${{ env.IMAGE_PLATFORM }}
-          file: ./Dockerfile
-          load: false
