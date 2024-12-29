@@ -1,0 +1,18 @@
+name: Docker Image CI
+
+on:
+  push:
+    branches: [ "dev-workflow" ]
+  pull_request:
+    branches: [ "dev-workflow" ]
+
+jobs:
+
+  build:
+
+    runs-on: alpine:3.21.0
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Build the Docker image
+      run: docker build . --file Dockerfile --tag my-image-name:$(date +%s)
