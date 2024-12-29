@@ -1,0 +1,24 @@
+name: Builder
+
+on:
+  push:
+    branches: [ "master" ]
+
+env:
+  IMAGE_PLATFORM: linux/386,linux/amd64,linux/arm/v6,linux/arm/v7,linux/arm/v8,linux/arm64,linux/riscv64,linux/s390x,linux/ppc64le
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 🔍 Checkout repository
+        uses: actions/checkout@v4.2.2
+      - name: ⚙️ Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3.8.0
+      - name: 🌀 Build Docker image
+        uses: docker/build-push-action@v6.10.0
+        with:
+          context: .
+          platforms: ${{ env.IMAGE_PLATFORM }}
+          file: ./Dockerfile
+          load: false
