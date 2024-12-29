@@ -2,7 +2,8 @@ name: CI
 
 on:
   push:
-    branches: [ "master" ]
+    tags:        
+      - '*'
   pull_request:
     branches: [ "master" ]
 
@@ -10,6 +11,7 @@ env:
   REGISTRY_DOCKERHUB: registry.hub.docker.com
   REGISTRY_GITHUB: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
+  IMAGE_PLATFORM: linux/386,linux/amd64,linux/arm/v6,linux/arm/v7,linux/arm/v8,linux/arm64,linux/riscv64,linux/s390x,linux/ppc64le
 
 jobs:
   release:
@@ -45,11 +47,6 @@ jobs:
             type=raw,value=latest,priority=100,enable=true
             type=semver,pattern={{version}},priority=300,enable=true
             type=sha,prefix=sha-,suffix=,format=short,priority=200,enable=true
-            
-  build:
-    needs: release
-    runs-on: ubuntu-latest
-    steps:
       - name: ⚙️ Set up Docker Buildx
         uses: docker/setup-buildx-action@v3.8.0
       - name: 🌀 Build and push Docker image
@@ -57,7 +54,7 @@ jobs:
         uses: docker/build-push-action@v6.10.0
         with:
           context: .
-          platforms: linux/386,linux/amd64,linux/arm/v6,linux/arm/v7,linux/arm/v8,linux/arm64,linux/riscv64,linux/s390x,linux/ppc64le
+          platforms: ${{ env.IMAGE_PLATFORM }}
           push: true
           provenance: false
           tags: ${{ steps.meta.outputs.tags }}
@@ -68,3 +65,15 @@ jobs:
           subject-name: ${{ env.REGISTRY_GITHUB }}/${{ env.IMAGE_NAME}}
           subject-digest: ${{ steps.push.outputs.digest }}
           push-to-registry: false
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 🔍 Checkout repository
+        uses: actions/checkout@v4.2.2
+      - name: 🌀 Build Docker image
+        uses: docker/build-push-action@v6.10.0
+        with:
+          context: .
+          platforms: ${{ env.IMAGE_PLATFORM }}
+          file: ./Dockerfile
+          load: false
