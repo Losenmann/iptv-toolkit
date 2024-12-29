@@ -62,10 +62,21 @@ jobs:
       - name: Load image
         run: |
           docker load --input /tmp/myimage.tar
+      - name: 🏷 Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@v3.3.0
+        with:
+          images: |
+            ${{ env.REGISTRY_DOCKERHUB }}/${{ github.repository }}
+            ${{ env.REGISTRY_GITHUB }}/${{ github.repository }}
+          tags: |
+            type=raw,value=latest,priority=1000,enable=true
+            type=semver,pattern={{version}},priority=900,enable=true
       - name: 🌀 Push Docker image
         id: push
         uses: docker/build-push-action@v6.10.0
         with:
+          tags: ${{ steps.meta.outputs.tags }}
           cache-from: type=local,src=/tmp
           push: true
           provenance: false
