@@ -2,10 +2,9 @@ name: CI
 
 on:
   push:
-    tags:        
-      - '*'
-  pull_request:
     branches: [ "master" ]
+  pull_request:
+    branches: [ "release" ]
 
 env:
   REGISTRY_DOCKERHUB: registry.hub.docker.com
