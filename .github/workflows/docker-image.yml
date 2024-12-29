@@ -38,7 +38,7 @@ jobs:
         with:
           images: |
             losenmann/iptv-toolkit
-            ${{ env.REGISTRY }}/${{ github.repository }}
+            ghcr.io/${{ github.repository }}
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3.8.0
       - name: Build and push Docker image
