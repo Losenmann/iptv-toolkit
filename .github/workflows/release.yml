@@ -66,7 +66,6 @@ jobs:
         id: push
         uses: docker/build-push-action@v6.10.0
         with:
-          context: .
-          platforms: ${{ env.IMAGE_PLATFORM }}
+          cache-from: type=local,src=/tmp
           push: true
           provenance: false
