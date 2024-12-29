@@ -23,12 +23,12 @@ jobs:
       - name: Build and export
         uses: docker/build-push-action@v6
         with:
-          tags: myimage:latest
-          outputs: type=docker,dest=/tmp/myimage.tar
+          tags: image:latest
+          outputs: type=docker,dest=/tmp/image.tar
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: myimage
+          name: image
           path: /tmp/myimage.tar
         
   release:
@@ -57,11 +57,11 @@ jobs:
       - name: Download artifact
         uses: actions/download-artifact@v4
         with:
-          name: myimage
+          name: image
           path: /tmp
       - name: Load image
         run: |
-          docker load --input /tmp/myimage.tar
+          docker load --input /tmp/image.tar
       - name: 🏷 Extract metadata (tags, labels) for Docker
         id: meta
         uses: docker/metadata-action@v3.3.0
@@ -72,11 +72,10 @@ jobs:
           tags: |
             type=raw,value=latest,priority=1000,enable=true
             type=semver,pattern={{version}},priority=900,enable=true
-      - name: 🌀 Push Docker image
-        id: push
-        uses: docker/build-push-action@v6.10.0
-        with:
-          tags: ${{ steps.meta.outputs.tags }}
-          cache-from: type=local,src=/tmp
-          push: true
-          provenance: false
+      - name: Load image
+        run: |
+          docker image tag image:latest ${{ steps.meta.outputs.tags }}
+      - name: Push image
+        run: |
+          docker push ${{ steps.meta.outputs.tags }}
+          
