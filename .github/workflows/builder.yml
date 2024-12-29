@@ -1,20 +1,75 @@
-name: Builder
+name: CI
 
 on:
   push:
+    tags:        
+      - '*'
+  pull_request:
     branches: [ "master" ]
 
 env:
+  REGISTRY_DOCKERHUB: registry.hub.docker.com
+  REGISTRY_GITHUB: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
   IMAGE_PLATFORM: linux/386,linux/amd64,linux/arm/v6,linux/arm/v7,linux/arm/v8,linux/arm64,linux/riscv64,linux/s390x,linux/ppc64le
 
 jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+      attestations: write
+      id-token: write
+    steps:
+      - name: 🔍 Checkout repository
+        uses: actions/checkout@v4.2.2
+      - name: 🔑 Log in to Docker Hub
+        uses: docker/login-action@v3.3.0
+        with:
+          registry: ${{ env.REGISTRY_DOCKERHUB }}
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+      - name: 🔑 Log in to GitHub
+        uses: docker/login-action@v3.3.0
+        with:
+          registry: ${{ env.REGISTRY_GITHUB }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: 🏷 Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@v5.6.1
+        with:
+          images: |
+            ${{ env.REGISTRY_DOCKERHUB }}/${{ github.repository }}
+            ${{ env.REGISTRY_GITHUB }}/${{ github.repository }}
+          tags: |
+            type=raw,value=latest,priority=100,enable=true
+            type=semver,pattern={{version}},priority=300,enable=true
+            type=sha,prefix=sha-,suffix=,format=short,priority=200,enable=true
+      - name: ⚙️ Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3.8.0
+      - name: 🌀 Build and push Docker image
+        id: push
+        uses: docker/build-push-action@v6.10.0
+        with:
+          context: .
+          platforms: ${{ env.IMAGE_PLATFORM }}
+          push: true
+          provenance: false
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+      - name: 📝 Generate artifact attestation
+        uses: actions/attest-build-provenance@v2.1.0
+        with:
+          subject-name: ${{ env.REGISTRY_GITHUB }}/${{ env.IMAGE_NAME}}
+          subject-digest: ${{ steps.push.outputs.digest }}
+          push-to-registry: false
   build:
     runs-on: ubuntu-latest
     steps:
       - name: 🔍 Checkout repository
         uses: actions/checkout@v4.2.2
-      - name: ⚙️ Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3.8.0
       - name: 🌀 Build Docker image
         uses: docker/build-push-action@v6.10.0
         with:
