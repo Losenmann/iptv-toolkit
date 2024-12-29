@@ -47,6 +47,7 @@ jobs:
             type=sha,prefix=sha-,suffix=,format=short,priority=200,enable=true
             
   build:
+    needs: release
     runs-on: ubuntu-latest
     steps:
       - name: ⚙️ Set up Docker Buildx
