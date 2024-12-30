@@ -14,7 +14,6 @@ services:
     env_file:
       - path: ./global.env
         required: true
-    env_file:
       - path: ./../testing/testing.env
         required: false
     environment:
