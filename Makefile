@@ -69,3 +69,28 @@ docker-up:
 
 docker-down:
 	@docker compose -f ./deploy/docker-compose.yaml down
+
+testing:
+	@netstat -tulpn 2>/dev/null |grep 4023 1>/dev/null \
+		&& printf "Check webserver port open - ${CONCOLE_GREEN}success${CONCOLE_NC}\n" \
+		|| printf "Check webserver port open - ${CONCOLE_RED}failure${CONCOLE_NC}\n"
+	@curl -sLo /dev/null -w "%{http_code}" http://localhost:4023 |grep "200" 1>/dev/null \
+		&& printf "Check webserver path root redirect - ${CONCOLE_GREEN}success${CONCOLE_NC}\n" \
+		|| printf "Check webserver path root redirect - ${CONCOLE_RED}failure${CONCOLE_NC}\n"
+	@curl -sLo /dev/null -w "%{http_code}" http://localhost:4023/files |grep "200" 1>/dev/null \
+		&& printf "Check webserver path files open - ${CONCOLE_GREEN}success${CONCOLE_NC}\n" \
+		|| printf "Check webserver path files open - ${CONCOLE_RED}failure${CONCOLE_NC}\n"
+	@wget --spider -qL http://localhost:4023/files/playlist 1>/dev/null \
+		&& printf "Check webserver path playlist exist - ${CONCOLE_GREEN}success${CONCOLE_NC}\n" \
+		|| printf "Check webserver path playlist exist - ${CONCOLE_RED}failure${CONCOLE_NC}\n"
+	@wget --spider -qL http://localhost:4023/files/tvguide 1>/dev/null \
+		&& printf "Check webserver path tvguide exist - ${CONCOLE_GREEN}success${CONCOLE_NC}\n" \
+		|| printf "Check webserver path tvguide exist - ${CONCOLE_RED}failure${CONCOLE_NC}\n"
+	@wget -qL http://localhost:4023/files/tvguide/playlist.m3u -P ./playlist || printf "Download playlist.m3u ${CONCOLE_RED}failure${CONCOLE_NC}\n"
+	@wget -qL http://localhost:4023/files/tvguide/playlist.xml -P ./playlist || printf "Download playlist.xml ${CONCOLE_RED}failure${CONCOLE_NC}\n"
+	@wget -qL http://localhost:4023/files/tvguide/epg.xml -P ./tvguide || printf "Download epg.xml ${CONCOLE_RED}failure${CONCOLE_NC}\n"
+	@wget -qL http://localhost:4023/files/tvguide/epg.xml.gz -P ./tvguide || printf "Download epg.xml.gz ${CONCOLE_RED}failure${CONCOLE_NC}\n"
+	@wget -qL http://localhost:4023/files/tvguide/epg.zip -P ./tvguide || printf "Download epg.zip ${CONCOLE_RED}failure${CONCOLE_NC}\n"
+	@sha256sum -c ./testing/sha256sums \
+		&& printf "Check in work of converters - ${CONCOLE_GREEN}success${CONCOLE_NC}\n" \
+		|| printf "Check in work of converters - ${CONCOLE_RED}failure${CONCOLE_NC}\n"

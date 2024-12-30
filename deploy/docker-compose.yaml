@@ -11,6 +11,12 @@ services:
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - /etc/timezone:/etc/timezone:ro
+    env_file:
+      - path: ./global.env
+        required: true
+    env_file:
+      - path: ./../testing/testing.env
+        required: false
     environment:
       - IPTVTOOLKIT_EPG=${IPTVTOOLKIT_EPG:-}
       - IPTVTOOLKIT_EPG_DST=${IPTVTOOLKIT_EPG_DST:-/www/iptv-toolkit/tvguide}
