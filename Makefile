@@ -77,3 +77,11 @@ testing:
 	@netstat -tulpn 2>/dev/null |grep 4023 || exit 1
 	@curl -sLo /dev/null -w "%{http_code}" http://localhost:4023 |grep "200" || exit 1
 	@curl -sLo /dev/null -w "%{http_code}" http://localhost:4023/files |grep "200" || exit 1
+	@wget --spider -qL http://localhost:4023/files/playlist || exit 1
+	@wget --spider -qL http://localhost:4023/files/tvguide || exit 1
+	@wget -qL http://localhost:4023/files/tvguide/epg.zip -P ~/ || exit 1
+	@wget -qL http://localhost:4023/files/tvguide/epg.zip -P ~/ || exit 1
+	@wget -qL http://localhost:4023/files/tvguide/epg.zip -P ~/ || exit 1
+	@wget -qL http://localhost:4023/files/tvguide/epg.zip -P ~/ || exit 1
+	@wget -qL http://localhost:4023/files/tvguide/epg.zip -P ~/ || exit 1
+	@sha256sum -c ./testing/sha256sums || exit 1
