@@ -24,12 +24,13 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           tags: image:latest
-          outputs: type=docker,dest=/tmp/image.tar
+          cache-to: type=local,dest=/tmp/artifact/cache
+          outputs: type=docker,dest=/tmp/artifact/image.tar
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: image
-          path: /tmp/image.tar
+          name: artifact
+          path: /tmp/artifact
         
   release:
     needs: build
@@ -57,11 +58,11 @@ jobs:
       - name: Download artifact
         uses: actions/download-artifact@v4
         with:
-          name: image
-          path: /tmp
+          name: artifact
+          path: /tmp/artifact
       - name: Load image
         run: |
-          docker load --input /tmp/image.tar
+          docker load --input /tmp/artifact/image.tar
       - name: 🏷 Extract metadata (tags, labels) for Docker
         id: meta
         uses: docker/metadata-action@v5.6.1
@@ -72,10 +73,11 @@ jobs:
           tags: |
             type=raw,value=latest,priority=1000,enable=true
             type=semver,pattern={{version}},priority=900,enable=true
-      - name: Load image
-        run: |
-          docker image tag image:latest registry.hub.docker.com/losenmann/iptv-toolkit:latest
-      - name: Push image
-        run: |
-          docker push registry.hub.docker.com/losenmann/iptv-toolkit:latest
-          
+      - name: 🌀 Push Docker image
+        id: push
+        uses: docker/build-push-action@v6.10.0
+        with:
+          tags: ${{ steps.meta.outputs.tags }}
+          cache-from: type=local,src=/tmp/artifact/cache
+          push: true
+          provenance: false
