@@ -49,12 +49,9 @@ jobs:
         run: |
           docker load --input /tmp/artifact/image.tar
           docker compose -f ./deploy/docker-compose.yaml up -d
-      - name: ⏳ Waiting for launch container
-        run: |
-          docker load --input /tmp/artifact/image.tar
-          docker compose -f ./deploy/docker-compose.yaml up -d
       - name: ▶️ Run tests
-        run: make testing
+        run: |
+          timeout 30s make testing
       
         
         
