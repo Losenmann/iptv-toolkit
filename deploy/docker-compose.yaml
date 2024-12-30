@@ -12,9 +12,9 @@ services:
       - /etc/localtime:/etc/localtime:ro
       - /etc/timezone:/etc/timezone:ro
     env_file:
-      - path: ./global.env
+      - path: ./deploy/global.env
         required: true
-      - path: ./../testing/testing.env
+      - path: ./testing/testing.env
         required: false
     environment:
       - IPTVTOOLKIT_EPG=${IPTVTOOLKIT_EPG:-}
