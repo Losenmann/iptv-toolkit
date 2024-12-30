@@ -51,7 +51,7 @@ jobs:
           docker compose -f ./deploy/docker-compose.yaml up -d
       - name: ▶️ Run tests
         run: |
-          sleep 30s
+          sleep 90s
           make testing
 
   release:
