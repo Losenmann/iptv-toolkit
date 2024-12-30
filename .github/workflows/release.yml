@@ -49,6 +49,11 @@ jobs:
         run: |
           docker load --input /tmp/artifact/image.tar
           docker compose -f ./deploy/docker-compose.yaml up -d
+      - name: ▶️ Test container
+        run: |
+          docker ps -a
+          docker exec -it IPTV-Toolkit /bin/sh -c 'echo $IPTVTOOLKIT_WEB_PORT'
+          docker exec -it IPTV-Toolkit /bin/sh -c 'echo $IPTVTOOLKIT_PLAYLIST'
       - name: ▶️ Run tests
         run: |
           sleep 90s
