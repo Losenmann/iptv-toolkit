@@ -33,9 +33,29 @@ jobs:
         with:
           name: artifact
           path: /tmp/artifact
+
+  testing:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: 🔍 Checkout repository
+        uses: actions/checkout@v4.2.2
+      - name: 📦 Download artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: artifact
+          path: /tmp/artifact
+      - name: ▶️ Run container
+        run: |
+          docker load --input /tmp/artifact/image.tar
+          docker compose -f ./deploy/docker-compose.yaml up -d
+      - name: ▶️ Run tests
+        run: make testing
+      
+        
         
   release:
-    needs: build
+    needs: testing
     runs-on: ubuntu-latest
     permissions:
       contents: read
