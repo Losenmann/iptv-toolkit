@@ -18,19 +18,21 @@ jobs:
     steps:
       - name: 🔍 Checkout repository
         uses: actions/checkout@v4.2.2
+      - name: Mkdir
+        run: mkdir -p /tmp/artifact/cache
       - name: ⚙️ Set up Docker Buildx
         uses: docker/setup-buildx-action@v3.8.0
       - name: Build and export
         uses: docker/build-push-action@v6
         with:
           tags: image:latest
-          cache-to: type=local,dest=/tmp/cache
-          outputs: type=docker,dest=/tmp/image.tar
+          cache-to: type=local,dest=/tmp/artifact/cache
+          outputs: type=docker,dest=/tmp/artifact/image.tar
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: artifact
-          path: /tmp/
+          path: /tmp/artifact
         
   release:
     needs: build
@@ -59,10 +61,10 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: artifact
-          path: /tmp/
+          path: /tmp/artifact
       - name: Load image
         run: |
-          docker load --input /tmp/image.tar
+          docker load --input /tmp/artifact/image.tar
       - name: 🏷 Extract metadata (tags, labels) for Docker
         id: meta
         uses: docker/metadata-action@v5.6.1
@@ -78,6 +80,6 @@ jobs:
         uses: docker/build-push-action@v6.10.0
         with:
           tags: ${{ steps.meta.outputs.tags }}
-          cache-from: type=local,src=/tmp/cache
+          cache-from: type=local,src=/tmp/artifact/cache
           push: true
           provenance: false
