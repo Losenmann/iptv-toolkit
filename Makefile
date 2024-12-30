@@ -8,13 +8,9 @@ ENV_IMAGE_COMPRESS_BIN ?= true
 ENV_IMAGE_BUILD_BIN ?= true
 ENV_PATH_BUILD ?= ./build
 ENV_BUILD_ARCH = 386 amd64 arm arm64 riscv64 s390x ppc64le
-if [ "${TERM:-}" = "" ]; then
-  echo "Setting TERM to dumb" # makes tput happy
-  TERM="dumb"
-fi
-GREEN=$(shell tput setaf 2 bold)
-RED=$(shell tput setaf 1 bold)
-NC=$(shell tput sgr0)
+GREEN=
+RED=
+NC=
 
 .PHONY: run docker testing
 
