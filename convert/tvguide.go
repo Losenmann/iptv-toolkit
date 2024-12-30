@@ -229,7 +229,7 @@ func jtvParseTitle(pdt []byte) ([]string) {
 
     if bytes.Equal(pdt[0:26], jtv_headers[0]) || bytes.Equal(pdt[0:26], jtv_headers[1]) {
         data := pdt[26:]
-        for title_start < len(data)-1 || title_end < len(data)-1 {
+        for title_start < len(data)-1 && title_end < len(data)-1 {
             title_start = title_end
             title_len = title_start+2
             offset_b = data[title_start:title_len-1]
