@@ -9,7 +9,7 @@ ENV_IMAGE_BUILD_BIN ?= true
 ENV_PATH_BUILD ?= ./build
 ENV_BUILD_ARCH = 386 amd64 arm arm64 riscv64 s390x ppc64le
 
-.PHONY: run docker
+.PHONY: run docker testing
 
 all: build
 
