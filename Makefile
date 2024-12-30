@@ -74,5 +74,6 @@ docker-down:
 	@docker compose -f ./deploy/docker-compose.yaml down
 
 testing:
-	@netstat -tulpn 2>/dev/null |grep 4023 || "::error:: Open port - failure" && exit 1
-	@curl -sLo /dev/null -w "%{http_code}" http://localhost:4023 |grep "200" || "::error:: Open port - failure" && exit 1
+	@netstat -tulpn 2>/dev/null |grep 4023 || exit 1
+	@curl -sLo /dev/null -w "%{http_code}" http://localhost:4023 |grep "200" || exit 1
+	@curl -sLo /dev/null -w "%{http_code}" http://localhost:4023/files |grep "200" || exit 1
