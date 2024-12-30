@@ -10,7 +10,7 @@ env:
   REGISTRY_DOCKERHUB: registry.hub.docker.com
   REGISTRY_GITHUB: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
-  IMAGE_PLATFORM: linux/386,linux/amd64
+  IMAGE_PLATFORM: linux/amd64
 
 jobs:
   build:
@@ -74,8 +74,8 @@ jobs:
             type=semver,pattern={{version}},priority=900,enable=true
       - name: Load image
         run: |
-          docker image tag image:latest losenmann/iptv-toolkit:latest
+          docker image tag image:latest registry.hub.docker.com/losenmann/iptv-toolkit:latest
       - name: Push image
         run: |
-          docker push losenmann/iptv-toolkit:latest
+          docker push registry.hub.docker.com/losenmann/iptv-toolkit:latest
           
