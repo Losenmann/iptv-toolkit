@@ -8,6 +8,9 @@ ENV_IMAGE_COMPRESS_BIN ?= true
 ENV_IMAGE_BUILD_BIN ?= true
 ENV_PATH_BUILD ?= ./build
 ENV_BUILD_ARCH = 386 amd64 arm arm64 riscv64 s390x ppc64le
+GREEN=$(shell tput setaf 2 bold)
+RED=$(shell tput setaf 1 bold)
+NC=$(shell tput sgr0)
 
 .PHONY: run docker testing
 
@@ -72,25 +75,25 @@ docker-down:
 
 testing:
 	@netstat -tulpn 2>/dev/null |grep 4023 1>/dev/null \
-		&& printf "Check webserver port open - ${CONCOLE_GREEN}success${CONCOLE_NC}\n" \
-		|| printf "Check webserver port open - ${CONCOLE_RED}failure${CONCOLE_NC}\n"
+		&& $(info Check webserver port open - ${GREEN}success${NC}) \
+		|| $(error Check webserver port open - ${RED}failure${NC})
 	@curl -sLo /dev/null -w "%{http_code}" http://localhost:4023 |grep "200" 1>/dev/null \
-		&& printf "Check webserver path root redirect - ${CONCOLE_GREEN}success${CONCOLE_NC}\n" \
-		|| printf "Check webserver path root redirect - ${CONCOLE_RED}failure${CONCOLE_NC}\n"
+		&& $(info Check webserver path root redirect - ${GREEN}success${NC}) \
+		|| $(error Check webserver path root redirect - ${RED}failure${NC})
 	@curl -sLo /dev/null -w "%{http_code}" http://localhost:4023/files |grep "200" 1>/dev/null \
-		&& printf "Check webserver path files open - ${CONCOLE_GREEN}success${CONCOLE_NC}\n" \
-		|| printf "Check webserver path files open - ${CONCOLE_RED}failure${CONCOLE_NC}\n"
+		&& $(info Check webserver path files open - ${GREEN}success${NC}) \
+		|| $(error Check webserver path files open - ${RED}failure${NC})
 	@wget --spider -qL http://localhost:4023/files/playlist 1>/dev/null \
-		&& printf "Check webserver path playlist exist - ${CONCOLE_GREEN}success${CONCOLE_NC}\n" \
-		|| printf "Check webserver path playlist exist - ${CONCOLE_RED}failure${CONCOLE_NC}\n"
+		&& $(info Check webserver path playlist exist - ${GREEN}success${NC}) \
+		|| $(error Check webserver path playlist exist - ${RED}failure${NC})
 	@wget --spider -qL http://localhost:4023/files/tvguide 1>/dev/null \
-		&& printf "Check webserver path tvguide exist - ${CONCOLE_GREEN}success${CONCOLE_NC}\n" \
-		|| printf "Check webserver path tvguide exist - ${CONCOLE_RED}failure${CONCOLE_NC}\n"
-	@wget -qL http://localhost:4023/files/tvguide/playlist.m3u -P ./playlist || printf "Download playlist.m3u ${CONCOLE_RED}failure${CONCOLE_NC}\n"
-	@wget -qL http://localhost:4023/files/tvguide/playlist.xml -P ./playlist || printf "Download playlist.xml ${CONCOLE_RED}failure${CONCOLE_NC}\n"
-	@wget -qL http://localhost:4023/files/tvguide/epg.xml -P ./tvguide || printf "Download epg.xml ${CONCOLE_RED}failure${CONCOLE_NC}\n"
-	@wget -qL http://localhost:4023/files/tvguide/epg.xml.gz -P ./tvguide || printf "Download epg.xml.gz ${CONCOLE_RED}failure${CONCOLE_NC}\n"
-	@wget -qL http://localhost:4023/files/tvguide/epg.zip -P ./tvguide || printf "Download epg.zip ${CONCOLE_RED}failure${CONCOLE_NC}\n"
+		&& $(info Check webserver path tvguide exist - ${GREEN}success${NC}) \
+		|| $(error Check webserver path tvguide exist - ${RED}failure${NC})
+	@wget -qL http://localhost:4023/files/tvguide/playlist.m3u -P ./playlist 2>/dev/null || $(error Download playlist.m3u ${RED}failure${NC})
+	@wget -qL http://localhost:4023/files/tvguide/playlist.xml -P ./playlist 2>/dev/null || $(error Download playlist.xml ${RED}failure${NC})
+	@wget -qL http://localhost:4023/files/tvguide/epg.xml -P ./tvguide 2>/dev/null || $(error Download epg.xml ${RED}failure${NC})
+	@wget -qL http://localhost:4023/files/tvguide/epg.xml.gz -P ./tvguide 2>/dev/null || $(error Download epg.xml.gz ${RED}failure${NC})
+	@wget -qL http://localhost:4023/files/tvguide/epg.zip -P ./tvguide 2>/dev/null || $(error Download epg.zip ${RED}failure${NC})
 	@sha256sum -c ./testing/sha256sums \
-		&& printf "Check in work of converters - ${CONCOLE_GREEN}success${CONCOLE_NC}\n" \
-		|| printf "Check in work of converters - ${CONCOLE_RED}failure${CONCOLE_NC}\n"
+		&& printf "Check in work of converters - ${GREEN}success${NC}\n" \
+		|| printf "Check in work of converters - ${RED}failure${NC}\n"
