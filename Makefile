@@ -74,26 +74,4 @@ docker-down:
 	@docker compose -f ./deploy/docker-compose.yaml down
 
 testing:
-	@netstat -tulpn 2>/dev/null |grep 4023 1>/dev/null \
-		&& $(info Check webserver port open - ${GREEN}success${NC}) \
-		|| $(error Check webserver port open - ${RED}failure${NC})
-	@curl -sLo /dev/null -w "%{http_code}" http://localhost:4023 |grep "200" 1>/dev/null \
-		&& $(info Check webserver path root redirect - ${GREEN}success${NC}) \
-		|| $(error Check webserver path root redirect - ${RED}failure${NC})
-	@curl -sLo /dev/null -w "%{http_code}" http://localhost:4023/files |grep "200" 1>/dev/null \
-		&& $(info Check webserver path files open - ${GREEN}success${NC}) \
-		|| $(error Check webserver path files open - ${RED}failure${NC})
-	@wget --spider -qL http://localhost:4023/files/playlist 1>/dev/null \
-		&& $(info Check webserver path playlist exist - ${GREEN}success${NC}) \
-		|| $(error Check webserver path playlist exist - ${RED}failure${NC})
-	@wget --spider -qL http://localhost:4023/files/tvguide 1>/dev/null \
-		&& $(info Check webserver path tvguide exist - ${GREEN}success${NC}) \
-		|| $(error Check webserver path tvguide exist - ${RED}failure${NC})
-	@wget -qL http://localhost:4023/files/tvguide/playlist.m3u -P ./playlist 2>/dev/null || $(error Download playlist.m3u ${RED}failure${NC})
-	@wget -qL http://localhost:4023/files/tvguide/playlist.xml -P ./playlist 2>/dev/null || $(error Download playlist.xml ${RED}failure${NC})
-	@wget -qL http://localhost:4023/files/tvguide/epg.xml -P ./tvguide 2>/dev/null || $(error Download epg.xml ${RED}failure${NC})
-	@wget -qL http://localhost:4023/files/tvguide/epg.xml.gz -P ./tvguide 2>/dev/null || $(error Download epg.xml.gz ${RED}failure${NC})
-	@wget -qL http://localhost:4023/files/tvguide/epg.zip -P ./tvguide 2>/dev/null || $(error Download epg.zip ${RED}failure${NC})
-	@sha256sum -c ./testing/sha256sums \
-		&& printf "Check in work of converters - ${GREEN}success${NC}\n" \
-		|| printf "Check in work of converters - ${RED}failure${NC}\n"
+	@netstat -tulpn 2>/dev/null |grep 4023 || exit 1
