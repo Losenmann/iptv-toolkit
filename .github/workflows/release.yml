@@ -51,10 +51,9 @@ jobs:
           docker compose -f ./deploy/docker-compose.yaml up -d
       - name: ▶️ Run tests
         run: |
-          timeout 30s make testing
-      
-        
-        
+          sleep 20s
+          make testing
+
   release:
     needs: testing
     runs-on: ubuntu-latest
