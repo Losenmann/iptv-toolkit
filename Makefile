@@ -79,6 +79,7 @@ testing:
 	@curl -sLo /dev/null -w "%{http_code}" http://localhost:4023/files |grep "200" || exit 1
 	@wget --spider -qL http://localhost:4023/files/playlist || exit 1
 	@wget --spider -qL http://localhost:4023/files/tvguide || exit 1
+	@wget --spider -qL http://localhost:4023/files/playlist/playlist.m3u || exit 1
 	@wget -qL http://localhost:4023/files/playlist/playlist.m3u || exit 1
 	@wget -qL http://localhost:4023/files/playlist/playlist.xml || exit 1
 	@wget -qL http://localhost:4023/files/tvguide/epg.xml || exit 1
