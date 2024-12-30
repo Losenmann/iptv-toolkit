@@ -74,4 +74,4 @@ docker-down:
 	@docker compose -f ./deploy/docker-compose.yaml down
 
 testing:
-	@netstat -tulpn 2>/dev/null |grep 4023 || exit 1
+	@netstat -tulpn 2>/dev/null |grep 4023 1>/dev/null && $(info Open port - success) || $(error Open port - failure)
