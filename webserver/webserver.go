@@ -12,8 +12,9 @@ import (
 func Main(port int, path string) {
     mux := http.NewServeMux()
     fs := http.FileServer(http.Dir(path))
+    rhf := http.RedirectHandler("/files/", 301)
     mux.Handle("/files/", http.StripPrefix("/files", fs))
-    mux.Handle("/static/", http.StripPrefix("/static", fs))
+    mux.Handle("/", rhf)
 
     if *setup.LogLVL <= 1 {
         slog.Info("starting web server on port: " + strconv.Itoa(port))
