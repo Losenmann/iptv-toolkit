@@ -64,7 +64,7 @@ jobs:
           docker load --input /tmp/image.tar
       - name: 🏷 Extract metadata (tags, labels) for Docker
         id: meta
-        uses: docker/metadata-action@v3.3.0
+        uses: docker/metadata-action@v5.6.1
         with:
           images: |
             ${{ env.REGISTRY_DOCKERHUB }}/${{ github.repository }}
@@ -74,8 +74,8 @@ jobs:
             type=semver,pattern={{version}},priority=900,enable=true
       - name: Load image
         run: |
-          docker image tag image:latest ${{ steps.meta.outputs.tags }}
+          docker image tag image:latest losenmann/iptv-toolkit:latest
       - name: Push image
         run: |
-          docker push ${{ steps.meta.outputs.tags }}
+          docker push losenmann/iptv-toolkit:latest
           
