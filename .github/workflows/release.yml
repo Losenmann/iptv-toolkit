@@ -24,13 +24,13 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           tags: image:latest
-          cache-to: type=local,dest=/tmp/artifact/cache
-          outputs: type=docker,dest=/tmp/artifact/image.tar
+          cache-to: type=local,dest=/tmp/cache
+          outputs: type=docker,dest=/tmp/image.tar
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: artifact
-          path: /tmp/artifact
+          path: /tmp/
         
   release:
     needs: build
@@ -59,10 +59,10 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: artifact
-          path: /tmp/artifact
+          path: /tmp/
       - name: Load image
         run: |
-          docker load --input /tmp/artifact/image.tar
+          docker load --input /tmp/image.tar
       - name: 🏷 Extract metadata (tags, labels) for Docker
         id: meta
         uses: docker/metadata-action@v5.6.1
@@ -78,6 +78,6 @@ jobs:
         uses: docker/build-push-action@v6.10.0
         with:
           tags: ${{ steps.meta.outputs.tags }}
-          cache-from: type=local,src=/tmp/artifact/cache
+          cache-from: type=local,src=/tmp/cache
           push: true
           provenance: false
