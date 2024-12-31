@@ -15,7 +15,7 @@ services:
       - path: ./global.env
         required: true
       - path: ../testing/testing.env
-        required: false
+        required: true
     environment:
       - IPTVTOOLKIT_EPG=${IPTVTOOLKIT_EPG:-}
       - IPTVTOOLKIT_EPG_DST=${IPTVTOOLKIT_EPG_DST:-/www/iptv-toolkit/tvguide}
