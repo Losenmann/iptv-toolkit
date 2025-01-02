@@ -13,9 +13,7 @@ services:
       - /etc/timezone:/etc/timezone:ro
     env_file:
       - path: ./global.env
-        required: true
-      - path: ../testing/testing.env
-        required: true
+        required: false
     environment:
       - IPTVTOOLKIT_EPG=${IPTVTOOLKIT_EPG:-}
       - IPTVTOOLKIT_EPG_DST=${IPTVTOOLKIT_EPG_DST:-/www/iptv-toolkit/tvguide}
