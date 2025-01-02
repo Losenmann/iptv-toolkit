@@ -25,7 +25,7 @@ jobs:
       - name: 🌀 Build and export
         uses: docker/build-push-action@v6
         with:
-          tags: image:latest
+          tags: Losenmann/iptv-toolkit:latest
           cache-to: type=local,dest=/tmp/artifact/cache
           outputs: type=docker,dest=/tmp/artifact/image.tar
       - name: 📦 Upload artifact
@@ -52,8 +52,7 @@ jobs:
       - name: ▶️ Test container
         run: |
           docker ps -a
-          docker exec -it IPTV-Toolkit /bin/sh -c 'echo $IPTVTOOLKIT_WEB_PORT'
-          docker exec -it IPTV-Toolkit /bin/sh -c 'echo $IPTVTOOLKIT_PLAYLIST'
+          wget --spider -qL http://localhost:4023/files/playlist/playlist.xml
       - name: ▶️ Run tests
         run: |
           sleep 90s
