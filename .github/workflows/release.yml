@@ -48,6 +48,7 @@ jobs:
       - name: ▶️ Run container
         run: |
           source ./testing/testing.env
+          export IPTVTOOLKIT_PLAYLIST=https://raw.githubusercontent.com/Losenmann/iptv-toolkit/refs/heads/master/testing/playlist.xml
           docker load --input /tmp/artifact/image.tar
           docker compose -f ./deploy/docker-compose.yaml up -d
       - name: ▶️ Test container
