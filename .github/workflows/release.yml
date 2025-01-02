@@ -47,16 +47,11 @@ jobs:
           path: /tmp/artifact
       - name: ▶️ Run container
         run: |
-          source ./testing/testing.env
           docker load --input /tmp/artifact/image.tar
           docker compose -f ./deploy/docker-compose.yaml --env-file ./testing/testing.env up -d
-      - name: ▶️ Test container
+      - name: 🚀️ Run tests
         run: |
-          sleep 10
-          wget --spider -qL http://localhost:4023/files/playlist/playlist.xml
-      - name: ▶️ Run tests
-        run: |
-          sleep 90s
+          sleep 15s
           make testing
 
   release:
