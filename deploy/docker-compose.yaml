@@ -1,7 +1,7 @@
 services:
   iptv-toolkit:
     container_name: "IPTV-Toolkit"
-    image: ${IMAGE_NAMESPACE:-Losenmann}/${IMAGE_REPO:-iptv-toolkit}:${IMAGE_VERSION:-latest}
+    image: losenmann/iptv-toolkit:latest
     hostname: iptv-toolkit
     command: ["-S", "-U", "-W"]
     network_mode: host
