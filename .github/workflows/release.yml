@@ -25,7 +25,7 @@ jobs:
       - name: 🌀 Build and export
         uses: docker/build-push-action@v6
         with:
-          tags: Losenmann/iptv-toolkit:latest
+          tags: losenmann/iptv-toolkit:latest
           cache-to: type=local,dest=/tmp/artifact/cache
           outputs: type=docker,dest=/tmp/artifact/image.tar
       - name: 📦 Upload artifact
@@ -51,7 +51,6 @@ jobs:
           docker compose -f ./deploy/docker-compose.yaml up -d
       - name: ▶️ Test container
         run: |
-          docker ps -a
           wget --spider -qL http://localhost:4023/files/playlist/playlist.xml
       - name: ▶️ Run tests
         run: |
