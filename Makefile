@@ -79,11 +79,10 @@ testing:
 	@curl -sLo /dev/null -w "%{http_code}" http://localhost:4023/files |grep "200" || exit 1
 	@wget --spider -qL http://localhost:4023/files/playlist || exit 1
 	@wget --spider -qL http://localhost:4023/files/tvguide || exit 1
-	@curl -sL http://localhost:4023/files/playlist
-	@wget --spider -qL http://localhost:4023/files/playlist/playlist.m3u || exit 1
-	@wget -qL http://localhost:4023/files/playlist/playlist.m3u || exit 1
-	@wget -qL http://localhost:4023/files/playlist/playlist.xml || exit 1
-	@wget -qL http://localhost:4023/files/tvguide/epg.xml || exit 1
-	@wget -qL http://localhost:4023/files/tvguide/epg.xml.gz || exit 1
-	@wget -qL http://localhost:4023/files/tvguide/epg.zip || exit 1
+	@wget -qL http://localhost:4023/files/playlist/playlist.m3u -P ./testing_tmp || exit 1
+	@wget -qL http://localhost:4023/files/playlist/playlist.xml -P ./testing_tmp || exit 1
+	@wget -qL http://localhost:4023/files/tvguide/epg.xml -P ./testing_tmp || exit 1
+	@wget -qL http://localhost:4023/files/tvguide/epg.xml.gz -P ./testing_tmp || exit 1
+	@wget -qL http://localhost:4023/files/tvguide/epg.zip -P ./testing_tmp || exit 1
 	@sha256sum -c ./testing/sha256sums || exit 1
+	
