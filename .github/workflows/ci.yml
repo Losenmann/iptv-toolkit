@@ -32,6 +32,8 @@ jobs:
           platforms: ${{ env.IMAGE_PLATFORM }}
           cache-to: type=local,dest=/tmp/artifact/cache
           outputs: type=local,dest=/tmp/artifact/images
+          build-args: |
+            BUILDKIT_INLINE_CACHE=1
       - name: 📦 Upload artifact
         uses: actions/upload-artifact@v4
         with:
