@@ -27,6 +27,7 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           tags: losenmann/iptv-toolkit:latest
+          platforms: ${{ env.IMAGE_PLATFORM }}
           cache-to: type=local,dest=/tmp/artifact/cache
           outputs: type=docker,dest=/tmp/artifact/image.tar
       - name: 📦 Upload artifact
