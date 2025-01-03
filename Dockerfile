@@ -40,7 +40,7 @@ ENV IPTVTOOLKIT_VERSION=${ARG_VERSION} \
 COPY --from=builder-main /usr/bin/iptv-toolkit* /usr/bin/iptv-toolkit-${TARGETOS}-${TARGETARCH}
 COPY --from=builder-udpxy /opt/udpxy/chipmunk/udpxy /usr/bin/udpxy
 RUN mkdir -p /www/iptv-toolkit/tvguide /www/iptv-toolkit/tvrecord /www/iptv-toolkit/playlist \
-    ls -s /usr/bin/iptv-toolkit-${TARGETOS}-${TARGETARCH} /usr/bin/iptv-toolkit
+    ln -s /usr/bin/iptv-toolkit-${TARGETOS}-${TARGETARCH} /usr/bin/iptv-toolkit
 WORKDIR /www/iptv-toolkit
 ENTRYPOINT ["iptv-toolkit"]
 CMD ["-S", "-U", "-W"]
