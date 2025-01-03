@@ -1,4 +1,4 @@
-name: Release
+name: CI
 
 on:
   push:
@@ -14,6 +14,7 @@ env:
 
 jobs:
   build:
+    name: Build image
     runs-on: ubuntu-latest
     steps:
       - name: 🔍 Checkout repository
@@ -35,6 +36,7 @@ jobs:
           path: /tmp/artifact
 
   testing:
+    name: Testing image
     needs: build
     runs-on: ubuntu-latest
     steps:
@@ -54,8 +56,29 @@ jobs:
           sleep 15s
           make testing
 
-  release:
+  extract-bin:
+    name: Extract executable file
     needs: testing
+    runs-on: ubuntu-latest
+    steps:
+      - name: 🔍 Checkout repository
+        uses: actions/checkout@v4.2.2
+      - name: 📦 Download artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: artifact
+          path: /tmp/artifact
+      - name: 🧬 Extract executable file
+        run: |
+          tar -xvf /tmp/artifact/image.tar -C /tmp/artifact/image
+          ls -lah /tmp/artifact/
+          ls -lah /tmp/artifact/image/
+
+
+
+  push:
+    name: Push image to repo
+    needs: extract-bin
     runs-on: ubuntu-latest
     permissions:
       contents: read
