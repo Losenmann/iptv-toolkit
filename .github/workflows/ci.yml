@@ -68,7 +68,7 @@ jobs:
 
   push:
     name: Push image to repo
-    needs: extract-bin
+    needs: testing
     runs-on: ubuntu-latest
     permissions:
       contents: read
