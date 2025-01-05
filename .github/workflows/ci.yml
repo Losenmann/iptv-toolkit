@@ -36,7 +36,7 @@ jobs:
             BUILDKIT_INLINE_CACHE=1
       - name: 🧬 Extract executable file
         run: |
-          mv /tmp/artifact/images/*/usr/bin/iptv* /tmp/artifact/bin/
+          mv /tmp/artifact/images/*/usr/bin/iptv-toolkit-* /tmp/artifact/bin/
           ls -lah /tmp/artifact/bin/
       - name: 📦 Upload artifact
         uses: actions/upload-artifact@v4
