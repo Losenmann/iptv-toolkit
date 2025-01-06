@@ -19,12 +19,11 @@ jobs:
     steps:
       - name: 🔍 Checkout repository
         uses: actions/checkout@v4.2.2
-      - name: ⚙️ Preparatory stage
+      - name: ⚙️ Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3.8.0
         run: |
           mkdir -p /tmp/artifact/cache /tmp/artifact/bin
           export DOCKER_BUILDKIT=1
-      - name: ⚙️ Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3.8.0
       - name: 🌀 Build and export
         uses: docker/build-push-action@v6
         with:
