@@ -68,6 +68,7 @@ jobs:
           make testing
 
   push:
+    if: ${{ github.ref == 'refs/heads/master' }}
     name: Push image to repo
     needs: testing
     runs-on: ubuntu-latest
