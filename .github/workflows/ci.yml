@@ -56,10 +56,13 @@ jobs:
         with:
           name: artifact
           path: /tmp/artifact
+      - name: 🌀 Import image
+        uses: docker/build-push-action@v6
+        with:
+          cache-from: type=local,src=/tmp/artifact/cache
+          load: true
       - name: ▶️ Run container
         run: |
-          export DOCKER_BUILDKIT=1
-          docker buildx build -t losenmann/iptv-toolkit:latest --cache-from=type=local,src=/tmp/artifact/cache --build-arg BUILDKIT_INLINE_CACHE=1 .
           docker compose -f ./deploy/docker-compose.yaml --env-file ./testing/testing.env up -d
       - name: 🚀️ Run tests
         run: |
