@@ -30,8 +30,10 @@ FROM alpine:3.20.3 AS app
 ARG ARG_VERSION=latest \
     ARG_BUILD_BIN=false \
     TARGETOS \
-    TARGETARCH
+    TARGETARCH \
+    ARG_WORKDIR=/www/iptv-toolkit
 ENV IPTVTOOLKIT_VERSION=${ARG_VERSION} \
+    IPTVTOOLKIT_ARCH=${TARGETARCH} \
     IPTVTOOLKIT_EPG_DST="/www/iptv-toolkit/tvguide" \
     IPTVTOOLKIT_PLAYLIST_DST="/www/iptv-toolkit/playlist" \
     IPTVTOOLKIT_WEB_PORT="4023" \
@@ -39,8 +41,8 @@ ENV IPTVTOOLKIT_VERSION=${ARG_VERSION} \
     IPTVTOOLKIT_CRONTAB="30 6 * * *"
 COPY --from=builder-main /usr/bin/iptv-toolkit* /usr/bin/iptv-toolkit-${TARGETOS}-${TARGETARCH}
 COPY --from=builder-udpxy /opt/udpxy/chipmunk/udpxy /usr/bin/udpxy
-RUN mkdir -p /www/iptv-toolkit/tvguide /www/iptv-toolkit/tvrecord /www/iptv-toolkit/playlist \
+RUN mkdir -p ${IPTVTOOLKIT_PLAYLIST_DST} ${IPTVTOOLKIT_EPG_DST} /www/iptv-toolkit/tvrecord \
     && ln -s /usr/bin/iptv-toolkit-${TARGETOS}-${TARGETARCH} /usr/bin/iptv-toolkit
-WORKDIR /www/iptv-toolkit
+WORKDIR ${ARG_WORKDIR}
 ENTRYPOINT ["iptv-toolkit"]
 CMD ["-S", "-U", "-W"]
