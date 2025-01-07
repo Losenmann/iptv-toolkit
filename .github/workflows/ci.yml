@@ -122,3 +122,12 @@ jobs:
           cache-from: type=local,src=/tmp/artifact/cache
           push: true
           provenance: false
+
+  test:
+    name: test
+    needs: testing
+    runs-on: ubuntu-latest
+    steps:
+      - name: 🔍 Checkout repository
+        run: |
+          ls -lah
