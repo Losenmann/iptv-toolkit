@@ -17,7 +17,6 @@ env:
 jobs:
   build:
     name: Build image
-    if: startsWith(github.ref, 'refs/tags/v')
     runs-on: ubuntu-latest
     steps:
       - name: 🔍 Checkout repository
@@ -50,8 +49,6 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     steps:
-      - name: 🔍 Checkout repository
-        uses: actions/checkout@v4.2.2
       - name: 📦 Download artifact
         uses: actions/download-artifact@v4
         with:
@@ -71,7 +68,7 @@ jobs:
           make testing
 
   push:
-    if: ${{ github.ref == 'refs/heads/master' }}
+    if: startsWith(github.ref, 'refs/tags/v')
     name: Push image to repo
     needs: testing
     runs-on: ubuntu-latest
@@ -81,17 +78,15 @@ jobs:
       attestations: write
       id-token: write
     steps:
-      - name: 🔍 Checkout repository
-        uses: actions/checkout@v4.2.2
       - name: ⚙️ Set up Docker Buildx
         uses: docker/setup-buildx-action@v3.8.0
-      - name: 🔑 Log in to Docker Hub
+      - name: 🔑 Login to Docker Hub
         uses: docker/login-action@v3.3.0
         with:
           registry: ${{ env.REGISTRY_DOCKERHUB }}
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
-      - name: 🔑 Log in to GitHub
+      - name: 🔑 Login to GitHub Registry
         uses: docker/login-action@v3.3.0
         with:
           registry: ${{ env.REGISTRY_GITHUB }}
@@ -114,7 +109,6 @@ jobs:
             type=semver,pattern={{version}},priority=200,enable=true
             type=sha,prefix=sha-,suffix=,format=short,priority=300,enable=true
       - name: 📌 Push Docker image
-        id: push
         uses: docker/build-push-action@v6.10.0
         with:
           tags: ${{ steps.meta.outputs.tags }}
@@ -123,11 +117,20 @@ jobs:
           push: true
           provenance: false
 
-  test:
-    name: test
+  release:
+    if: startsWith(github.ref, 'refs/tags/v')
+    name: Release pushed tag
     needs: testing
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
-      - name: 🔍 Checkout repository
+      - name: 💽 Create release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          tag: ${{ github.ref_name }}
         run: |
-          ls -lah
+          gh release create "$tag" \
+              --repo="$GITHUB_REPOSITORY" \
+              --title="${GITHUB_REPOSITORY#*/} ${tag#v}" \
+              --generate-notes
