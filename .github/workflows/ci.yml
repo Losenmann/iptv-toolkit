@@ -49,6 +49,8 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     steps:
+      - name: 🔍 Checkout repository
+        uses: actions/checkout@v4.2.2
       - name: 📦 Download artifact
         uses: actions/download-artifact@v4
         with:
