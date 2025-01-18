@@ -1,4 +1,4 @@
-// Test ci pipeline
+// Test ci pipeline true
 package main
 
 import (
