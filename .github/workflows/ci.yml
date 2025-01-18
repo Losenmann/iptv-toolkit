@@ -34,9 +34,9 @@ jobs:
           cache-to: type=local,dest=/tmp/artifact/cache
           outputs: type=local,dest=/tmp/artifact/images
       - name: 🧬 Extract executable file
+        working-directory: /tmp/artifact/bin
         run: |
           mv /tmp/artifact/images/*/usr/bin/iptv-toolkit-* /tmp/artifact/bin/
-          cd /tmp/artifact/bin/
           sha256sum * > sha256sums
       - name: 📦 Upload artifact
         uses: actions/upload-artifact@v4
@@ -127,12 +127,19 @@ jobs:
     permissions:
       contents: write
     steps:
+      - name: 📦 Download artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: artifact
+          path: /tmp/artifact
       - name: 💽 Create release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           tag: ${{ github.ref_name }}
         run: |
-          gh release create "$tag" \
+          gh release create \
               --repo="$GITHUB_REPOSITORY" \
               --title="${GITHUB_REPOSITORY#*/} ${tag#v}" \
-              --generate-notes
+              --generate-notes \
+              "$tag" \
+              /tmp/artifact/bin/*
