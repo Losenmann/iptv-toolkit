@@ -3,10 +3,9 @@ name: CI
 on:
   push:
     branches: ['master']
-    paths:
-      - '**.go'
+    paths: ['*.go','go.sum','go.mod']
   pull_request:
-    branches: [ "master" ]
+    branches: ["master"]
 
 env:
   REGISTRY_DOCKERHUB: registry.hub.docker.com
