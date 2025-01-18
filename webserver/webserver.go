@@ -35,7 +35,6 @@ func pageRoot(w http.ResponseWriter, r *http.Request) {
     }    
 }
 
-
 func hardened(handler http.Handler) http.Handler {
     return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
         index := strings.Index(r.URL.Path, "\x00")
