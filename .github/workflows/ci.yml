@@ -3,9 +3,9 @@ name: CI
 on:
   push:
     branches:
-      - master/**
+      - 'master/**'
     paths:
-      - **.go
+      - '**.go'
   pull_request:
     branches: [ "master" ]
 
