@@ -3,7 +3,7 @@ name: CI
 on:
   push:
     branches: ['master']
-    paths: ['**.go','go.sum','go.mod']
+    paths: ['**.go','go.sum','go.mod','Makefile','Dockerfile','.dockerignore']
   pull_request:
     branches: ["master"]
 
