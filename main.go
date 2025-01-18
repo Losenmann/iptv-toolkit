@@ -1,3 +1,4 @@
+// Test ci pipeline
 package main
 
 import (
@@ -33,4 +34,3 @@ func main() {
         webserver.Main(*setup.WebPort, *setup.WebPath)
     }
 }
-
