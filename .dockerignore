@@ -11,3 +11,5 @@
 !setup/
 !webserver/
 !convert/
+!Makefile
+!artifact/bin/iptv-toolkit-*
