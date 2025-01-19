@@ -103,6 +103,7 @@ jobs:
           name: artifact
           path: ${{ env.ARTIFACTS_PATH }}/asset
 
+          
   push:
     if: startsWith(github.ref, 'refs/tags/v')
     name: Push image to repo
