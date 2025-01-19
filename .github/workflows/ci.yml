@@ -3,7 +3,7 @@ name: CI
 on:
   push:
     branches: ['master']
-    paths: ['**.go','go.sum','go.mod','Makefile','Dockerfile','.dockerignore','.github/workflows/ci.yaml']
+    paths: ['**.go','go.sum','go.mod','Makefile','Dockerfile','.dockerignore','ci.yml']
   pull_request:
     branches: ["master"]
 
