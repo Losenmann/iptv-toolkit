@@ -15,7 +15,7 @@ NC=
 PKG_VERSION=0.0.1
 PKG_MAINTAINER=`whoami`
 PKG_MAINTAINER_EMAIL=root@unknown
-PKG_LICENSE=apache
+PKG_LICENSE=Apache
 PKG_DESCRIPTION=none
 PKG_ARCH=any
 
@@ -76,30 +76,10 @@ testing-post-stage:
 
 build-rpm:
 	@rpmdev-setuptree
-	@rpmdev-newspec iptv-toolkit -o ~/rpmbuild/SPECS/iptv-toolkit.spec
 	@mkdir ~/rpmbuild/iptv-toolkit-${PKG_VERSION}
-	@mv ~/iptv-toolkit-* ~/rpmbuild/iptv-toolkit-${PKG_VERSION}/iptv-toolkit
-	@tar -czvf ./rpmbuild/SOURCES/iptv-toolkit-${PKG_VERSION}.tar.gz -C ~/rpmbuild/ iptv-toolkit-${PKG_VERSION} --remove-files
-	@sed -i '/^Version/s/$$/${PKG_VERSION}/g' ~/rpmbuild/SPECS/iptv-toolkit.spec
-	@sed -i '/^Summary/s/$$/Toolkit for IPTV/g' ~/rpmbuild/SPECS/iptv-toolkit.spec
-	@sed -i '/^License/s/$$/MIT/g' ~/rpmbuild/SPECS/iptv-toolkit.spec
-	@sed -i '/^URL/s/$$/https:\/\/github.com\/Losenmann\/iptv-toolkit/g' ~/rpmbuild/SPECS/iptv-toolkit.spec
-	@sed -i '/^Source0/s/$$/%{name}-%{version}.tar.gz/g' ~/rpmbuild/SPECS/iptv-toolkit.spec
-	@sed -i -e '/^BuildRequires:/,$$d' \
-		-e '/^$$/d' ~/rpmbuild/SPECS/iptv-toolkit.spec
-	@printf '\n%s\n%s\n\n\n%s\n%s\n\n%s\n%s\n%s\n%s\n\n%s\n%s\n\n%s\n%s\n\n%s\n' \
-		'%description' \
-		'${PKG_DESCRIPTION}' \
-		'%prep' \
-		'%setup -q' \
-		'%install' \
-		'rm -rf $$RPM_BUILD_ROOT' \
-		'mkdir -p $$RPM_BUILD_ROOT/%{_bindir}' \
-		'cp %{name} $$RPM_BUILD_ROOT/%{_bindir}' \
-		'%clean' \
-		'rm -rf $$RPM_BUILD_ROOT' \
-		'%files' \
-		'%{_bindir}/%{name}' \
-		'%changelog' >> ~/rpmbuild/SPECS/iptv-toolkit.spec
+	@cp -r ./pkg/rpmbuild/* ~/rpmbuild/
+	@cp ./artifact/bin/*linux-${PKG_ARCH} ~/rpmbuild/iptv-toolkit-${PKG_VERSION}/iptv-toolkit
+	@tar -czvf ~/rpmbuild/SOURCES/iptv-toolkit-${PKG_VERSION}.tar.gz -C ~/rpmbuild/ iptv-toolkit-${PKG_VERSION} --remove-files
+	@sed -i -e '/Version/s/$$/${PKG_VERSION}/g' ~/rpmbuild/SPECS/iptv-toolkit.spec
 	@rpmlint ~/rpmbuild/SPECS/iptv-toolkit.spec
 	@rpmbuild -ba ~/rpmbuild/SPECS/iptv-toolkit.spec
