@@ -95,6 +95,7 @@ jobs:
       - name: 🌀 Build and export RHEL package
         uses: docker/build-push-action@v6
         with:
+          context: .
           file: ./build-tools/rhel.Dockerfile
           platforms: ${{ env.IMAGE_PLATFORM_PKG_RPM }}
           outputs: type=local,dest=${{ env.ARTIFACTS_PATH }}/pkg
