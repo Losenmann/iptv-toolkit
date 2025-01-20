@@ -77,6 +77,7 @@ build-rpm:
 	@rpmdev-setuptree
 	@mkdir ~/rpmbuild/iptv-toolkit-${PKG_VERSION}
 	@cp -r ./pkg/rpmbuild/* ~/rpmbuild/
+	@ls -lah ./artifact
 	@cp ./artifact/bin/*linux-${PKG_ARCH} ~/rpmbuild/iptv-toolkit-${PKG_VERSION}/iptv-toolkit
 	@tar -czvf ~/rpmbuild/SOURCES/iptv-toolkit-${PKG_VERSION}.tar.gz -C ~/rpmbuild/ iptv-toolkit-${PKG_VERSION} --remove-files
 	@sed -i -e '/Version/s/$$/${PKG_VERSION}/g' ~/rpmbuild/SPECS/iptv-toolkit.spec
