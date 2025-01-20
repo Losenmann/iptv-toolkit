@@ -42,7 +42,6 @@ jobs:
         working-directory: ${{ env.ARTIFACTS_PATH }}/images
         run: |
           cp -vf ./*/usr/bin/iptv-toolkit-* ../bin/
-          cp -vf ./*/usr/bin/iptv-toolkit-* ../asset/
       - name: 📦 Upload artifact
         uses: actions/upload-artifact@v4
         with:
@@ -94,9 +93,7 @@ jobs:
           context: .
           file: ./build-tools/rhel.Dockerfile
           platforms: ${{ env.IMAGE_PLATFORM_PKG_RPM }}
-          outputs: |
-            type=local,dest=./artifact/pkg
-            type=local,dest=./artifact/asset
+          outputs: type=local,dest=./artifact/pkg
           build-args: |
             PKG_VERSION=1.0.1
             PKG_MAINTAINER=test
@@ -106,7 +103,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: artifact
-          path: artifact
+          path: artifact/pkg
 
           
   push:
