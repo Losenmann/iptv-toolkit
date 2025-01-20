@@ -90,8 +90,7 @@ jobs:
           path: artifact
       - name: ⚡️ Run container
         run: |
-          ls -lah ./
-          cp /tmp/artifact ./
+          ls -lah ./artifact/bin/
       - name: 🌀 Build and export RHEL package
         uses: docker/build-push-action@v6
         with:
