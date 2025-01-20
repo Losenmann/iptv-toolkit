@@ -17,7 +17,7 @@ env:
 
 jobs:
   build:
-    name: Build image
+    name: Build image and bin
     runs-on: ubuntu-latest
     steps:
       - name: 🔍 Checkout repository
@@ -42,39 +42,15 @@ jobs:
         working-directory: ${{ env.ARTIFACTS_PATH }}/images
         run: |
           cp -vf ./*/usr/bin/iptv-toolkit-* ../bin/
+          cp -vf ./*/usr/bin/iptv-toolkit-* ../asset/
       - name: 📦 Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: artifact
           path: ${{ env.ARTIFACTS_PATH }}
 
-  testing:
-    name: Testing image
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
-      - name: 🔍 Checkout repository
-        uses: actions/checkout@v4.2.2
-      - name: 📦 Download artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: artifact
-          path: ${{ env.ARTIFACTS_PATH }}
-      - name: 🌀 Import image
-        uses: docker/build-push-action@v6
-        with:
-          cache-from: type=local,src=${{ env.ARTIFACTS_PATH }}/cache
-          load: true
-      - name: ⚡️ Run container
-        run: |
-          docker compose -f ./deploy/docker-compose.yaml --env-file ./testing/testing.env up -d
-      - name: 🚀️ Run tests
-        run: |
-          sleep 15s
-          make testing
-
   build-pkg:
-    name: Build packages OS
+    name: Build packages Linux distros
     needs: build
     runs-on: ubuntu-latest
     steps:
@@ -108,11 +84,35 @@ jobs:
           path: ${{ env.ARTIFACTS_PATH }}
           overwrite: true
 
-          
+  testing:
+    name: Testing image
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: 🔍 Checkout repository
+        uses: actions/checkout@v4.2.2
+      - name: 📦 Download artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: artifact
+          path: ${{ env.ARTIFACTS_PATH }}
+      - name: 🌀 Import image
+        uses: docker/build-push-action@v6
+        with:
+          cache-from: type=local,src=${{ env.ARTIFACTS_PATH }}/cache
+          load: true
+      - name: ⚡️ Run container
+        run: |
+          docker compose -f ./deploy/docker-compose.yaml --env-file ./testing/testing.env up -d
+      - name: 🚀️ Run tests
+        run: |
+          sleep 15s
+          make testing
+
   push:
     if: startsWith(github.ref, 'refs/tags/v')
-    name: Push image to repo
-    needs: testing
+    name: Push image to registry
+    needs: [build-pkg, testing]
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -161,7 +161,7 @@ jobs:
 
   release:
     if: startsWith(github.ref, 'refs/tags/v')
-    name: Release pushed tag
+    name: Create release
     needs: testing
     runs-on: ubuntu-latest
     permissions:
