@@ -11,7 +11,6 @@ ENV_BUILD_ARCH = 386 amd64 arm arm64 riscv64 s390x ppc64le
 GREEN=
 RED=
 NC=
-
 PKG_VERSION=0.0.1
 PKG_MAINTAINER=`whoami`
 PKG_MAINTAINER_EMAIL=root@unknown
