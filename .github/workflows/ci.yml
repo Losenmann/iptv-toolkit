@@ -28,7 +28,6 @@ jobs:
             ${{ env.ARTIFACTS_PATH }}/cache \
             ${{ env.ARTIFACTS_PATH }}/bin \
             ${{ env.ARTIFACTS_PATH }}/asset \
-            ${{ env.ARTIFACTS_PATH }}/pkg
       - name: ⚙️ Set up Docker Buildx
         uses: docker/setup-buildx-action@v3.8.0
       - name: 🌀 Build and export
