@@ -99,7 +99,11 @@ jobs:
           file: ./build-tools/rhel.Dockerfile
           platforms: ${{ env.IMAGE_PLATFORM_PKG_RPM }}
           outputs: type=local,dest=${{ env.ARTIFACTS_PATH }}/pkg
-          build-args: PKG_VERSION=1.0.1,PKG_MAINTAINER=test,PKG_MAINTAINER_EMAIL=root@unknown,PKG_DESCRIPTION=testdesc
+          build-args: |
+            PKG_VERSION=1.0.1
+            PKG_MAINTAINER=test
+            PKG_MAINTAINER_EMAIL=root@unknown
+            PKG_DESCRIPTION=testdesc
       - name: 🧬 Extract packages
         working-directory: ${{ env.ARTIFACTS_PATH }}/pkg
         run: |
