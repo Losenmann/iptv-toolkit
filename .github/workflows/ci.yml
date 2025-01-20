@@ -87,11 +87,10 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: artifact
-          path: /tmp/artifact
       - name: ⚡️ Run container
         run: |
           ls -lah ./
-          ls -lah ./artifact/bin
+          cp /tmp/artifact ./
       - name: 🌀 Build and export RHEL package
         uses: docker/build-push-action@v6
         with:
