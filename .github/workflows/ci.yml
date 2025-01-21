@@ -31,7 +31,7 @@ jobs:
         run: |
           TAG=${{ github.ref_name }}
           gh release list --json tagName,isLatest -q '.[]|select(.isLatest==true)|.tagName' |sed 's/v/version=/' >> "$GITHUB_ENV"
-          echo "VERSION=${TAG//master/$version}"
+          echo "VERSION=`sed 's/master/$version/' <<< $TAG`"
        
 
   build:
