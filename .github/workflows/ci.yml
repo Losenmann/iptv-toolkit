@@ -107,6 +107,9 @@ jobs:
             type=local,dest=./artifact/asset
           build-args: |
             PKG_VERSION=${{ needs.init.outputs.version }}
+            PKG_LICENSE=${{ needs.init.outputs.license }}
+            PKG_DESCRIPTION=${{ needs.init.outputs.description }}
+            PKG_HOME_URL=${{ needs.init.outputs.url }}
             PKG_MAINTAINER=${{ github.actor }}
       - name: 📦 Upload artifact
         uses: actions/upload-artifact@v4
