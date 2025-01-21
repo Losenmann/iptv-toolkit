@@ -14,6 +14,8 @@ env:
   IMAGE_PLATFORM: linux/amd64,linux/386
   IMAGE_PLATFORM_PKG_RPM: linux/amd64
   ARTIFACTS_PATH: /tmp/artifact
+  VERSION_LAST: ${{ github.ref_name }}
+  VERSION_NEW: ${{ github.ref_name }}
 
 jobs:
   init:
@@ -25,10 +27,12 @@ jobs:
       - name: 🔍 Checkout repository
         uses: actions/checkout@v4.2.2
       - name: Step 1
+        id: set-version
         run: |
           TAG=${{ github.ref_name }}
-          echo "VERSION=${TAG#mas}"
-          gh release list  --json tagName,isLatest -q '.[] | select(.isLatest == true) | .tagName'
+          gh release list --json tagName,isLatest -q '.[]|select(.isLatest==true)|.tagName' |sed 's/v/version=/' >> "$GITHUB_ENV"
+          echo "VERSION=${TAG//mas/${version}}"
+       
 
   build:
     name: Build image and bin
