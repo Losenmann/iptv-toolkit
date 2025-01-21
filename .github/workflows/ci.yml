@@ -26,6 +26,8 @@ jobs:
         uses: actions/checkout@v4.2.2
       - name: Get last version
         id: get-version-last
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           gh release list --json tagName,isLatest -q '.[]|select(.isLatest==true)|.tagName' |sed 's/v/version=/' >> "$GITHUB_ENV"
       - name: Set version
