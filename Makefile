@@ -79,7 +79,8 @@ build-rpm:
 	@cp -r ./pkg/rpmbuild/* ~/rpmbuild/
 	@cp ./artifact/bin/*linux-${PKG_ARCH} ~/rpmbuild/iptv-toolkit-${PKG_VERSION}/iptv-toolkit
 	@tar -czvf ~/rpmbuild/SOURCES/iptv-toolkit-${PKG_VERSION}.tar.gz -C ~/rpmbuild/ iptv-toolkit-${PKG_VERSION} --remove-files
-	@sed -i -e '/^Version/s/$$/${PKG_VERSION}/g' -e '/^License/s/$$/${PKG_LICENSE}/g' ~/rpmbuild/SPECS/iptv-toolkit.spec
+	@sed -i -e '/^Version/s/$$/${PKG_VERSION}/g' \
+		-e '/^License/s/$$/${PKG_LICENSE}/g' ~/rpmbuild/SPECS/iptv-toolkit.spec
 	@cat ~/rpmbuild/SPECS/iptv-toolkit.spec
 	@rpmlint ~/rpmbuild/SPECS/iptv-toolkit.spec
 	@rpmbuild -ba ~/rpmbuild/SPECS/iptv-toolkit.spec
