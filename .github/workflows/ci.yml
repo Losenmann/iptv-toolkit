@@ -23,7 +23,7 @@ jobs:
       - name: Step 1
         run: |
           TAG=${{ github.ref_name }}
-          echo "VERSION=${TAG#v}"
+          echo "VERSION=${TAG#mas}"
 
   build:
     name: Build image and bin
