@@ -27,10 +27,13 @@ jobs:
       - name: 🔍 Checkout repository
         uses: actions/checkout@v4.2.2
       - name: Step 1
+        id: get-version-last
+        run: |
+          gh release list --json tagName,isLatest -q '.[]|select(.isLatest==true)|.tagName' |sed 's/v/version=/' >> "$GITHUB_ENV"
+      - name: Step 1
         id: set-version
         run: |
           TAG=${{ github.ref_name }}
-          gh release list --json tagName,isLatest -q '.[]|select(.isLatest==true)|.tagName' |sed 's/v/version=/' >> "$GITHUB_ENV"
           echo VERSION=`sed "s/master/$version/" <<< $TAG`
        
 
