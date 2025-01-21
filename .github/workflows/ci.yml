@@ -24,6 +24,7 @@ jobs:
         run: |
           TAG=${{ github.ref_name }}
           echo "VERSION=${TAG#mas}"
+          gh release list --json isLatest
 
   build:
     name: Build image and bin
