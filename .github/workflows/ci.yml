@@ -45,6 +45,7 @@ jobs:
           gh repo view --json latestRelease -q '.latestRelease | "tag_url=\(.url)"' >> "$GITHUB_ENV"
           version=`gh repo view --json latestRelease -q '.latestRelease.tagName'`
           sed -e "s/master/$version/" -e "s/^/version=/" <<< ${{ github.ref_name }} >> "$GITHUB_ENV"
+          gh repo view --json latestRelease -q '.latestRelease.tagName'
 
   build:
     name: Build image and bin
