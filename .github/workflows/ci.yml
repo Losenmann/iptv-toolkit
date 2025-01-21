@@ -28,7 +28,7 @@ jobs:
         run: |
           TAG=${{ github.ref_name }}
           echo "VERSION=${TAG#mas}"
-          gh release list  --json tagName,isLatest
+          gh release list  --json tagName,isLatest -q '.[] | select(.isLatest == true) | .tagName'
 
   build:
     name: Build image and bin
