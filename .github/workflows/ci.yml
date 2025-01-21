@@ -95,7 +95,7 @@ jobs:
             type=local,dest=./artifact/pkg
             type=local,dest=./artifact/asset
           build-args: |
-            PKG_VERSION=${VERSION}
+            PKG_VERSION=${{ needs.init.outputs.version }}
             PKG_MAINTAINER=${{ github.actor }}
       - name: Test step
         env:
