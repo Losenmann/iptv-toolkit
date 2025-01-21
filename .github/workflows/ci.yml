@@ -20,9 +20,9 @@ jobs:
     name: Init CI
     runs-on: ubuntu-latest
     outputs:
-      version: ${{ steps.set-var.outputs.VERSION }}
+      version: ${{ steps.set-var.outputs.version }}
       tag_url: ${{ steps.set-var.outputs.tag_url }}
-      description: ${{ steps.set-var.outputs.DESCRIPTION }}
+      description: ${{ steps.set-var.outputs.description }}
       license: ${{ steps.set-var.outputs.license }}
       url: ${{ steps.set-var.outputs.url }}
     steps:
@@ -33,8 +33,12 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          gh repo view --json description -q '. | "DESCRIPTION=\(.description)"' >> "$GITHUB_ENV"
-          gh repo view --json description -q '. | "DESCRIPTION=\(.description)"'
+          gh repo view --json licenseInfo -q '.licenseInfo | "license=\(.name)"' >> "$GITHUB_OUTPUT"
+          gh repo view --json description -q '. | "description=\(.description)"' >> "$GITHUB_OUTPUT"
+          gh repo view --json url -q '. | "url=\(.url)"' >> "$GITHUB_OUTPUT"
+          gh repo view --json latestRelease -q '.latestRelease | "tag_url=\(.url)"' >> "$GITHUB_OUTPUT"
+          version=`gh repo view --json latestRelease -q '.latestRelease.tagName' |sed 's/v/VERSION=/'`
+          sed "s/master/$version/" <<< ${{ github.ref_name }} >> "$GITHUB_OUTPUT"
 
   build:
     name: Build image and bin
@@ -43,7 +47,11 @@ jobs:
     steps:
       - name: Test step
         run:
+          echo ${{ needs.init.outputs.version }}
+          echo ${{ needs.init.outputs.tag_url }}
           echo ${{ needs.init.outputs.description }}
+          echo ${{ needs.init.outputs.license }}
+          echo ${{ needs.init.outputs.url }}
       - name: 🔍 Checkout repository
         uses: actions/checkout@v4.2.2
       - name: ⚙️ Preparatory stage
