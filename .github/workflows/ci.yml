@@ -43,9 +43,10 @@ jobs:
           gh repo view --json licenseInfo -q '.licenseInfo | "license=\(.name)"' >> "$GITHUB_ENV"
           gh repo view --json url -q '. | "url=\(.url)"' >> "$GITHUB_ENV"
           gh repo view --json latestRelease -q '.latestRelease | "tag_url=\(.url)"' >> "$GITHUB_ENV"
-          version=`gh repo view --json latestRelease -q '.latestRelease.tagName'`
-          sed -e "s/master/$version/" -e "s/^/version=/" <<< ${{ github.ref_name }} >> "$GITHUB_ENV"
+          version=`gh repo view --json latestRelease -q '.latestRelease.tagName' |sed 's/v/version=/'`
+          sed "s/master/$version/" <<< ${{ github.ref_name }} >> "$GITHUB_ENV"
           gh repo view --json latestRelease -q '.latestRelease.tagName'
+          echo $version
 
   build:
     name: Build image and bin
