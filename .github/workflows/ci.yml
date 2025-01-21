@@ -20,22 +20,16 @@ jobs:
     name: Init CI
     runs-on: ubuntu-latest
     outputs:
-      version: ${{ steps.set-version.outputs.version }}
-      tag_url: ${{ steps.set-version.outputs.tag_url }}
-      description: ${{ steps.set-version.outputs.description }}
-      license: ${{ steps.set-version.outputs.license }}
-      url: ${{ steps.set-version.outputs.url }}
+      version: ${{ steps.set-var.outputs.version }}
+      tag_url: ${{ steps.set-var.outputs.tag_url }}
+      description: ${{ steps.set-var.outputs.description }}
+      license: ${{ steps.set-var.outputs.license }}
+      url: ${{ steps.set-var.outputs.url }}
     steps:
       - name: 🔍 Checkout repository
         uses: actions/checkout@v4.2.2
-      - name: Get last version
-        id: get-version-last
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          gh release list --json tagName,isLatest -q '.[]|select(.isLatest==true)|.tagName' |sed 's/v/version=/' >> "$GITHUB_ENV"
       - name: Set version
-        id: set-version
+        id: init-set-var
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
@@ -53,6 +47,9 @@ jobs:
     needs: init
     runs-on: ubuntu-latest
     steps:
+      - name: Test step
+        run:
+          echo ${{ needs.init.outputs.license }}
       - name: 🔍 Checkout repository
         uses: actions/checkout@v4.2.2
       - name: ⚙️ Preparatory stage
