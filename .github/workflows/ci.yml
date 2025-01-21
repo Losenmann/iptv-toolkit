@@ -16,8 +16,17 @@ env:
   ARTIFACTS_PATH: /tmp/artifact
 
 jobs:
+  init:
+    name: Init CI
+    runs-on: ubuntu-latest
+    steps:
+      - name: Step 1
+        run: |
+          echo ${{ github.ref_name#mas }}
+    
   build:
     name: Build image and bin
+    needs: init
     runs-on: ubuntu-latest
     steps:
       - name: 🔍 Checkout repository
