@@ -22,6 +22,8 @@ jobs:
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
+      - name: 🔍 Checkout repository
+        uses: actions/checkout@v4.2.2
       - name: Step 1
         run: |
           TAG=${{ github.ref_name }}
