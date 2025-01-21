@@ -20,7 +20,7 @@ jobs:
     name: Init CI
     runs-on: ubuntu-latest
     outputs:
-      version: ${{ steps.set-var.outputs.version }}
+      version: ${{ steps.set-var.outputs.VERSION }}
       tag_url: ${{ steps.set-var.outputs.tag_url }}
       description: ${{ steps.set-var.outputs.description }}
       license: ${{ steps.set-var.outputs.license }}
@@ -37,7 +37,7 @@ jobs:
           gh repo view --json licenseInfo -q '.licenseInfo | "license=\(.name)"' >> "$GITHUB_ENV"
           gh repo view --json url -q '. | "url=\(.url)"' >> "$GITHUB_ENV"
           gh repo view --json latestRelease -q '.latestRelease | "tag_url=\(.url)"' >> "$GITHUB_ENV"
-          version=`gh repo view --json latestRelease -q '.latestRelease.tagName' |sed 's/v/version=/'`
+          version=`gh repo view --json latestRelease -q '.latestRelease.tagName' |sed 's/v/VERSION=/'`
           sed "s/master/$version/" <<< ${{ github.ref_name }} >> "$GITHUB_ENV"
           gh repo view --json latestRelease -q '.latestRelease.tagName'
           echo $version
