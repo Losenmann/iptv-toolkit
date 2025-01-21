@@ -22,7 +22,7 @@ jobs:
     outputs:
       version: ${{ steps.set-var.outputs.VERSION }}
       tag_url: ${{ steps.set-var.outputs.tag_url }}
-      description: ${{ steps.set-var.outputs.description }}
+      description: ${{ steps.set-var.outputs.DESCRIPTION }}
       license: ${{ steps.set-var.outputs.license }}
       url: ${{ steps.set-var.outputs.url }}
     steps:
@@ -33,7 +33,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          gh repo view --json description -q '. | "description=\(.description)"' >> "$GITHUB_ENV"
+          gh repo view --json description -q '. | "DESCRIPTION=\(.description)"' >> "$GITHUB_ENV"
 
   build:
     name: Build image and bin
