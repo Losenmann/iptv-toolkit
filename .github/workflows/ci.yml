@@ -23,6 +23,8 @@ jobs:
     runs-on: ubuntu-latest
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    outputs:
+      version: ${{ steps.set-version.outputs.VERSION }}
     steps:
       - name: 🔍 Checkout repository
         uses: actions/checkout@v4.2.2
@@ -43,7 +45,7 @@ jobs:
     steps:
       - name: Test step
         run: |
-          echo ${{ steps.set-version.outputs.VERSION }}
+          echo ${{needs.init.outputs.version}}
       - name: 🔍 Checkout repository
         uses: actions/checkout@v4.2.2
       - name: ⚙️ Preparatory stage
