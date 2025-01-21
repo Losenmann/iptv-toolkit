@@ -88,6 +88,8 @@ jobs:
           path: artifact
       - name: 🌀 Build and export RHEL package
         uses: docker/build-push-action@v6
+        env:
+          VERSION: ${{ needs.init.outputs.version }}
         with:
           context: .
           file: ./build-tools/rhel.Dockerfile
@@ -96,7 +98,7 @@ jobs:
             type=local,dest=./artifact/pkg
             type=local,dest=./artifact/asset
           build-args: |
-            PKG_VERSION=${{ needs.init.outputs.version }}
+            PKG_VERSION=$VERSION
             PKG_MAINTAINER=${{ github.actor }}
       - name: 📦 Upload artifact
         uses: actions/upload-artifact@v4
