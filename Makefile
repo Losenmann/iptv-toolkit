@@ -83,6 +83,5 @@ build-rpm:
 		-e '/^License/s/$$/${PKG_LICENSE}/g' \
 		-e '/^URL/s|$$|${PKG_HOME_URL}|g' \
 		-e '/^%description/s/$$/\n  ${PKG_DESCRIPTION}/g' ~/rpmbuild/SPECS/iptv-toolkit.spec
-	@cat ~/rpmbuild/SPECS/iptv-toolkit.spec
 	@rpmlint ~/rpmbuild/SPECS/iptv-toolkit.spec
 	@rpmbuild -ba ~/rpmbuild/SPECS/iptv-toolkit.spec
