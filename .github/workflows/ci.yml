@@ -93,8 +93,16 @@ jobs:
             type=local,dest=./artifact/pkg
             type=local,dest=./artifact/asset
           build-args: |
-            PKG_VERSION=${{needs.init.outputs.version}}
+            PKG_VERSION=${VERSION}
             PKG_MAINTAINER=${{ github.actor }}
+      - name: Test step
+        env:
+          VERSION: ${{ needs.init.outputs.version }}
+          VERSION2: ${{ needs.init.outputs.version }}
+        run: |
+          echo ${VERSION}
+          echo $VERSION
+          echo ${{ needs.init.outputs.version }}
       - name: 📦 Upload artifact
         uses: actions/upload-artifact@v4
         with:
