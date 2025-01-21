@@ -71,7 +71,7 @@ jobs:
 
   build-pkg:
     name: Build packages Linux distros
-    needs: build
+    needs: [init, build]
     runs-on: ubuntu-latest
     steps:
       - name: 🔍 Checkout repository
