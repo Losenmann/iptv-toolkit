@@ -22,8 +22,8 @@ jobs:
     steps:
       - name: Step 1
         run: |
-          echo ${{ github.event.release.tag_name }}
-#          echo ${{ github.ref_name#mas }}
+          TAG=${{ github.ref_name }}
+          echo "VERSION=${TAG#v}"
 
   build:
     name: Build image and bin
