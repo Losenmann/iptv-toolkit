@@ -14,15 +14,11 @@ env:
   IMAGE_PLATFORM: linux/amd64,linux/386
   IMAGE_PLATFORM_PKG_RPM: linux/amd64
   ARTIFACTS_PATH: /tmp/artifact
-  VERSION_LAST: ${{ github.ref_name }}
-  VERSION_NEW: ${{ github.ref_name }}
 
 jobs:
   init:
     name: Init CI
     runs-on: ubuntu-latest
-    env:
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     outputs:
       version: ${{ steps.set-version.outputs.VERSION }}
     steps:
@@ -36,7 +32,6 @@ jobs:
         id: set-version
         run: |
           echo VERSION=`sed "s/master/$version/" <<< ${{ github.ref_name }}` >> "$GITHUB_OUTPUT"
-       
 
   build:
     name: Build image and bin
@@ -98,7 +93,7 @@ jobs:
             type=local,dest=./artifact/pkg
             type=local,dest=./artifact/asset
           build-args: |
-            PKG_VERSION=$VERSION
+            PKG_VERSION=${VERSION}
             PKG_MAINTAINER=${{ github.actor }}
       - name: 📦 Upload artifact
         uses: actions/upload-artifact@v4
@@ -202,11 +197,11 @@ jobs:
       - name: 🏷 Create release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          tag: ${{ github.ref_name }}
+          VERSION: ${{ needs.init.outputs.version }}
         run: |
           gh release create \
               --repo="$GITHUB_REPOSITORY" \
-              --title="${GITHUB_REPOSITORY#*/} ${tag#v}" \
+              --title="${GITHUB_REPOSITORY#*/} ${VERSION}" \
               --generate-notes \
-              "$tag" \
+              "v$tag" \
               ${{ env.ARTIFACTS_PATH }}/asset/*
