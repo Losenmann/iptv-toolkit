@@ -20,7 +20,11 @@ jobs:
     name: Init CI
     runs-on: ubuntu-latest
     outputs:
-      version: ${{ steps.set-version.outputs.VERSION }}
+      version: ${{ steps.set-version.outputs.version }}
+      tag_url: ${{ steps.set-version.outputs.tag_url }}
+      description: ${{ steps.set-version.outputs.description }}
+      license: ${{ steps.set-version.outputs.license }}
+      url: ${{ steps.set-version.outputs.url }}
     steps:
       - name: 🔍 Checkout repository
         uses: actions/checkout@v4.2.2
@@ -32,14 +36,15 @@ jobs:
           gh release list --json tagName,isLatest -q '.[]|select(.isLatest==true)|.tagName' |sed 's/v/version=/' >> "$GITHUB_ENV"
       - name: Set version
         id: set-version
-        run: |
-          echo VERSION=`sed "s/master/$version/" <<< ${{ github.ref_name }}` >> "$GITHUB_OUTPUT"
-      - name: Set version
-        id: set-description
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          gh repo view --json description,latestRelease,licenseInfo,nameWithOwner,owner
+          gh repo view --json description -q '. | "description=\(.description)"' >> "$GITHUB_ENV"
+          gh repo view --json licenseInfo -q '.licenseInfo | "license=\(.name)"' >> "$GITHUB_ENV"
+          gh repo view --json url -q '. | "url=\(.url)"' >> "$GITHUB_ENV"
+          gh repo view --json latestRelease -q '.latestRelease | "tag_url=\(.url)' >> "$GITHUB_ENV"
+          version=`gh repo view --json latestRelease -q '.latestRelease.tagName'`
+          sed -e "s/master/$version/" -e "s/^/version=/" <<< ${{ github.ref_name }} >> "$GITHUB_ENV"
 
   build:
     name: Build image and bin

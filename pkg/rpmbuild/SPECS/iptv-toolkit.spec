@@ -2,8 +2,8 @@ Name: iptv-toolkit
 Version: 
 Release: 1%{?dist}
 Summary: Toolkit for IPTV
-License: Apach
-URL: https://github.com/Losenmann/iptv-toolkit
+License: 
+URL: 
 Source0: %{name}-%{version}.tar.gz
 
 %description
