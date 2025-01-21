@@ -19,6 +19,8 @@ jobs:
   init:
     name: Init CI
     runs-on: ubuntu-latest
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
       - name: Step 1
         run: |
