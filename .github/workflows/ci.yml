@@ -30,10 +30,10 @@ jobs:
         id: get-version-last
         run: |
           gh release list --json tagName,isLatest -q '.[]|select(.isLatest==true)|.tagName' |sed 's/v/version=/' >> "$GITHUB_ENV"
-      - name: Step 1
+      - name: Set version
         id: set-version
         run: |
-          echo VERSION=`sed "s/master/$version/" <<< ${{ github.ref_name }}`
+          echo VERSION=`sed "s/master/$version/" <<< ${{ github.ref_name }}` >> "$GITHUB_OUTPUT"
        
 
   build:
@@ -41,6 +41,9 @@ jobs:
     needs: init
     runs-on: ubuntu-latest
     steps:
+      - name: Test step
+        run: |
+          echo ${{ steps.set-version.outputs.VERSION }}
       - name: 🔍 Checkout repository
         uses: actions/checkout@v4.2.2
       - name: ⚙️ Preparatory stage
