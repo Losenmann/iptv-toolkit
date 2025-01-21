@@ -34,6 +34,12 @@ jobs:
         id: set-version
         run: |
           echo VERSION=`sed "s/master/$version/" <<< ${{ github.ref_name }}` >> "$GITHUB_OUTPUT"
+      - name: Set version
+        id: set-description
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh repo view --json description,latestRelease,licenseInfo,nameWithOwner,owner
 
   build:
     name: Build image and bin
