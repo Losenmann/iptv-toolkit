@@ -49,7 +49,7 @@ jobs:
     steps:
       - name: Test step
         run:
-          echo ${{ needs.init.outputs.license }}
+          echo ${{ needs.init.outputs.VERSION }}
       - name: 🔍 Checkout repository
         uses: actions/checkout@v4.2.2
       - name: ⚙️ Preparatory stage
