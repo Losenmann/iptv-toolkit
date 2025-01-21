@@ -22,8 +22,9 @@ jobs:
     steps:
       - name: Step 1
         run: |
+          echo ${{ github.ref_name }}
           echo ${{ github.ref_name#mas }}
-    
+
   build:
     name: Build image and bin
     needs: init
