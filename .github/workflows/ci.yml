@@ -85,8 +85,6 @@ jobs:
           path: artifact
       - name: 🌀 Build and export RHEL package
         uses: docker/build-push-action@v6
-        env:
-          VERSION: ${{ needs.init.outputs.version }}
         with:
           context: .
           file: ./build-tools/rhel.Dockerfile
@@ -97,14 +95,6 @@ jobs:
           build-args: |
             PKG_VERSION=${{ needs.init.outputs.version }}
             PKG_MAINTAINER=${{ github.actor }}
-      - name: Test step
-        env:
-          VERSION: ${{ needs.init.outputs.version }}
-          VERSION2: ${{ needs.init.outputs.version }}
-        run: |
-          echo ${VERSION}
-          echo $VERSION
-          echo ${{ needs.init.outputs.version }}
       - name: 📦 Upload artifact
         uses: actions/upload-artifact@v4
         with:
@@ -140,7 +130,7 @@ jobs:
   push:
     if: startsWith(github.ref, 'refs/tags/v')
     name: Push image to registry
-    needs: [build-pkg, testing]
+    needs: [init, build-pkg, testing]
     runs-on: ubuntu-latest
     permissions:
       contents: read
