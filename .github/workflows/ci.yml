@@ -35,13 +35,14 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          gh api /users/${GITHUB_ACTOR} -q '. | "maintainer=\(.name)"' >> "$GITHUB_OUTPUT"
+          gh api /users/${GITHUB_ACTOR} -q '. | "maintainer_email=\(.id)+\(.login)@users.noreply.github.com"' >> "$GITHUB_OUTPUT"
           gh repo view --json licenseInfo -q '.licenseInfo | "license=\(.name)"' >> "$GITHUB_OUTPUT"
           gh repo view --json description -q '. | "description=\(.description)"' >> "$GITHUB_OUTPUT"
           gh repo view --json url -q '. | "url=\(.url)"' >> "$GITHUB_OUTPUT"
           gh repo view --json latestRelease -q '.latestRelease | "tag_url=\(.url)"' >> "$GITHUB_OUTPUT"
           version=`gh repo view --json latestRelease -q '.latestRelease.tagName' |sed 's/v/version=/'`
           sed "s/master/$version/" <<< ${{ github.ref_name }} >> "$GITHUB_OUTPUT"
-          gh api /users/${GITHUB_ACTOR} -q '. | "maintainer=\(.name)"' 
 
   build:
     name: Build image and bin
