@@ -102,6 +102,8 @@ jobs:
           path: artifact
       - name: 🌀 Build and export Alpine package
         uses: docker/build-push-action@v6
+        env:
+          DOCKER_BUILDKIT: 1
         with:
           context: .
           file: ./build-tools/alpine.Dockerfile

@@ -74,7 +74,6 @@ testing-post-stage:
 	@docker compose -f ./deploy/docker-compose.yaml --env-file ./testing/testing.env down
 
 build-apk:
-	@
 	@cp ~/artifact/bin/*linux-${PKG_ARCH} ~/pkg/apkbuild/iptv-toolkit/iptv-toolkit
 	@cp ~/artifact/bin/*linux-${PKG_ARCH} ~/iptv-toolkit
 	@sed -i -e '/^pkgver/s/$$/${PKG_VERSION}/g' \
