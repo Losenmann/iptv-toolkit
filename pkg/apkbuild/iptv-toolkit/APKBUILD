@@ -1,0 +1,15 @@
+# Maintainer: Natanael Copa <ncopa@alpinelinux.org>
+pkgname=iptv-toolkit
+pkgver=
+pkgrel=1
+pkgdesc=
+url=
+arch="all"
+license=
+source=
+option="!strip"
+
+package() {
+	mkdir -p "$pkgdir"
+    install -m755 -D "$srcdir"/$pkgname "$pkgdir"/usr/bin/$pkgname
+}

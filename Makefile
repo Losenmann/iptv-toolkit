@@ -73,6 +73,19 @@ testing-pre-stage:
 testing-post-stage:
 	@docker compose -f ./deploy/docker-compose.yaml --env-file ./testing/testing.env down
 
+build-apk:
+	@cp ~/artifact/bin/*linux-${PKG_ARCH} ~/pkg/apkbuild/iptv-toolkit/iptv-toolkit
+	@cp ~/artifact/bin/*linux-${PKG_ARCH} ~/iptv-toolkit
+	@sed -i -e '/^pkgver/s/$$/${PKG_VERSION}/g' \
+		-e '/^pkgdesc/s/$$/"${PKG_DESCRIPTION}"/g' \
+		-e '/^url/s|$$|"${PKG_HOME_URL}"|g' \
+		-e '/^license/s/$$/"${PKG_LICENSE}"/g' ~/pkg/apkbuild/iptv-toolkit/APKBUILD
+	@cd ~/pkg/apkbuild/iptv-toolkit; abuild checksum
+	@ls -lah ~/iptv-toolkit
+	@ls -lah ~/pkg/apkbuild/iptv-toolkit/iptv-toolkit
+	@abuild-keygen -aniq
+	@cd ~/pkg/apkbuild/iptv-toolkit; abuild -r
+
 build-rpm:
 	@rpmdev-setuptree
 	@mkdir ~/rpmbuild/iptv-toolkit-${PKG_VERSION}

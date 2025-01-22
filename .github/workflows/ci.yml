@@ -13,6 +13,7 @@ env:
   IMAGE_NAME: ${{ github.repository }}
   IMAGE_PLATFORM: linux/amd64,linux/386
   IMAGE_PLATFORM_PKG_RPM: linux/amd64
+  IMAGE_PLATFORM_PKG_APK: linux/amd64
   ARTIFACTS_PATH: /tmp/artifact
 
 jobs:
@@ -99,6 +100,21 @@ jobs:
         with:
           name: artifact
           path: artifact
+      - name: 🌀 Build and export Alpine package
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: ./build-tools/alpine.Dockerfile
+          platforms: ${{ env.IMAGE_PLATFORM_PKG_APK }}
+          outputs: |
+            type=local,dest=./artifact/pkg
+            type=local,dest=./artifact/asset
+          build-args: |
+            PKG_VERSION=${{ needs.init.outputs.version }}
+            PKG_LICENSE=${{ needs.init.outputs.license }}
+            PKG_DESCRIPTION=${{ needs.init.outputs.description }}
+            PKG_HOME_URL=${{ needs.init.outputs.url }}
+            PKG_MAINTAINER=${{ github.actor }}
       - name: 🌀 Build and export RHEL package
         uses: docker/build-push-action@v6
         with:
