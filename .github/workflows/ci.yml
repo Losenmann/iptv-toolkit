@@ -25,6 +25,8 @@ jobs:
       description: ${{ steps.set-var.outputs.description }}
       license: ${{ steps.set-var.outputs.license }}
       url: ${{ steps.set-var.outputs.url }}
+      maintainer: ${{ steps.set-var.outputs.maintainer }}
+      maintainer_email: ${{ steps.set-var.outputs.maintainer_email }}
     steps:
       - name: 🔍 Checkout repository
         uses: actions/checkout@v4.2.2
@@ -39,7 +41,7 @@ jobs:
           gh repo view --json latestRelease -q '.latestRelease | "tag_url=\(.url)"' >> "$GITHUB_OUTPUT"
           version=`gh repo view --json latestRelease -q '.latestRelease.tagName' |sed 's/v/version=/'`
           sed "s/master/$version/" <<< ${{ github.ref_name }} >> "$GITHUB_OUTPUT"
-          gh api /users/${GITHUB_ACTOR}
+          gh api /users/${GITHUB_ACTOR} -q '. | "maintainer=\(.name)"' 
 
   build:
     name: Build image and bin
