@@ -39,7 +39,7 @@ jobs:
           gh repo view --json latestRelease -q '.latestRelease | "tag_url=\(.url)"' >> "$GITHUB_OUTPUT"
           version=`gh repo view --json latestRelease -q '.latestRelease.tagName' |sed 's/v/version=/'`
           sed "s/master/$version/" <<< ${{ github.ref_name }} >> "$GITHUB_OUTPUT"
-          gh api /users/${GITHUB_ACTOR} | jq .name -r
+          gh api /users/${GITHUB_ACTOR}
 
   build:
     name: Build image and bin
