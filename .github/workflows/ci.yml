@@ -101,7 +101,7 @@ jobs:
           DOCKER_BUILDKIT: 1
         with:
           context: .
-          file: ./build-tools/alpine/alpine.Dockerfile
+          file: ./build-tools/alpine.Dockerfile
           platforms: ${{ env.IMAGE_PLATFORM_PKG_APK }}
           outputs: |
             type=local,dest=./artifact/pkg
