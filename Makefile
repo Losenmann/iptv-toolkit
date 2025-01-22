@@ -74,6 +74,7 @@ testing-post-stage:
 	@docker compose -f ./deploy/docker-compose.yaml --env-file ./testing/testing.env down
 
 build-apk:
+	@
 	@cp ~/artifact/bin/*linux-${PKG_ARCH} ~/pkg/apkbuild/iptv-toolkit/iptv-toolkit
 	@cp ~/artifact/bin/*linux-${PKG_ARCH} ~/iptv-toolkit
 	@sed -i -e '/^pkgver/s/$$/${PKG_VERSION}/g' \
@@ -90,7 +91,7 @@ build-rpm:
 	@rpmdev-setuptree
 	@mkdir ~/rpmbuild/iptv-toolkit-${PKG_VERSION}
 	@cp -r ./pkg/rpmbuild/* ~/rpmbuild/
-	@cp ./artifact/bin/*linux-${PKG_ARCH} ~/rpmbuild/iptv-toolkit-${PKG_VERSION}/iptv-toolkit
+	@install -m755 -D ./artifact/bin/*linux-${PKG_ARCH} ~/rpmbuild/iptv-toolkit-${PKG_VERSION}/iptv-toolkit
 	@tar -czvf ~/rpmbuild/SOURCES/iptv-toolkit-${PKG_VERSION}.tar.gz -C ~/rpmbuild/ iptv-toolkit-${PKG_VERSION} --remove-files
 	@sed -i -e '/^Version/s/$$/${PKG_VERSION}/g' \
 		-e '/^License/s/$$/${PKG_LICENSE}/g' \
