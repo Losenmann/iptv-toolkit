@@ -88,7 +88,7 @@ jobs:
 
   build-pkg:
     name: Build packages Linux distros
-    needs: [init, build]
+    needs: [init]
     runs-on: ubuntu-latest
     steps:
       - name: 🔍 Checkout repository
@@ -106,7 +106,7 @@ jobs:
           DOCKER_BUILDKIT: 1
         with:
           context: .
-          file: ./build-tools/alpine.Dockerfile
+          file: ./build-tools/alpine/Dockerfile
           platforms: ${{ env.IMAGE_PLATFORM_PKG_APK }}
           outputs: |
             type=local,dest=./artifact/pkg
