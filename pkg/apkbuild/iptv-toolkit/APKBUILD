@@ -6,7 +6,7 @@ url=
 arch="all"
 license=
 source="$pkgname-$pkgver.tar.gz::$url/archive/refs/tags/v$pkgver.tar.gz"
-option="!check !strip"
+options="!check !strip"
 
 package() {
 	install -m755 -D "$pkgsrc/iptv-toolkit" "$pkgdir/usr/bin/iptv-toolkit"
