@@ -74,22 +74,19 @@ testing-post-stage:
 	@docker compose -f ./deploy/docker-compose.yaml --env-file ./testing/testing.env down
 
 build-apk:
-	@cp ~/artifact/bin/*linux-${PKG_ARCH} ~/pkg/apkbuild/iptv-toolkit/iptv-toolkit
-	@cp ~/artifact/bin/*linux-${PKG_ARCH} ~/iptv-toolkit
+	@mv ./pkg/apkbuild ~/apkbuild
+	@install -m755 -D ./artifact/bin/*linux-${PKG_ARCH} ~/apkbuild/iptv-toolkit/src/iptv-toolkit
 	@sed -i -e '/^pkgver/s/$$/${PKG_VERSION}/g' \
 		-e '/^pkgdesc/s/$$/"${PKG_DESCRIPTION}"/g' \
 		-e '/^url/s|$$|"${PKG_HOME_URL}"|g' \
-		-e '/^license/s/$$/"${PKG_LICENSE}"/g' ~/pkg/apkbuild/iptv-toolkit/APKBUILD
-	@cd ~/pkg/apkbuild/iptv-toolkit; abuild checksum
-	@ls -lah ~/iptv-toolkit
-	@ls -lah ~/pkg/apkbuild/iptv-toolkit/iptv-toolkit
+		-e '/^license/s/$$/"${PKG_LICENSE}"/g' ~/apkbuild/iptv-toolkit/APKBUILD
+	@cd ~/apkbuild/iptv-toolkit; abuild checksum
 	@abuild-keygen -aniq
-	@cd ~/pkg/apkbuild/iptv-toolkit; abuild -r
+	@cd ~/apkbuild/iptv-toolkit; abuild -r
 
 build-rpm:
 	@rpmdev-setuptree
-	@mkdir ~/rpmbuild/iptv-toolkit-${PKG_VERSION}
-	@cp -r ./pkg/rpmbuild/* ~/rpmbuild/
+	@mv ./pkg/rpmbuild ~/rpmbuild
 	@install -m755 -D ./artifact/bin/*linux-${PKG_ARCH} ~/rpmbuild/iptv-toolkit-${PKG_VERSION}/iptv-toolkit
 	@tar -czvf ~/rpmbuild/SOURCES/iptv-toolkit-${PKG_VERSION}.tar.gz -C ~/rpmbuild/ iptv-toolkit-${PKG_VERSION} --remove-files
 	@sed -i -e '/^Version/s/$$/${PKG_VERSION}/g' \

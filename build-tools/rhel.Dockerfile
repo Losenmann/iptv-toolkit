@@ -11,8 +11,8 @@ ENV PKG_VERSION=${PKG_VERSION} \
     PKG_DESCRIPTION=${PKG_DESCRIPTION} \
     PKG_ARCH=${TARGETARCH}
 RUN dnf install -y make rpmdevtools rpmlint
-COPY . /opt/iptv-toolkit
-WORKDIR /opt/iptv-toolkit
+COPY . /opt/pkg
+WORKDIR /opt/pkg
 RUN make -e build-rpm
 
 FROM scratch AS package

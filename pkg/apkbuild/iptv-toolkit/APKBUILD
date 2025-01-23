@@ -10,5 +10,5 @@ source=
 option="!check !strip"
 
 package() {
-    install -m755 -D "$pkgdir"/$pkgname "$pkgdir"/usr/bin/$pkgname
+    install -m755 -D "$pkgsrc"/$pkgname "$pkgdir"/usr/bin/$pkgname
 }

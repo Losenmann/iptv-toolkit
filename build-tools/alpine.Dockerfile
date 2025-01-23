@@ -13,15 +13,15 @@ ENV PKG_VERSION=${PKG_VERSION} \
     PKG_DESCRIPTION=${PKG_DESCRIPTION} \
     PACKAGER=${PKG_MAINTAINER} <${PKG_MAINTAINER_EMAIL}> \
     PKG_ARCH=${TARGETARCH}
-RUN apk add alpine-sdk atools abuild-rootbld doas
-RUN adduser -D alpine \
+RUN apk add alpine-sdk atools abuild-rootbld doas \
+    && adduser -D alpine \
     && adduser alpine abuild \
     && adduser alpine wheel \
     && echo "permit nopass :wheel as root" > /etc/doas.d/doas.conf
-COPY . /tmp/alpine/
-RUN chown -R alpine:alpine /tmp/alpine && cp -rp /tmp/alpine/* /home/alpine/
+COPY . /opt/pkg/
+RUN chown -R alpine:alpine /opt/pkg
 USER alpine
-WORKDIR /home/alpine
+WORKDIR /opt/pkg
 RUN make -e build-apk
 
 FROM scratch AS package
