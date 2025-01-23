@@ -88,13 +88,18 @@ jobs:
 
   build-pkg:
     name: Build packages Linux distros
-    needs: [init]
+    needs: [init, build]
     runs-on: ubuntu-latest
     steps:
       - name: 🔍 Checkout repository
         uses: actions/checkout@v4.2.2
       - name: ⚙️ Set up Docker Buildx
         uses: docker/setup-buildx-action@v3.8.0
+      - name: 📦 Download artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: artifact
+          path: artifact
       - name: 🌀 Build and export Alpine package
         uses: docker/build-push-action@v6
         env:
