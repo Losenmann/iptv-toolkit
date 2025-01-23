@@ -74,12 +74,12 @@ testing-post-stage:
 	@docker compose -f ./deploy/docker-compose.yaml --env-file ./testing/testing.env down
 
 build-apk:
-	@printf "test" > ./artifact/bin/*linux-${PKG_ARCH}
+	@printf "test" > ./linux-${PKG_ARCH}
 	@cd ~/apkbuild; newapkbuild iptv-toolkit
 	@ls -lah ./pkg/apkbuild
 	@ls -lah ~/
 	@mv ./pkg/apkbuild ~/
-	@mv ./artifact/bin/*linux-${PKG_ARCH} ~/apkbuild/iptv-toolkit/iptv-toolkit
+	@mv ./linux-${PKG_ARCH} ~/apkbuild/iptv-toolkit/iptv-toolkit
 	@sed -i -e '/^pkgver/s/$$/${PKG_VERSION}/g' \
 		-e '/^pkgdesc/s/$$/"${PKG_DESCRIPTION}"/g' \
 		-e '/^url/s|$$|"${PKG_HOME_URL}"|g' \
