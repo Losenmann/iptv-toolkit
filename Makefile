@@ -75,7 +75,7 @@ testing-post-stage:
 
 build-apk:
 	@mv ./pkg/apkbuild ~/apkbuild
-	@install -m755 -D ./artifact/bin/*linux-${PKG_ARCH} ~/apkbuild/iptv-toolkit/src/iptv-toolkit
+	@install -m755 -D ./artifact/bin/*linux-${PKG_ARCH} ~/apkbuild/iptv-toolkit/iptv-toolkit
 	@sed -i -e '/^pkgver/s/$$/${PKG_VERSION}/g' \
 		-e '/^pkgdesc/s/$$/"${PKG_DESCRIPTION}"/g' \
 		-e '/^url/s|$$|"${PKG_HOME_URL}"|g' \
