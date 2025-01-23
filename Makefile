@@ -79,7 +79,8 @@ build-apk:
 	@sed -i -e '/^pkgver/s/$$/${PKG_VERSION}/g' \
 		-e '/^pkgdesc/s/$$/"${PKG_DESCRIPTION}"/g' \
 		-e '/^url/s|$$|"${PKG_HOME_URL}"|g' \
-		-e '/^license/s/$$/"${PKG_LICENSE}"/g' ~/apkbuild/iptv-toolkit/APKBUILD
+		-e '/^license/s/$$/"${PKG_LICENSE}"/g' \
+		-e '/^maintainer/s/$$/"${MAINTAINER}"/g' ~/apkbuild/iptv-toolkit/APKBUILD
 	@cd ~/apkbuild/iptv-toolkit; abuild checksum
 	@abuild-keygen -aniq
 	@cd ~/apkbuild/iptv-toolkit; abuild -r
