@@ -9,5 +9,5 @@ source="$pkgname-$pkgver.tar.gz::$url/archive/refs/tags/v$pkgver.tar.gz"
 options="!check !strip"
 
 package() {
-	install -m755 -D "~/apkbuild/iptv-toolkit/iptv-toolkit" "$pkgdir/usr/bin/iptv-toolkit"
+	install -m755 -D "/home/alpine/apkbuild/iptv-toolkit/iptv-toolkit" "$pkgdir/usr/bin/iptv-toolkit"
 }
