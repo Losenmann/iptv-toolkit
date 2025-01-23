@@ -116,7 +116,8 @@ jobs:
             PKG_LICENSE=${{ needs.init.outputs.license }}
             PKG_DESCRIPTION=${{ needs.init.outputs.description }}
             PKG_HOME_URL=${{ needs.init.outputs.url }}
-            PKG_MAINTAINER=${{ github.actor }}
+            PKG_MAINTAINER=${{ needs.init.outputs.maintainer }}
+            PKG_MAINTAINER_EMAIL=${{ needs.init.outputs.maintainer_email }}
       - name: 🌀 Build and export RHEL package
         uses: docker/build-push-action@v6
         with:
