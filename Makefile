@@ -75,6 +75,7 @@ testing-post-stage:
 
 build-apk:
 	@printf "test" > ./linux-${PKG_ARCH}
+	@mkdir ~/apkbuild
 	@cd ~/apkbuild; newapkbuild iptv-toolkit
 	@ls -lah ./pkg/apkbuild
 	@ls -lah ~/
