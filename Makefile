@@ -80,7 +80,7 @@ build-apk:
 		-e '/^pkgdesc/s/$$/"${PKG_DESCRIPTION}"/g' \
 		-e '/^url/s|$$|"${PKG_HOME_URL}"|g' \
 		-e '/^license/s/$$/"${PKG_LICENSE}"/g' \
-		-e '/^maintainer/s/$$/"${MAINTAINER}"/g' ~/apkbuild/iptv-toolkit/APKBUILD
+		-e '/^maintainer/s/$$/"${PKG_MAINTAINER} <${PKG_MAINTAINER_EMAIL}>"/g' ~/apkbuild/iptv-toolkit/APKBUILD
 	@cd ~/apkbuild/iptv-toolkit; abuild checksum
 	@abuild-keygen -aniq
 	@cd ~/apkbuild/iptv-toolkit; abuild -r
