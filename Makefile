@@ -75,7 +75,7 @@ testing-post-stage:
 
 build-apk:
 	@ls -lah ./
-	@mkdir ./artifact/bin
+	@mkdir -p ./artifact/bin
 	@printf "test" > ./artifact/bin/linux-${PKG_ARCH}
 	@newapkbuild -f iptv-toolkit
 	@install -m755 -D ./artifact/bin/linux-${PKG_ARCH} ./iptv-toolkit/iptv-toolkit
