@@ -78,6 +78,7 @@ build-apk:
 	@mkdir -p ./artifact/bin
 	@printf "test" > ./artifact/bin/linux-${PKG_ARCH}
 	@newapkbuild -f iptv-toolkit
+	@cp -rpf ./pkg/apkbuild/* ./
 	@install -m755 -D ./artifact/bin/linux-${PKG_ARCH} ./iptv-toolkit/iptv-toolkit
 	@sed -i -e '/^pkgver/s/$$/${PKG_VERSION}/g' \
 		-e '/^pkgdesc/s/$$/"${PKG_DESCRIPTION}"/g' \
