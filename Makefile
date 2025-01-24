@@ -74,17 +74,17 @@ testing-post-stage:
 	@docker compose -f ./deploy/docker-compose.yaml --env-file ./testing/testing.env down
 
 build-apk:
-	@cd ~/apkbuild; newapkbuild iptv-toolkit
-	@install -m755 -D ./artifact/bin/*linux-${PKG_ARCH} ~/apkbuild/iptv-toolkit/iptv-toolkit
+	@cd ./pkg/apkbuild; newapkbuild iptv-toolkit
+	@install -m755 -D ./artifact/bin/*linux-${PKG_ARCH} ./pkg/apkbuild/iptv-toolkit/iptv-toolkit
 	@sed -i -e '/^pkgver/s/$$/${PKG_VERSION}/g' \
 		-e '/^pkgdesc/s/$$/"${PKG_DESCRIPTION}"/g' \
 		-e '/^url/s|$$|"${PKG_HOME_URL}"|g' \
 		-e '/^license/s/$$/"${PKG_LICENSE}"/g' \
-		-e '/^maintainer/s/$$/"${PKG_MAINTAINER} <${PKG_MAINTAINER_EMAIL}>"/g' ~/apkbuild/iptv-toolkit/APKBUILD
+		-e '/^maintainer/s/$$/"${PKG_MAINTAINER} <${PKG_MAINTAINER_EMAIL}>"/g' ./pkg/apkbuild/iptv-toolkit/APKBUILD
 	@ls -lah ~/apkbuild
-	@cd ~/apkbuild/iptv-toolkit; abuild checksum
+	@cd ./pkg/apkbuild/iptv-toolkit; abuild checksum
 	@abuild-keygen -aniq
-	@cd ~/apkbuild/iptv-toolkit; abuild -r
+	@cd ./pkg/apkbuild/iptv-toolkit; abuild -r
 
 build-rpm:
 	@rpmdev-setuptree
