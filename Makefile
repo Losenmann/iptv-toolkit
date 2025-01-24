@@ -77,9 +77,7 @@ build-apk:
 	@printf "test" > ./linux-${PKG_ARCH}
 	@mkdir ~/apkbuild
 	@cd ~/apkbuild; newapkbuild iptv-toolkit
-	@ls -lah ./pkg/apkbuild
-	@ls -lah ~/
-	@mv ./pkg/apkbuild ~/
+	@cp -rp ./pkg/apkbuild ~/
 	@mv ./linux-${PKG_ARCH} ~/apkbuild/iptv-toolkit/iptv-toolkit
 	@sed -i -e '/^pkgver/s/$$/${PKG_VERSION}/g' \
 		-e '/^pkgdesc/s/$$/"${PKG_DESCRIPTION}"/g' \
