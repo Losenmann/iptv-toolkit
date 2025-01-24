@@ -19,9 +19,9 @@ RUN apk add alpine-sdk atools abuild-rootbld doas \
     && adduser alpine abuild \
     && adduser alpine wheel \
     && echo "permit nopass :wheel as root" > /etc/doas.d/doas.conf
-COPY . /opt/pkg/
-WORKDIR /opt/pkg
-RUN chown -R alpine:alpine /opt/pkg
+COPY . /home/alpine/
+WORKDIR /home/alpine/
+RUN chown -R alpine:alpine /home/alpine/
 USER alpine
 RUN make -e build-apk
 
