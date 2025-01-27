@@ -14,7 +14,8 @@ ENV PKG_VERSION=${PKG_VERSION} \
     PACKAGER=${PKG_MAINTAINER} <${PKG_MAINTAINER_EMAIL}> \
     MAINTAINER=${PKG_MAINTAINER} <${PKG_MAINTAINER_EMAIL}> \
     PKG_ARCH=${TARGETARCH}
-RUN apk add alpine-sdk atools abuild-rootbld doas
+RUN apk add alpine-sdk atools abuild-rootbld doas \
+    && adduser -D alpine
 COPY --chown=alpine:alpine . /home/alpine/
 WORKDIR /home/alpine
 USER alpine:['alpine','abuild','wheel']
