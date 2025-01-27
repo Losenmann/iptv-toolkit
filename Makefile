@@ -74,7 +74,6 @@ testing-post-stage:
 	@docker compose -f ./deploy/docker-compose.yaml --env-file ./testing/testing.env down
 
 build-apk:
-	@newapkbuild -f iptv-toolkit
 	@install -m755 -D ./artifact/bin/*linux-${PKG_ARCH} ./pkg/apkbuild/iptv-toolkit/iptv-toolkit
 	@sed -i -e '/^pkgver/s/$$/${PKG_VERSION}/g' \
 		-e '/^pkgdesc/s/$$/"${PKG_DESCRIPTION}"/g' \
@@ -84,7 +83,6 @@ build-apk:
 	@cd ./pkg/apkbuild/iptv-toolkit; abuild checksum
 	@abuild-keygen -aniq
 	@cd ./pkg/apkbuild/iptv-toolkit; abuild -r
-
 
 build-rpm:
 	@rpmdev-setuptree

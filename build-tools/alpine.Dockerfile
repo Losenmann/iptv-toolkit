@@ -25,5 +25,5 @@ USER alpine
 RUN make -e build-apk
 
 FROM scratch AS package
-COPY --from=builder ~/packages/*/*/*.apk /
+COPY --from=builder /home/alpine/pkg/apkbuild/packages/*/*/*.apk /
 ENTRYPOINT ["/iptv-toolkit-*"]
