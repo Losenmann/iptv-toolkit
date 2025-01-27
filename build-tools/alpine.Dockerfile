@@ -15,7 +15,9 @@ ENV PKG_VERSION=${PKG_VERSION} \
     MAINTAINER=${PKG_MAINTAINER} <${PKG_MAINTAINER_EMAIL}> \
     PKG_ARCH=${TARGETARCH}
 RUN apk add alpine-sdk atools abuild-rootbld doas && apk add --virtual build-dependencies build-base \
-    && usermod -a -G wheel,abuild alpine \
+    && adduser -D alpine \
+    && adduser alpine abuild \
+    && adduser alpine wheel \
     && echo "permit nopass :wheel as root" > /etc/doas.d/doas.conf
 COPY . /home/alpine/
 WORKDIR /home/alpine
