@@ -10,5 +10,6 @@ source="$pkgname-$pkgver.tar.gz::$url/archive/refs/tags/v$pkgver.tar.gz"
 options="!check !strip"
 
 package() {
-	install -m755 -D ./iptv-toolkit "$pkgdir"/usr/bin/iptv-toolkit
+	mkdir -p "$pkgdir"
+	install -m755 -D "$startdir"/iptv-toolkit "$pkgdir"/usr/bin/iptv-toolkit
 }
