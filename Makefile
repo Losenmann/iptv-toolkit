@@ -107,6 +107,7 @@ build-rpm:
 	@rpmbuild -ba ~/rpmbuild/SPECS/iptv-toolkit.spec
 
 build-deb:
+	@chmod +x ./pkg/debbuild/iptv-toolkit/debian/rules
 	@install -m755 -D ./artifact/bin/*linux-${PKG_ARCH} ./pkg/debbuild/iptv-toolkit/usr/bin/iptv-toolkit
 	@sed -i -e '/^Description/s/$$/\n ${PKG_DESCRIPTION}/g' \
 		-e '/^Homepage/s|$$|${PKG_HOME_URL}|g' \
