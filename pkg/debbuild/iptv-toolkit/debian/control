@@ -1,0 +1,15 @@
+Source: iptv-toolkit
+Section: utils
+Priority: optional
+Maintainer:
+Rules-Requires-Root: no
+Build-Depends:
+ debhelper-compat (= 13),
+Standards-Version: 4.6.2
+Homepage:
+Vcs-Browser:
+Vcs-Git:
+
+Package: iptv-toolkit
+Architecture:
+Description: Toolkit for IPTV

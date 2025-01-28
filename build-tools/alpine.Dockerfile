@@ -7,21 +7,18 @@ ARG TARGETOS \
     PKG_DESCRIPTION=None \
     PKG_MAINTAINER=None \
     PKG_MAINTAINER_EMAIL=example@example.com \
+    PKG_SIGN_ALPINE="" \
 ENV PKG_VERSION=${PKG_VERSION} \
     PKG_LICENSE=${PKG_LICENSE} \
     PKG_HOME_URL=${PKG_HOME_URL} \
     PKG_DESCRIPTION=${PKG_DESCRIPTION} \
     PACKAGER=${PKG_MAINTAINER} <${PKG_MAINTAINER_EMAIL}> \
     MAINTAINER=${PKG_MAINTAINER} <${PKG_MAINTAINER_EMAIL}> \
+    PKG_SIGN_ALPINE=${PKG_SIGN_ALPINE}
     PKG_ARCH=${TARGETARCH}
-RUN apk add alpine-sdk atools abuild-rootbld doas \
-    && adduser -D alpine \
-    && adduser alpine abuild \
-    && adduser alpine wheel \
-    && echo "permit nopass :wheel as root" > /etc/doas.d/doas.conf
-COPY --chown=alpine:alpine . /home/alpine/
-WORKDIR /home/alpine
-USER alpine
+RUN apk add alpine-sdk atools abuild-rootbld doas
+COPY . /opt/pkg
+WORKDIR /opt/pkg
 RUN make -e build-apk
 
 FROM scratch AS package
