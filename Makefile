@@ -28,7 +28,7 @@ ifeq ($(PKG_REVISION),)
         PKG_REVISION=1
 endif
 ifeq ($(PKG_MAINTAINER),)
-        PKG_MAINTAINER!=`whoami`
+        PKG_MAINTAINER=${MAKE_USER}
 endif
 ifeq ($(PKG_MAINTAINER_EMAIL),)
         PKG_MAINTAINER_EMAIL=${PKG_MAINTAINER}@example.com
