@@ -24,5 +24,5 @@ WORKDIR /opt/pkg
 RUN make build-rpm
 
 FROM scratch AS package
-COPY --from=builder /root/rpmbuild/RPMS/*/* /
+COPY --from=builder /opt/pkg/pkg/rpmbuild/RPMS/*/*.rpm /
 ENTRYPOINT ["/iptv-toolkit-*"]

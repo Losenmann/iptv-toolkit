@@ -22,25 +22,28 @@ MAKE_PWD!=pwd
 HOME=${MAKE_PWD}/pkg
 
 ifeq ($(PKG_VERSION),)
-        PKG_VERSION=0.0.1
+	PKG_VERSION=0.0.1
 endif
 ifeq ($(PKG_REVISION),)
-        PKG_REVISION=1
+	PKG_REVISION=1
 endif
 ifeq ($(PKG_MAINTAINER),)
-        PKG_MAINTAINER=${MAKE_USER}
+	PKG_MAINTAINER=${MAKE_USER}
 endif
 ifeq ($(PKG_MAINTAINER_EMAIL),)
-        PKG_MAINTAINER_EMAIL=${PKG_MAINTAINER}@example.com
+	PKG_MAINTAINER_EMAIL=${PKG_MAINTAINER}@example.com
 endif
 ifeq ($(PKG_LICENSE),)
-        PKG_LICENSE=Apache-2.0
+	PKG_LICENSE=Apache-2.0
 endif
 ifeq ($(PKG_DESCRIPTION),)
-        PKG_DESCRIPTION=No description
+	PKG_DESCRIPTION=No description
+endif
+ifeq ($(PKG_CHANGELOG),)
+	PKG_CHANGELOG=Unknown
 endif
 ifeq ($(PKG_ARCH),)
-        PKG_ARCH=any
+	PKG_ARCH=any
 endif
 
 .PHONY: realesae run docker testing
@@ -120,6 +123,9 @@ build-rpm:
 		-e '/^URL/s|$$|${PKG_HOME_URL}|g' \
 		-e '/^%description/s/$$/\n  ${PKG_DESCRIPTION}/g' \
 		-e '/^%changelog/s/$$/\n  * ${MAKE_DATE_C} ${MAINTAINER}/g' ./pkg/rpmbuild/SPECS/iptv-toolkit.spec
+ifdef PKG_CHANGELOG
+	@echo '${PKG_CHANGELOG}' |sed 's/^/  - /g' |tee -a ./pkg/rpmbuild/SPECS/iptv-toolkit.spec 1> /dev/null
+endif
 	@rpmlint ./pkg/rpmbuild/SPECS/iptv-toolkit.spec
 	@rpmbuild -ba ./pkg/rpmbuild/SPECS/iptv-toolkit.spec
 
@@ -137,8 +143,6 @@ build-deb:
 	@sed -i -e '/urgency=/s/(.*)/(${PKG_VERSION}-${PKG_REVISION})/g' ./pkg/debbuild/iptv-toolkit/debian/changelog
 ifdef PKG_CHANGELOG
 	@echo '${PKG_CHANGELOG}' |sed 's/^/  * /g' |tee -a ./pkg/debbuild/iptv-toolkit/debian/changelog 1> /dev/null
-else
-	@echo 'Unknown' |sed 's/^/  * /g' |tee -a ./pkg/debbuild/iptv-toolkit/debian/changelog 1> /dev/nuu
 endif
 	@echo '\n -- ${PACKAGER}  ${MAKE_DATE_R}\n' >> ./pkg/debbuild/iptv-toolkit/debian/changelog
 	@cd ./pkg/debbuild/iptv-toolkit; dpkg-buildpackage -b -us -uc
