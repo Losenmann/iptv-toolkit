@@ -11,20 +11,37 @@ ENV_BUILD_ARCH = 386 amd64 arm arm64 riscv64 s390x ppc64le
 GREEN=
 RED=
 NC=
-PKG_VERSION?=0.0.1
-PKG_MAINTAINER?=`shell whoami`
-PKG_MAINTAINER_EMAIL?=root@unknown
-PKG_LICENSE?=Apache-2.0
-PKG_DESCRIPTION?=none
-PKG_ARCH?=any
-MAKE_DATE=$(shell date)
-MAKE_DATE_U=$(shell date +%s -d '${MAKE_DATE}')
-MAKE_DATE_Y=$(shell date +%Y -d '${MAKE_DATE}')
-MAKE_DATE_R=$(shell date -R -d '${MAKE_DATE}')
-MAKE_USER=$(shell whoami)
 
+MAKE_DATE!=date
+MAKE_DATE_U!=date +%s -d '${MAKE_DATE}'
+MAKE_DATE_Y!=date +%Y -d '${MAKE_DATE}'
+MAKE_DATE_R!=date -R -d '${MAKE_DATE}'
+MAKE_DATE_C!=date '+%a %b %d %Y' -d '${MAKE_DATE}'
+MAKE_USER!=whoami
+MAKE_PWD!=pwd
+HOME=${MAKE_PWD}/pkg
 
-.EXPORT_ALL_VARIABLES:
+ifeq ($(PKG_VERSION),)
+        PKG_VERSION=0.0.1
+endif
+ifeq ($(PKG_REVISION),)
+        PKG_REVISION=1
+endif
+ifeq ($(PKG_MAINTAINER),)
+        PKG_MAINTAINER!=`whoami`
+endif
+ifeq ($(PKG_MAINTAINER_EMAIL),)
+        PKG_MAINTAINER_EMAIL=${PKG_MAINTAINER}@example.com
+endif
+ifeq ($(PKG_LICENSE),)
+        PKG_LICENSE=Apache-2.0
+endif
+ifeq ($(PKG_DESCRIPTION),)
+        PKG_DESCRIPTION=No description
+endif
+ifeq ($(PKG_ARCH),)
+        PKG_ARCH=any
+endif
 
 .PHONY: realesae run docker testing
 
@@ -95,16 +112,16 @@ build-apk:
 	@efwegqa
 
 build-rpm:
-	@rpmdev-setuptree
-	@mv ./pkg/rpmbuild ~/rpmbuild
-	@install -m755 -D ./artifact/bin/*linux-${PKG_ARCH} ~/rpmbuild/iptv-toolkit-${PKG_VERSION}/iptv-toolkit
-	@tar -czvf ~/rpmbuild/SOURCES/iptv-toolkit-${PKG_VERSION}.tar.gz -C ~/rpmbuild/ iptv-toolkit-${PKG_VERSION} --remove-files
+	@mkdir -p ./pkg/rpmbuild/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
+	@install -m755 -D ./artifact/bin/*linux-${PKG_ARCH} ./pkg/rpmbuild/iptv-toolkit-${PKG_VERSION}/iptv-toolkit
+	@tar -czvf ./pkg/rpmbuild/SOURCES/iptv-toolkit-${PKG_VERSION}.tar.gz -C ./pkg/rpmbuild/ iptv-toolkit-${PKG_VERSION} --remove-files
 	@sed -i -e '/^Version/s/$$/${PKG_VERSION}/g' \
 		-e '/^License/s/$$/${PKG_LICENSE}/g' \
 		-e '/^URL/s|$$|${PKG_HOME_URL}|g' \
-		-e '/^%description/s/$$/\n  ${PKG_DESCRIPTION}/g' ~/rpmbuild/SPECS/iptv-toolkit.spec
-	@rpmlint ~/rpmbuild/SPECS/iptv-toolkit.spec
-	@rpmbuild -ba ~/rpmbuild/SPECS/iptv-toolkit.spec
+		-e '/^%description/s/$$/\n  ${PKG_DESCRIPTION}/g' \
+		-e '/^%changelog/s/$$/\n  * ${MAKE_DATE_C} ${MAINTAINER}/g' ./pkg/rpmbuild/SPECS/iptv-toolkit.spec
+	@rpmlint ./pkg/rpmbuild/SPECS/iptv-toolkit.spec
+	@rpmbuild -ba ./pkg/rpmbuild/SPECS/iptv-toolkit.spec
 
 build-deb:
 	@chmod +x ./pkg/debbuild/iptv-toolkit/debian/rules

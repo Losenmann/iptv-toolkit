@@ -13,12 +13,12 @@ Source0: %{name}-%{version}.tar.gz
 
 %install
   rm -rf $RPM_BUILD_ROOT
-  mkdir -p $RPM_BUILD_ROOT/%{_bindir}
-  cp %{name} $RPM_BUILD_ROOT/%{_bindir}
+  install -m755 -D %{name} %{buildroot}%{_bindir}/iptv-toolkit
 
 %clean
   rm -rf $RPM_BUILD_ROOT
 
 %files
-%{_bindir}/%{name}
+  %{_bindir}/%{name}
+
 %changelog
