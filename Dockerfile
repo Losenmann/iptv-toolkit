@@ -1,48 +1,35 @@
 FROM --platform=$BUILDPLATFORM golang:1.22.5-alpine3.20 AS builder-main
-ARG TARGETOS
-ARG TARGETARCH
-ARG ARG_COMPRESS=true
-ARG GOPROXY=direct
-COPY . /opt/src/
-WORKDIR /opt/src
-RUN apk add upx git \
-    && GOOS=${TARGETOS} GOARCH=${TARGETARCH} go build -ldflags "-s -w" -o /usr/bin/iptv-toolkit /opt/src/main.go \
-    && if [[ ${ARG_COMPRESS} == "true" ]] \
-        && [[ ! ${TARGETARCH} == "riscv64" ]] \
-        && [[ ! ${TARGETARCH} == "s390x" ]]; then upx --best --lzma /usr/bin/iptv-toolkit; fi \
-    && chmod +x /usr/bin/iptv-toolkit
-FROM alpine:3.20.3 AS builder-udpxy
-ARG ARG_UDPXY_VERSION=master \
-    ARG_BUILD_BIN=false
-RUN if [[ ${ARG_BUILD_BIN} == "false" ]]; \
-    then \
-        apk add git \
-            make \
-            gcc \
-            libc-dev \
-        && git -C /opt clone --branch ${ARG_UDPXY_VERSION} https://github.com/pcherenkov/udpxy.git \
-        && make -C /opt/udpxy/chipmunk; \
-    else \
-        mkdir -p /opt/udpxy/chipmunk \
-        && touch /opt/udpxy/chipmunk/udpxy; \
-    fi
-FROM alpine:3.20.3 AS app
-ARG ARG_VERSION=latest \
-    ARG_BUILD_BIN=false \
-    TARGETOS \
+ARG TARGETOS \
     TARGETARCH \
+    BIN_COMPRESS=true \
+    GOPROXY=direct
+WORKDIR /opt/src
+RUN apk add make git upx
+COPY . .
+RUN go mod download
+RUN make build-bin-main
+FROM alpine:3.20.3 AS builder-udpxy
+ARG UDPXY_VERSION=master
+WORKDIR /opt/src
+RUN apk add make git gcc libc-dev
+COPY ./Makefile .
+RUN make build-bin-udpxy
+FROM alpine:3.20.3 AS app
+ARG TARGETOS \
+    TARGETARCH \
+    VERSION=latest \
     ARG_WORKDIR=/www/iptv-toolkit
-ENV IPTVTOOLKIT_VERSION=${ARG_VERSION} \
+ENV IPTVTOOLKIT_VERSION=${VERSION} \
     IPTVTOOLKIT_ARCH=${TARGETARCH} \
-    IPTVTOOLKIT_EPG_DST="/www/iptv-toolkit/tvguide" \
-    IPTVTOOLKIT_PLAYLIST_DST="/www/iptv-toolkit/playlist" \
+    IPTVTOOLKIT_EPG_DST="{ARG_WORKDIR}/tvguide" \
+    IPTVTOOLKIT_PLAYLIST_DST="${ARG_WORKDIR}/playlist" \
     IPTVTOOLKIT_WEB_PORT="4023" \
-    IPTVTOOLKIT_WEB_PATH="/www/iptv-toolkit" \
+    IPTVTOOLKIT_WEB_PATH="{ARG_WORKDIR}" \
     IPTVTOOLKIT_CRONTAB="30 6 * * *"
-COPY --from=builder-main /usr/bin/iptv-toolkit* /usr/bin/iptv-toolkit-${TARGETOS}-${TARGETARCH}
-COPY --from=builder-udpxy /opt/udpxy/chipmunk/udpxy /usr/bin/udpxy
-RUN mkdir -p ${IPTVTOOLKIT_PLAYLIST_DST} ${IPTVTOOLKIT_EPG_DST} /www/iptv-toolkit/tvrecord \
+WORKDIR /www/iptv-toolkit
+COPY --from=builder-udpxy /opt/src/build/udpxy/chipmunk/udpxy /usr/bin/udpxy
+COPY --from=builder-main /opt/src/artifact/bin/iptv-toolkit* /usr/bin/
+RUN mkdir -p ${ARG_WORKDIR}/{playlist,tvguide,tvrecord} \
     && ln -s /usr/bin/iptv-toolkit-${TARGETOS}-${TARGETARCH} /usr/bin/iptv-toolkit
-WORKDIR ${ARG_WORKDIR}
 ENTRYPOINT ["iptv-toolkit"]
 CMD ["-S", "-U", "-W"]

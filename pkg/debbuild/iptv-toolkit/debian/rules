@@ -1,4 +1,12 @@
 #!/usr/bin/make -f
 
-%:
-	dh $@
+clean:
+	@# Do nothing
+
+build:
+	make build-bin-deb
+
+binary:
+	install -m755 -D iptv-toolkit debian/iptv-toolkit/usr/bin/iptv-toolkit
+	dh_gencontrol
+	dh_builddeb
