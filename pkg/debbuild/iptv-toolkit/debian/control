@@ -3,7 +3,7 @@ Section: utils
 Priority: optional
 Maintainer: 
 Rules-Requires-Root: no
-Build-Depends: build-essential debhelper (>= 13)
+Build-Depends: build-essential, debhelper, debhelper-compat (= 13)
 Standards-Version: 4.6.2
 Homepage: 
 Vcs-Browser: 

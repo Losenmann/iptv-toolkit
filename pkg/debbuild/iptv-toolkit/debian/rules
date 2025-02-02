@@ -4,9 +4,14 @@ clean:
 	@# Do nothing
 
 build:
-	make build-bin-deb
+	@# Do nothing
 
 binary:
+ifeq ("$(wildcard iptv-toolkit)","")
+	make -C ../../.. build-bin
+	cp -p ./artifact/images/usr/bin/iptv-toolkit-* ./iptv-toolkit
+endif
 	install -m755 -D iptv-toolkit debian/iptv-toolkit/usr/bin/iptv-toolkit
+	dh_makeshlibs
 	dh_gencontrol
 	dh_builddeb

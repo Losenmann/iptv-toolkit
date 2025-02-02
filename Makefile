@@ -40,6 +40,8 @@ endif
 ifeq ($(PKG_ARCH),)
 	PKG_ARCH=any
 endif
+MAINTAINER=${PKG_MAINTAINER} <${PKG_MAINTAINER_EMAIL}>
+PACKAGER=${MAINTAINER}
 
 .PHONY: realesae run docker testing
 
@@ -107,14 +109,12 @@ endif
 	@rpmbuild -ba ./pkg/rpmbuild/SPECS/iptv-toolkit.spec
 
 build-deb:
-	@chmod +x ./pkg/debbuild/iptv-toolkit/debian/rules
 	@install -m755 -D ./artifact/bin/*linux-${PKG_ARCH} ./pkg/debbuild/iptv-toolkit/usr/bin/iptv-toolkit
-	@sed -i -e '/^Description/s/$$/\n ${PKG_DESCRIPTION}/g' \
+	@sed -i -e '/^Maintainer/s/ .*/ ${MAINTAINER}/g' \
 		-e '/^Homepage/s| .*| ${PKG_HOME_URL}|g' \
-		-e '/^Architecture/s/ .*/ ${PKG_ARCH}/g' \
-		-e '/^Maintainer/s/ .*/ ${MAINTAINER}/g' \
 		-e '/^Vcs-Browser/s| .*| ${PKG_HOME_URL}|g' \
 		-e '/^Vcs-Git/s| .*| ${PKG_HOME_URL}.git|g' \
+		-e '/^Description/s/$$/\n ${PKG_DESCRIPTION}/g' \
 		-e '16,$$d' ./pkg/debbuild/iptv-toolkit/debian/control
 	@sed -i -e '/^Copyright/s/$$/\n ${MAKE_DATE_Y}/g' \
 		-e '/^Upstream-Contact/s/$$/${PKG_MAINTAINER_EMAIL}/g' ./pkg/debbuild/iptv-toolkit/debian/copyright
@@ -125,9 +125,6 @@ ifdef PKG_CHANGELOG
 endif
 	@echo '\n -- ${PACKAGER}  ${MAKE_DATE_R}\n' >> ./pkg/debbuild/iptv-toolkit/debian/changelog
 	@cd ./pkg/debbuild/iptv-toolkit; dpkg-buildpackage -b -us -uc
-
-install:
-	@install -m755 -D ./artifact/bin/*linux-${PKG_ARCH} /usr/bin/iptv-toolkit
 
 build-image:
 	@docker buildx build . \
@@ -164,3 +161,10 @@ build-bin-udpxy:
 	@mkdir -p ./build
 	@git -C ./build clone --branch ${UDPXY_VERSION} https://github.com/pcherenkov/udpxy.git
 	@make -C ./build/udpxy/chipmunk
+
+install:
+	@mkdir -p /www/iptv-toolkit/{playlist,tvguide,tvrecord}
+	@install -m755 -D ./artifact/bin/*linux-${PKG_ARCH} /usr/bin/iptv-toolkit
+
+uninstall:
+	@rm -rvf /usr/bin/iptv-toolkit /www/iptv-toolkit
