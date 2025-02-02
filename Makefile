@@ -7,13 +7,13 @@ IMAGE_VERSION ?= ${VERSION}
 IMAGE_BIN_COMPRESS ?= true
 
 MAKE_PATH_BUILD ?= ./build
-MAKE_DATE!=`date`
-MAKE_DATE_U!=`date +%s -d '${MAKE_DATE}'`
-MAKE_DATE_Y!=`date +%Y -d '${MAKE_DATE}'`
-MAKE_DATE_R!=`date -R -d '${MAKE_DATE}'`
-MAKE_DATE_C!=`date '+%a %b %d %Y' -d '${MAKE_DATE}'`
-MAKE_USER!=`whoami`
-MAKE_PWD!=`pwd`
+MAKE_DATE!=date
+MAKE_DATE_U!=date +%s -d '${MAKE_DATE}'
+MAKE_DATE_Y!=date +%Y -d '${MAKE_DATE}'
+MAKE_DATE_R!=date -R -d '${MAKE_DATE}'
+MAKE_DATE_C!=date '+%a %b %d %Y' -d '${MAKE_DATE}'
+MAKE_USER!=whoami
+MAKE_PWD!=pwd
 HOME=${MAKE_PWD}/pkg
 
 ifeq ($(PKG_VERSION),)
