@@ -119,7 +119,8 @@ jobs:
             PKG_LICENSE=${{ needs.init.outputs.license }}
             PKG_DESCRIPTION=${{ needs.init.outputs.description }}
             PKG_HOME_URL=${{ needs.init.outputs.url }}
-            PKG_MAINTAINER=${{ github.actor }}
+            PKG_MAINTAINER=${{ needs.init.outputs.maintainer }}
+            PKG_MAINTAINER_EMAIL=${{ needs.init.outputs.maintainer_email }}
       - name: 🌀 Build DEB package
         uses: docker/build-push-action@ca877d9245402d1537745e0e356eab47c3520991
         env:
