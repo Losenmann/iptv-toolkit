@@ -23,7 +23,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       version: ${{ steps.set-var.outputs.version }}
-      revision: {{ steps.set-var.outputs.revision }}
+      revision: ${{ steps.set-var.outputs.revision }}
       tag_url: ${{ steps.set-var.outputs.tag_url }}
       description: ${{ steps.set-var.outputs.description }}
       license: ${{ steps.set-var.outputs.license }}
