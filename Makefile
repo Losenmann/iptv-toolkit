@@ -109,7 +109,7 @@ endif
 	@rpmbuild -ba ./pkg/rpmbuild/SPECS/iptv-toolkit.spec
 
 build-deb:
-	@install -m755 -D ./artifact/bin/*linux-${PKG_ARCH} ./pkg/debbuild/iptv-toolkit/usr/bin/iptv-toolkit
+	@install -m755 -D ./artifact/bin/*linux-${PKG_ARCH} ./pkg/debbuild/iptv-toolkit/iptv-toolkit
 	@sed -i -e '/^Maintainer/s/ .*/ ${MAINTAINER}/g' \
 		-e '/^Homepage/s| .*| ${PKG_HOME_URL}|g' \
 		-e '/^Vcs-Browser/s| .*| ${PKG_HOME_URL}|g' \
