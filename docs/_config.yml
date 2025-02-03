@@ -4,4 +4,6 @@ weburl: https://github.com/Losenmann/iptv-toolkit
 remote_theme: pages-themes/cayman@v0.2.0
 plugins:
   - jekyll-remote-theme
-show_downloads: true
+show_downloads: false
+github:
+  repository_release: https://github.com/Losenmann/iptv-toolkit/releases/latest
