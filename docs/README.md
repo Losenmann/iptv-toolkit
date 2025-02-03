@@ -59,37 +59,6 @@ Environmental variables and key CLI applicable in all operating modes.
 > Environment variables repeat CLI.<br>
 > CLI key take precedence over environment variables.
 
-## Build from source
-### Build executable file from source
-There are two ways to build: with Docker or locally.<br>
-In Docker, everything you need is built into a container and then placed in the ./build directory.<br>
-Or you can build locally. The executables will also be located in the ./build directory.<br>
-Docker build is done and installed by default.
-
-> [!IMPORTANT]
-> Before building locally, you need to install the [Golang](https://go.dev/dl) environment and install the [upx](https://github.com/upx/upx/releases) packager before building.
-
-#### Build using Docker
-1. Go to the project directory
-2. Run `make build` command
-3. Check catalog `./build`
-
-#### Build local
-1. Go to the project directory
-2. Run `make build-local` command
-3. Check catalog `./build`
-> [!NOTE]
-> You can pass the `ARCH_ALL=true` argument to the `make build-local` command for cross-compilation executable files.<br>
-> Example: `make build-local ARCH_ALL=true`
-
-### Build Docker Image
-Build Docker Image Allows you to build a ready-to-deploy Docker image from sources.
-1. Go to the project directory
-2. Run `make docker` command
-2. Check the repository `docker image ls`
-
-Once the image build is complete, you can deploy it by running the command: `make docker-up` or `make docker-down`
-
 ## Downloads
 ### Binary
 + Linux i386 [download](https://github.com/losenmann/iptv-toolkit/releases/latest/download/iptv-toolkit-linux-386)

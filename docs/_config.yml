@@ -1,6 +1,7 @@
+title: "IPTV Toolkit"
+description: "Toolkit for IPTV"
+weburl: https://github.com/Losenmann/iptv-toolkit
 remote_theme: pages-themes/cayman@v0.2.0
 plugins:
   - jekyll-remote-theme
-title: "IPTV Toolkit"
-description: "A set of tools for working with IPTV services: Playlists, EPG, UDPXY"
 show_downloads: true
