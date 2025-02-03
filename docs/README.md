@@ -39,22 +39,22 @@ Also in the background, the udpxy proxy server is launched, allowing you to conv
 
 ## Environment Variables and CLI Key
 Environmental variables and key CLI applicable in all operating modes.
-```table
+
 | Variables | Key  | Default | Description |
 | :-------- | :--: | :-----: | :---------- |
-| `IPTVTOOLKIT_EPG` | `-e` | `none` | Link to tv guide |
-| `IPTVTOOLKIT_EPG_DST` | `-E` | `./files/tvguide` | Path of export of EPGs |
-| `IPTVTOOLKIT_PLAYLIST` | `-p` | `none` | Link to channels playlist |
-| `IPTVTOOLKIT_PLAYLIST_DST` | `-P` | `./files/playlist` | Path of export of Playlists |
-| `IPTVTOOLKIT_PLAYLIST_UDPXY` | `-u` | `none` | Create a playlist with a formatted<br> udp link in udpxy format |
-| `IPTVTOOLKIT_PLAYLIST_EMBED_EPG` | `-i` | `none` | Link to epg integrated into playlist |
-| `IPTVTOOLKIT_WEB_PATH` | `-f` | `./files` | Path to display files by web server |
-| `IPTVTOOLKIT_WEB_PORT` | `-P` | `4023` | Web server port |
-| `IPTVTOOLKIT_CRONTAB` | `-c` | `30 6 * * *` | Сrontab style task schedule |
-| `none` | `-S` | `false` | Start Schedule job |
-| `none` | `-U` | `false` | Start UDPXY proxy |
-| `none` | `-W` | `false` | Start Web Server |
-```
+| IPTVTOOLKIT_EPG | -e | none | Link to tv guide |
+| IPTVTOOLKIT_EPG_DST | -E | ./files/tvguide | Path of export of EPGs |
+| IPTVTOOLKIT_PLAYLIST | -p | none | Link to channels playlist |
+| IPTVTOOLKIT_PLAYLIST_DST | -P | ./files/playlist | Path of export of Playlists |
+| IPTVTOOLKIT_PLAYLIST_UDPXY | -u | none | Create a playlist with a formatted<br> udp link in udpxy format |
+| IPTVTOOLKIT_PLAYLIST_EMBED_EPG | -i | none | Link to epg integrated into playlist |
+| IPTVTOOLKIT_WEB_PATH | -f | ./files | Path to display files by web server |
+| IPTVTOOLKIT_WEB_PORT | -P | 4023 | Web server port |
+| IPTVTOOLKIT_CRONTAB | -c | 30 6 * * * | Сrontab style task schedule |
+| none | -S | false | Start Schedule job |
+| none | -U | false | Start UDPXY proxy |
+| none | -W | false | Start Web Server |
+
 
 |---------------|---------|
 | Look, I span  | Looks   |
