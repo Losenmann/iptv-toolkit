@@ -55,6 +55,16 @@ Environmental variables and key CLI applicable in all operating modes.
 | `none` | `-U` | `false` | Start UDPXY proxy |
 | `none` | `-W` | `false` | Start Web Server |
 ```
+
+```table
+| _For padding_ | _For padding_ | _For padding_ |
+|---------------|---------------|---------------|
+| left          |    center     |         right |
+|    center     |         right | left          |
+|         right | left          |    center     |
+```alignment
+cCClCrCrlrLc
+```
 > [!IMPORTANT]
 > Environment variables repeat CLI.<br>
 > CLI key take precedence over environment variables.
