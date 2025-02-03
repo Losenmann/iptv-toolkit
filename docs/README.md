@@ -6,6 +6,7 @@
 [![GitHub License](https://img.shields.io/github/license/losenmann/iptv-toolkit?style=for-the-badge)](https://github.com/Losenmann/iptv-toolkit/blob/master/LICENSE)
 [![Docker Image Version](https://img.shields.io/docker/v/losenmann/iptv-toolkit?style=for-the-badge&label=Docker&color=%231D63ED)](https://hub.docker.com/r/losenmann/iptv-toolkit/tags)
 
+
 ## Overview
 The service allows you to convert iptv and epg playlists. For playlists, conversion is carried out in the following formats: m3u, m3u8, xml. EPG conversion is carried out in the following formats: jtv, xml, xml.gz.<br>
 The service supports automatic detection of the EPG type and playlists.<br>
@@ -38,6 +39,7 @@ Also in the background, the udpxy proxy server is launched, allowing you to conv
 
 ## Environment Variables and CLI Key
 Environmental variables and key CLI applicable in all operating modes.
+```table
 | Variables | Key  | Default | Description |
 | :-------- | :--: | :-----: | :---------- |
 | `IPTVTOOLKIT_EPG` | `-e` | `none` | Link to tv guide |
@@ -52,7 +54,7 @@ Environmental variables and key CLI applicable in all operating modes.
 | `none` | `-S` | `false` | Start Schedule job |
 | `none` | `-U` | `false` | Start UDPXY proxy |
 | `none` | `-W` | `false` | Start Web Server |
-
+```
 > [!IMPORTANT]
 > Environment variables repeat CLI.<br>
 > CLI key take precedence over environment variables.
@@ -87,3 +89,25 @@ Build Docker Image Allows you to build a ready-to-deploy Docker image from sourc
 2. Check the repository `docker image ls`
 
 Once the image build is complete, you can deploy it by running the command: `make docker-up` or `make docker-down`
+
+## Downloads
+### Binary
++ Linux i386 [download](https://github.com/losenmann/iptv-toolkit/releases/latest/download/iptv-toolkit-linux-386)
++ Linux amd64 [download](https://github.com/losenmann/iptv-toolkit/releases/latest/download/iptv-toolkit-linux-amd64)
++ Linux arm [downloads](https://github.com/losenmann/iptv-toolkit/releases/latest/download/iptv-toolkit-linux-arm)
++ Linux arm64 [download](https://github.com/losenmann/iptv-toolkit/releases/latest/download/iptv-toolkit-linux-arm64)
++ Linux ppc64le [download](https://github.com/losenmann/iptv-toolkit/releases/latest/download/iptv-toolkit-linux-ppc64le)
++ Linux riscv64 [download](https://github.com/losenmann/iptv-toolkit/releases/latest/download/iptv-toolkit-linux-riscv64)
++ Linux s390x [download](https://github.com/losenmann/iptv-toolkit/releases/latest/download/iptv-toolkit-linux-s390x)
+
+### Package
++ RPM amd64 [download](https://github.com/losenmann/iptv-toolkit/releases/latest/download/iptv-toolkit-linux-amd64)
++ RPM arm64 [download](https://github.com/losenmann/iptv-toolkit/releases/latest/download/iptv-toolkit-linux-arm64)
++ RPM ppc64le [download](https://github.com/losenmann/iptv-toolkit/releases/latest/download/iptv-toolkit-linux-ppc64le)
++ RPM s390x [download](https://github.com/losenmann/iptv-toolkit/releases/latest/download/iptv-toolkit-linux-s390x)
++ DEB i386 [download](https://github.com/losenmann/iptv-toolkit/releases/latest/download/iptv-toolkit-linux-386)
++ DEB amd64 [download](https://github.com/losenmann/iptv-toolkit/releases/latest/download/iptv-toolkit-linux-amd64)
++ DEB arm [downloads](https://github.com/losenmann/iptv-toolkit/releases/latest/download/iptv-toolkit-linux-arm)
++ DEB arm64 [download](https://github.com/losenmann/iptv-toolkit/releases/latest/download/iptv-toolkit-linux-arm64)
++ DEB ppc64le [download](https://github.com/losenmann/iptv-toolkit/releases/latest/download/iptv-toolkit-linux-ppc64le)
++ DEB s390x [download](https://github.com/losenmann/iptv-toolkit/releases/latest/download/iptv-toolkit-linux-s390x)
