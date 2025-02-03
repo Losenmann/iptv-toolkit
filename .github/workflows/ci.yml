@@ -80,10 +80,10 @@ jobs:
           cache-to: type=local,dest=${{ env.ARTIFACTS_PATH }}/cache
           outputs: type=local,dest=${{ env.ARTIFACTS_PATH }}/images
       - name: 🧬 Extract executable file
-        working-directory: ${{ env.ARTIFACTS_PATH }}
+        working-directory: ${{ env.ARTIFACTS_PATH }}/images
         run: |
-          cp -vf ./*/usr/bin/iptv-toolkit-* ./bin/
-          cp -vf ./*/usr/bin/iptv-toolkit-* ./asset/
+          cp -vf ./*/usr/bin/iptv-toolkit-* ../bin/
+          cp -vf ./*/usr/bin/iptv-toolkit-* ../asset/
       - name: 📦 Upload artifact
         uses: actions/upload-artifact@v4
         with:
@@ -130,7 +130,6 @@ jobs:
         with:
           context: .
           file: ./build-tools/debian.Dockerfile
-          provenance: false
           platforms: ${{ env.IMAGE_PLATFORM_PKG_DEB }}
           outputs: |
             type=local,dest=./artifact/pkg
