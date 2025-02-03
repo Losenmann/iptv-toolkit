@@ -1,4 +1,3 @@
-@import "{{ site.theme }}";
 .page-header{
     color: #fff;
     text-align: center;
@@ -6,3 +5,4 @@
     background: -webkit-linear-gradient(to left, #5C258D, #4389A2);
     background: linear-gradient(120deg, #b65a00, #50008f);
 }
+@import 'jekyll-theme-cayman';
