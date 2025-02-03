@@ -21,6 +21,8 @@ jobs:
   init:
     name: Init CI
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     outputs:
       version: ${{ steps.set-var.outputs.version }}
       revision: ${{ steps.set-var.outputs.revision }}
@@ -52,6 +54,8 @@ jobs:
     name: Build image and bin
     needs: init
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
       - name: Test step
         run:
@@ -94,6 +98,8 @@ jobs:
     name: Build packages Linux distros
     needs: [init, build]
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
       - name: 🔍 Checkout repository
         uses: actions/checkout@v4.2.2
@@ -154,6 +160,8 @@ jobs:
     name: Testing image
     needs: build
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
       - name: 🔍 Checkout repository
         uses: actions/checkout@v4.2.2
