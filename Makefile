@@ -34,6 +34,12 @@ endif
 ifeq ($(PKG_DESCRIPTION),)
 	PKG_DESCRIPTION=No description
 endif
+ifeq ($(PKG_HOMEPAGE),)
+	PKG_HOMEPAGE=example.com
+endif
+ifeq ($(PKG_HOMEGIT),)
+	PKG_HOMEGIT=example.com/example
+endif
 ifeq ($(PKG_CHANGELOG),)
 	PKG_CHANGELOG=Unknown
 endif
@@ -85,7 +91,7 @@ build-apk:
 	@sed -i '/^[^#]/s/^/#/g' /root/.abuild/abuild.conf
 	@sed -i -e '/^pkgver/s/$$/${PKG_VERSION}/g' \
 		-e '/^pkgdesc/s/$$/"${PKG_DESCRIPTION}"/g' \
-		-e '/^url/s|$$|"${PKG_HOME_URL}"|g' \
+		-e '/^url/s|$$|"${PKG_HOMEGIT}"|g' \
 		-e '/^license/s/$$/"${PKG_LICENSE}"/g' ./pkg/apkbuild/iptv-toolkit/APKBUILD
 	@apkbuild-lint ./pkg/apkbuild/iptv-toolkit/APKBUILD
 	@abuild -F checksum ./pkg/apkbuild/iptv-toolkit
@@ -99,7 +105,7 @@ build-rpm:
 	@tar -czvf ./pkg/rpmbuild/SOURCES/iptv-toolkit-${PKG_VERSION}.tar.gz -C ./pkg/rpmbuild/ iptv-toolkit-${PKG_VERSION} --remove-files
 	@sed -i -e '/^Version/s/$$/${PKG_VERSION}/g' \
 		-e '/^License/s/$$/${PKG_LICENSE}/g' \
-		-e '/^URL/s|$$|${PKG_HOME_URL}|g' \
+		-e '/^URL/s|$$|${PKG_HOMEPAGE}|g' \
 		-e '/^%description/s/$$/\n  ${PKG_DESCRIPTION}/g' \
 		-e '/^%changelog/s/$$/\n  * ${MAKE_DATE_C} ${MAINTAINER}/g' ./pkg/rpmbuild/SPECS/iptv-toolkit.spec
 ifdef PKG_CHANGELOG
@@ -111,9 +117,9 @@ endif
 build-deb:
 	@install -m755 -D ./artifact/bin/*linux-${PKG_ARCH} ./pkg/debbuild/iptv-toolkit/iptv-toolkit
 	@sed -i -e '/^Maintainer/s/ .*/ ${MAINTAINER}/g' \
-		-e '/^Homepage/s| .*| ${PKG_HOME_URL}|g' \
-		-e '/^Vcs-Browser/s| .*| ${PKG_HOME_URL}|g' \
-		-e '/^Vcs-Git/s| .*| ${PKG_HOME_URL}.git|g' \
+		-e '/^Homepage/s| .*| ${PKG_HOMEPAGE}|g' \
+		-e '/^Vcs-Browser/s| .*| ${PKG_HOMEGIT}|g' \
+		-e '/^Vcs-Git/s| .*| ${PKG_HOMEGIT}.git|g' \
 		-e '/^Description/s/$$/\n ${PKG_DESCRIPTION}/g' \
 		-e '16,$$d' ./pkg/debbuild/iptv-toolkit/debian/control
 	@sed -i -e '/^Copyright/s/$$/\n ${MAKE_DATE_Y}/g' \

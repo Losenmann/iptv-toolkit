@@ -28,6 +28,7 @@ jobs:
       revision: ${{ steps.set-var.outputs.revision }}
       tag_url: ${{ steps.set-var.outputs.tag_url }}
       description: ${{ steps.set-var.outputs.description }}
+      homepage: ${{ steps.set-var.outputs.homepage }}
       license: ${{ steps.set-var.outputs.license }}
       url: ${{ steps.set-var.outputs.url }}
       maintainer: ${{ steps.set-var.outputs.maintainer }}
@@ -44,6 +45,7 @@ jobs:
           gh api /users/${GITHUB_ACTOR} -q '. | "maintainer_email=\(.id)+\(.login)@users.noreply.github.com"' >> "$GITHUB_OUTPUT"
           gh repo view --json licenseInfo -q '.licenseInfo | "license=\(.name)"' >> "$GITHUB_OUTPUT"
           gh repo view --json description -q '. | "description=\(.description)"' >> "$GITHUB_OUTPUT"
+          gh repo view --json homepageUrl -q '. | "homepage=\(.homepageUrl)"' >> "$GITHUB_OUTPUT"
           gh repo view --json url -q '. | "url=\(.url)"' >> "$GITHUB_OUTPUT"
           gh repo view --json latestRelease -q '.latestRelease | "tag_url=\(.url)"' >> "$GITHUB_OUTPUT"
           version=`gh repo view --json latestRelease -q '.latestRelease.tagName' |sed 's/v/version=/'`
@@ -126,7 +128,8 @@ jobs:
             PKG_VERSION=${{ needs.init.outputs.version }}
             PKG_LICENSE=${{ needs.init.outputs.license }}
             PKG_DESCRIPTION=${{ needs.init.outputs.description }}
-            PKG_HOME_URL=${{ needs.init.outputs.url }}
+            PKG_HOMEPAGE=${{ needs.init.outputs.homepage }}
+            PKG_HOMEGIT=${{ needs.init.outputs.url }}
             PKG_MAINTAINER=${{ needs.init.outputs.maintainer }}
             PKG_MAINTAINER_EMAIL=${{ needs.init.outputs.maintainer_email }}
       - name: 🌀 Build DEB package
@@ -145,7 +148,8 @@ jobs:
             PKG_VERSION=${{ needs.init.outputs.version }}
             PKG_LICENSE=${{ needs.init.outputs.license }}
             PKG_DESCRIPTION=${{ needs.init.outputs.description }}
-            PKG_HOME_URL=${{ needs.init.outputs.url }}
+            PKG_HOMEPAGE=${{ needs.init.outputs.homepage }}
+            PKG_HOMEGIT=${{ needs.init.outputs.url }}
             PKG_MAINTAINER=${{ needs.init.outputs.maintainer }}
             PKG_MAINTAINER_EMAIL=${{ needs.init.outputs.maintainer_email }}
             PKG_REVISION=1
