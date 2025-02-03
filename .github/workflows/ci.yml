@@ -130,6 +130,7 @@ jobs:
         with:
           context: .
           file: ./build-tools/debian.Dockerfile
+          provenance: false
           platforms: ${{ env.IMAGE_PLATFORM_PKG_DEB }}
           outputs: |
             type=local,dest=./artifact/pkg
