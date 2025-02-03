@@ -74,6 +74,7 @@ jobs:
       - name: 🌀 Build and export
         uses: docker/build-push-action@ca877d9245402d1537745e0e356eab47c3520991
         with:
+          provenance: false
           tags: losenmann/iptv-toolkit:latest
           platforms: ${{ env.IMAGE_PLATFORM }}
           cache-to: type=local,dest=${{ env.ARTIFACTS_PATH }}/cache
@@ -110,6 +111,7 @@ jobs:
         with:
           context: .
           file: ./build-tools/rhel.Dockerfile
+          provenance: false
           platforms: ${{ env.IMAGE_PLATFORM_PKG_RPM }}
           outputs: |
             type=local,dest=./artifact/pkg
@@ -128,6 +130,7 @@ jobs:
         with:
           context: .
           file: ./build-tools/debian.Dockerfile
+          provenance: false
           platforms: ${{ env.IMAGE_PLATFORM_PKG_DEB }}
           outputs: |
             type=local,dest=./artifact/pkg
