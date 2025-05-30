@@ -6,8 +6,7 @@ import (
     "fmt"
     "encoding/xml"
     "log/slog"
-    "io/ioutil"
-    "iptv-toolkit/main/setup"
+    "github.com/losenmann/iptv-toolkit/setup"
     "regexp"
     "github.com/gabriel-vasile/mimetype"
     "bytes"
@@ -35,10 +34,10 @@ type Track struct {
 
 func ConvertPlaylist(file []byte, udpxy string, epg string) {
     var (
-        path_playlist_m3u = *setup.PlaylistPathDst + "/playlist.m3u"
-        path_playlist_udpxy_m3u = *setup.PlaylistPathDst + "/playlist_udpxy.m3u"
-        path_playlist_xml = *setup.PlaylistPathDst + "/playlist.xml"
-        path_playlist_udpxy_xml = *setup.PlaylistPathDst + "/playlist_udpxy.xml"
+        path_playlist_m3u = *setup.PlaylistDir + "/playlist.m3u"
+        path_playlist_udpxy_m3u = *setup.PlaylistDir + "/playlist_udpxy.m3u"
+        path_playlist_xml = *setup.PlaylistDir + "/playlist.xml"
+        path_playlist_udpxy_xml = *setup.PlaylistDir + "/playlist_udpxy.xml"
         playlist_xml, playlist_m3u, playlist_udpxy_xml, playlist_udpxy_m3u []byte
     )
 
@@ -63,12 +62,12 @@ func ConvertPlaylist(file []byte, udpxy string, epg string) {
         }
     }
 
-    if err := os.MkdirAll(*setup.PlaylistPathDst, 0777); err != nil {
+    if err := os.MkdirAll(*setup.PlaylistDir, 0777); err != nil {
         if *setup.LogLVL <= 2 {
             slog.Warn(fmt.Sprintf("%v", err))
         }
     } else {
-        if err := ioutil.WriteFile(path_playlist_m3u, playlist_m3u, 0644); err != nil {
+        if err := os.WriteFile(path_playlist_m3u, playlist_m3u, 0644); err != nil {
             if *setup.LogLVL <= 2 {
                 slog.Warn(fmt.Sprintf("%v", err))
             }
@@ -77,7 +76,7 @@ func ConvertPlaylist(file []byte, udpxy string, epg string) {
                 slog.Info("Successfully write " + path_playlist_m3u)
             }
         }
-        if err := ioutil.WriteFile(path_playlist_xml, playlist_xml, 0644); err != nil {
+        if err := os.WriteFile(path_playlist_xml, playlist_xml, 0644); err != nil {
             if *setup.LogLVL <= 2 {
                 slog.Warn(fmt.Sprintf("%v", err))
             }
@@ -87,7 +86,7 @@ func ConvertPlaylist(file []byte, udpxy string, epg string) {
             }
         }
         if len(playlist_udpxy_m3u) > 0 {
-            if err := ioutil.WriteFile(path_playlist_udpxy_m3u, playlist_udpxy_m3u, 0644); err != nil {
+            if err := os.WriteFile(path_playlist_udpxy_m3u, playlist_udpxy_m3u, 0644); err != nil {
                 if *setup.LogLVL <= 2 {
                 slog.Warn(fmt.Sprintf("%v", err))
                 }
@@ -98,7 +97,7 @@ func ConvertPlaylist(file []byte, udpxy string, epg string) {
             }
         }
         if len(playlist_udpxy_xml) > 0 {
-            if err := ioutil.WriteFile(path_playlist_udpxy_xml, playlist_udpxy_xml, 0644); err != nil {
+            if err := os.WriteFile(path_playlist_udpxy_xml, playlist_udpxy_xml, 0644); err != nil {
                 if *setup.LogLVL <= 2 {
                     slog.Warn(fmt.Sprintf("%v", err))
                 }
@@ -148,7 +147,7 @@ func XmlToM3u(file []byte, epg ...string) ([]byte) {
         if playlist.TrackList.Track[i].Location != "" {
             location = track + "\n" + playlist.TrackList.Track[i].Location
         } else {
-            track = track + "\n"
+            track += "\n"
         }
         data = data + location
     }

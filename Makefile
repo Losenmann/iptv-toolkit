@@ -152,7 +152,8 @@ build-bin:
 build-bin-main:
 	@GOOS=${TARGETOS} GOARCH=${TARGETARCH} \
 		go build \
-		-ldflags "-s -w" \
+		-ldflags "-s -w" 
+		-v \
 		-o ./artifact/bin/iptv-toolkit-${TARGETOS}-${TARGETARCH} \
 		./main.go
 ifeq (${BIN_COMPRESS},true)
@@ -162,11 +163,6 @@ ifneq (${TARGETARCH},s390x)
 endif
 endif
 endif
-
-build-bin-udpxy:
-	@mkdir -p ./build
-	@git -C ./build clone --branch ${UDPXY_VERSION} https://github.com/pcherenkov/udpxy.git
-	@make -C ./build/udpxy/chipmunk
 
 install:
 	@mkdir -p /www/iptv-toolkit/{playlist,tvguide,tvrecord}

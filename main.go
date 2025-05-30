@@ -1,14 +1,12 @@
-// Test ci pipeline true
 package main
 
 import (
     "log/slog"
     "os"
     "fmt"
-    "iptv-toolkit/main/setup"
-    "iptv-toolkit/main/webserver"
-    "iptv-toolkit/main/scheduler"
-    "iptv-toolkit/main/udpxy"
+    "github.com/losenmann/iptv-toolkit/setup"
+    "github.com/losenmann/iptv-toolkit/webserver"
+    "github.com/losenmann/iptv-toolkit/scheduler"
 )
 
 func init() {
@@ -16,7 +14,7 @@ func init() {
 }
 
 func main() {
-    if err := os.MkdirAll(*setup.WebPath, 0744); err != nil {
+    if err := os.MkdirAll(*setup.WebFilesDir, 0744); err != nil {
         if *setup.LogLVL <= 2 {
             slog.Warn(fmt.Sprintf("%v", err))
         }
@@ -24,13 +22,14 @@ func main() {
     }
 
     scheduler.Task()
-    if *setup.Schedule == true {
+    if *setup.Schedule {
         scheduler.Main(*setup.Crontab)
     }
-    if *setup.Udpxy == true {
-        go udpxy.UdpxyExt()
+    if *setup.Udpxy {
+        webserver.Udpxy(*setup.WebUdpxyPath)
     }
-    if *setup.Web == true {
-        webserver.Main(*setup.WebPort, *setup.WebPath)
+    if *setup.Files {
+        webserver.Files(*setup.WebFilesPath, *setup.WebFilesDir)
     }
+    webserver.Run(*setup.WebPort)
 }

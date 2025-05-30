@@ -9,3 +9,5 @@ tv
 *.ndx
 *.pdt
 upx
+./gocache
+iptv-toolkit

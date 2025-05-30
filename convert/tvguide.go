@@ -1,7 +1,7 @@
 package convert
 
 import (
-    "iptv-toolkit/main/setup"
+    "github.com/losenmann/iptv-toolkit/setup"
     "archive/zip"
     "encoding/xml"
     "encoding/binary"
@@ -10,10 +10,10 @@ import (
     "os"
     "bytes"
     "regexp"
-    "io/ioutil"
+    "io"
     "golang.org/x/text/encoding/charmap"
     "math"
-	"time"
+    "time"
     "github.com/gabriel-vasile/mimetype"
     "log/slog"
     "strconv"
@@ -41,9 +41,9 @@ type Programme struct {
 
 func ConvertEpg(file []byte) {
     var (
-        path_epg_jtv = *setup.EpgPathDst + "/epg.zip"
-        path_epg_xml = *setup.EpgPathDst + "/epg.xml"
-        path_epg_xmlgz = *setup.EpgPathDst + "/epg.xml.gz"
+        path_epg_jtv = *setup.EpgDir + "/epg.zip"
+        path_epg_xml = *setup.EpgDir + "/epg.xml"
+        path_epg_xmlgz = *setup.EpgDir + "/epg.xml.gz"
         epg_jtv, epg_xml, epg_xmlgz []byte
     )
     
@@ -65,12 +65,12 @@ func ConvertEpg(file []byte) {
             slog.Warn("Unknown type epg")
         }
     }
-    if err := os.MkdirAll(*setup.EpgPathDst, 0777); err != nil {
+    if err := os.MkdirAll(*setup.EpgDir, 0777); err != nil {
         if *setup.LogLVL <= 2 {
             slog.Warn(fmt.Sprintf("%v", err))
         }
     } else {
-        if err := ioutil.WriteFile(path_epg_jtv, epg_jtv, 0644); err != nil {
+        if err := os.WriteFile(path_epg_jtv, epg_jtv, 0644); err != nil {
             if *setup.LogLVL <= 2 {
                 slog.Warn(fmt.Sprintf("%v", err))
             }
@@ -79,7 +79,7 @@ func ConvertEpg(file []byte) {
                 slog.Info("Successfully write " + path_epg_jtv)
             }
         }
-        if err := ioutil.WriteFile(path_epg_xml, epg_xml, 0644); err != nil {
+        if err := os.WriteFile(path_epg_xml, epg_xml, 0644); err != nil {
             if *setup.LogLVL <= 2 {
                 slog.Warn(fmt.Sprintf("%v", err))
             }
@@ -88,7 +88,7 @@ func ConvertEpg(file []byte) {
                 slog.Info("Successfully write " + path_epg_xml)
             }
         }
-        if err := ioutil.WriteFile(path_epg_xmlgz, epg_xmlgz, 0644); err != nil {
+        if err := os.WriteFile(path_epg_xmlgz, epg_xmlgz, 0644); err != nil {
             if *setup.LogLVL <= 2 {
                 slog.Warn(fmt.Sprintf("%v", err))
             }
@@ -127,7 +127,7 @@ func JtvToXml(file []byte) ([]byte) {
                 }
                 continue
             } else {
-                pdt, _ := ioutil.ReadAll(rc)
+                pdt, _ := io.ReadAll(rc)
                 title = jtvParseTitle(pdt)
                 rc.Close()
             }
@@ -137,7 +137,7 @@ func JtvToXml(file []byte) ([]byte) {
                 }
                 continue
             } else {
-                ndx, _ := ioutil.ReadAll(rc)
+                ndx, _ := io.ReadAll(rc)
                 duration = jtvParseDuration(ndx)
                 rc.Close()
             }
@@ -191,7 +191,7 @@ func XmlGzToXml(data []byte) ([]byte) {
             slog.Warn(fmt.Sprintf("%v", err))
         }
     } else {
-        if data, err := ioutil.ReadAll(gzreader); err != nil {
+        if data, err := io.ReadAll(gzreader); err != nil {
             if *setup.LogLVL <= 2 {
                 slog.Warn(fmt.Sprintf("%v", err))
             }

@@ -2,9 +2,9 @@ package scheduler
 
 import (
     "log/slog"
-    "iptv-toolkit/main/setup"
-    "iptv-toolkit/main/util"
-    "iptv-toolkit/main/convert"
+    "github.com/losenmann/iptv-toolkit/setup"
+    "github.com/losenmann/iptv-toolkit/util"
+    "github.com/losenmann/iptv-toolkit/convert"
 )
 
 func Task() {
@@ -15,7 +15,7 @@ func Task() {
                 slog.Warn("playlist file not specified")
             }
         } else {
-            convert.ConvertPlaylist(playlist, *setup.PlalistUdpxy, *setup.EmbedEPG)
+            convert.ConvertPlaylist(playlist, *setup.PlaylistEmbedUdpxy, *setup.PlaylistEmbedEPG)
         }
     }
 
