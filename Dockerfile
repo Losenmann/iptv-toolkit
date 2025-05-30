@@ -1,4 +1,4 @@
-FROM --platform=$BUILDPLATFORM golang:1.22.5-alpine3.20 AS builder-main
+FROM --platform=$BUILDPLATFORM golang:1.24.3-alpine3.20 AS builder-main
 ARG TARGETOS \
     TARGETARCH \
     BIN_COMPRESS=true \
