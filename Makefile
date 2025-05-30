@@ -152,7 +152,7 @@ build-bin:
 build-bin-main:
 	@GOOS=${TARGETOS} GOARCH=${TARGETARCH} \
 		go build \
-		-ldflags "-s -w" 
+		-ldflags "-s -w" \
 		-v \
 		-o ./artifact/bin/iptv-toolkit-${TARGETOS}-${TARGETARCH} \
 		./main.go
