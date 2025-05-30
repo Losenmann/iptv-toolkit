@@ -1,79 +1,49 @@
 package udpxy
 
 import (
-	"iptv-toolkit/main/setup"
-	"encoding/hex"
-	"log/slog"
-    "fmt"
-	"log"
-	"net"
-	"time"
-	"os/exec"
-	"os"
-)
-
-var (
-    v_tvguide = *setup.EpgPathDst + "/tvguide"
-    v_playlist = *setup.PlaylistPathDst + "/playlist"
+    "net"
+    "strings"
+    "bufio"
+    "github.com/gin-gonic/gin"
 )
 
 const (
-//	srvAddr         = "224.0.0.1:9999"
-	srvAddr         = "239.255.43.72:1234"
-	maxDatagramSize = 8192
+    maxDatagramSize = 32768
 )
 
-func Main() {
-	go ping(srvAddr)
-	serveMulticastUDP(srvAddr, msgHandler)
-}
+func Udpxy(c *gin.Context) {
+    parts := strings.Split(c.Request.URL.Path, "/")
+    if len(parts) < 3 || parts[1] != "udp" {
+        c.String(400, "No address specified")
+        return
+    }
 
-func ping(a string) {
-	addr, err := net.ResolveUDPAddr("udp", a)
-	if err != nil {
-		log.Fatal(err)
-	}
-	_, err = net.DialUDP("udp", nil, addr)
-	for {
-	//	c.Write([]byte("hello, world\n"))
-		time.Sleep(1 * time.Second)
-	}
-}
+    addr, err := net.ResolveUDPAddr("udp", parts[2])
+    if err != nil {
+        c.String(500, err.Error())
+        return
+    }
 
-func msgHandler(src *net.UDPAddr, n int, b []byte) {
-	log.Println(n, "bytes read from", src)
-	log.Println(hex.Dump(b[:n]))
-	log.Println(b[:n])
-}
+    conn, err := net.ListenMulticastUDP("udp", nil, addr)
+    if err != nil {
+        c.String(500, err.Error())
+        return
+    }
+    defer conn.Close()
 
-func serveMulticastUDP(a string, h func(*net.UDPAddr, int, []byte)) {
-	
+    reader := bufio.NewReader(conn)
+    b := make([]byte, maxDatagramSize)
+    for {
+        if n, err := reader.Read(b); err != nil {
+            c.String(500, err.Error())
+            return
+        } else {
+            c.Writer.Header().Set("Content-Type", "application/octet-stream")
+            c.Writer.WriteHeader(200)
 
-	addr, err := net.ResolveUDPAddr("udp", a)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	l, err := net.ListenMulticastUDP("udp", nil, addr)
-	l.SetReadBuffer(maxDatagramSize)
-	
-	for {
-		b := make([]byte, maxDatagramSize)
-		n, src, err := l.ReadFromUDP(b)
-		if err != nil {
-			log.Fatal("ReadFromUDP failed:", err)
-		}
-		h(src, n, b)
-	}
-}
-
-func UdpxyExt() {
-	cmd := exec.Command("udpxy", "-p", "4022", "-vTSl", "/proc/1/fd/1")
-	_, err := cmd.Output()
-	if err != nil {
-    	if *setup.LogLVL <= 2 {
-			slog.Warn(fmt.Sprintf("%v", err))
-		}
-	}
-	os.Exit(1)
+            if _, err := c.Writer.Write(b[:n]); err != nil {
+                break
+            }
+        }
+    }
 }

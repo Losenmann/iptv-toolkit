@@ -5,8 +5,8 @@ import (
     "net/http"
     "crypto/tls"
     "log/slog"
-    "io/ioutil"
-    "iptv-toolkit/main/setup"
+    "io"
+    "github.com/losenmann/iptv-toolkit/setup"
     "fmt"
     "regexp"
     "errors"
@@ -35,7 +35,7 @@ func getFileLocal(file string) ([]byte, error) {
     }
     defer f.Close()
 
-    data, err := ioutil.ReadAll(f)
+    data, err := io.ReadAll(f)
     if err != nil {
         if *setup.LogLVL <= 2 {
             slog.Warn(fmt.Sprintf("%v", err))
@@ -61,7 +61,7 @@ func getFileRemote(url string) ([]byte, error) {
     }
     defer res.Body.Close()
 
-    data, err := ioutil.ReadAll(res.Body)
+    data, err := io.ReadAll(res.Body)
     if err != nil {
         if *setup.LogLVL <= 2 {
             slog.Warn(fmt.Sprintf("%v", err))

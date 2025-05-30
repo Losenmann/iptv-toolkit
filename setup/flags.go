@@ -10,17 +10,19 @@ import (
 var (
     LogLVL              = flag.Int("l", 1, "Log lvl")
     Epg                 = flag.String("e", getEnv("IPTVTOOLKIT_EPG", ""), "EPG URI")
-    EpgPathDst          = flag.String("E", strippath(getEnv("IPTVTOOLKIT_EPG_DST", "./files/tvguide")), "Path EPGs storage")
+    EpgDir              = flag.String("E", strippath(getEnv("IPTVTOOLKIT_EPG_DIR", "./files/tvguide")), "Path EPGs storage")
     Playlist            = flag.String("p", getEnv("IPTVTOOLKIT_PLAYLIST", ""), "Playlist URI")
-    PlaylistPathDst     = flag.String("P", strippath(getEnv("IPTVTOOLKIT_PLAYLIST_DST", "./files/playlist")), "Path playlists storage")
-    PlalistUdpxy        = flag.String("u", getEnv("IPTVTOOLKIT_PLAYLIST_UDPXY", ""), "Create a playlist with embedded udpxy")
-    EmbedEPG            = flag.String("i", getEnv("IPTVTOOLKIT_PLAYLIST_EMBED_EPG", ""), "Embed a link to EPG in the playlist")
-    WebPath             = flag.String("f", getEnv("IPTVTOOLKIT_WEB_PATH", "./files"), "Web Server path")
-    WebPort             = flag.Int("w", aToi(getEnv("IPTVTOOLKIT_WEB_PORT", "4023")), "Web Server port")
+    PlaylistDir         = flag.String("P", strippath(getEnv("IPTVTOOLKIT_PLAYLIST_DIR", "./files/playlist")), "Path playlists storage")
+    PlaylistEmbedEPG    = flag.String("b", getEnv("IPTVTOOLKIT_PLAYLIST_EMBED_EPG", ""), "UDPXY URI")
+    PlaylistEmbedUdpxy  = flag.String("a", getEnv("IPTVTOOLKIT_PLAYLIST_EMBED_UDPXY", ""), "Create a playlist with embedded udpxy")
+    WebFilesPath        = flag.String("f", getEnv("IPTVTOOLKIT_WEB_FILES_PATH", "/files"), "Web Server static files path")
+    WebFilesDir         = flag.String("d", getEnv("IPTVTOOLKIT_WEB_FILES_DIR", "./files"), "Directory on the host for web server files")
+    WebUdpxyPath        = flag.String("u", getEnv("IPTVTOOLKIT_WEB_UDXPY_PATH", "/udp/:addr"), "Web Server multicast path")
+    WebPort             = flag.Int("w", aToi(getEnv("IPTVTOOLKIT_WEB_PORT", "4022")), "Web Server port")
     Health              = flag.Bool("H", false, "Start Healthcheck server")
     Udpxy               = flag.Bool("U", false, "Start UDPXY proxy")
     Schedule            = flag.Bool("S", false, "Start Schedule job")
-    Web                 = flag.Bool("W", false, "Start Web Server")
+    Files               = flag.Bool("F", false, "Start File Server")
     Crontab             = flag.String("c", getEnv("IPTVTOOLKIT_CRONTAB", "30 6 * * *"), "Сrontab style task schedule")
 )
 
@@ -39,8 +41,8 @@ func aToi(value string) int {
 
 func Initgo() {
     flag.Parse()
-    *EpgPathDst = regexp.MustCompile(`/$`).ReplaceAllString(*EpgPathDst, "")
-    *PlaylistPathDst = regexp.MustCompile(`/$`).ReplaceAllString(*PlaylistPathDst, "")
+    *EpgDir = regexp.MustCompile(`/$`).ReplaceAllString(*EpgDir, "")
+    *PlaylistDir = regexp.MustCompile(`/$`).ReplaceAllString(*PlaylistDir, "")
 }
 
 func strippath(a string) string {
