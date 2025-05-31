@@ -1,9 +1,9 @@
 package webserver
 
 import (
-    "strconv"
     "github.com/gin-gonic/gin"
     "github.com/losenmann/iptv-toolkit/udpxy"
+    "strconv"
 )
 
 var router *gin.Engine
@@ -21,5 +21,5 @@ func Files(p, d string) {
 }
 
 func Run(p int) {
-    router.Run(strconv.Itoa(p))
+    router.Run(":" + strconv.Itoa(p))
 }

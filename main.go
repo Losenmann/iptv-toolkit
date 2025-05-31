@@ -1,12 +1,12 @@
 package main
 
 import (
-    "log/slog"
-    "os"
     "fmt"
+    "github.com/losenmann/iptv-toolkit/scheduler"
     "github.com/losenmann/iptv-toolkit/setup"
     "github.com/losenmann/iptv-toolkit/webserver"
-    "github.com/losenmann/iptv-toolkit/scheduler"
+    "log/slog"
+    "os"
 )
 
 func init() {

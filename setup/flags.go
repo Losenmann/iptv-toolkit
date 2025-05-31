@@ -1,8 +1,8 @@
 package setup
 
 import (
-    "os"
     "flag"
+    "os"
     "regexp"
     "strconv"
 )

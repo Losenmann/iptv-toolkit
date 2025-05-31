@@ -2,9 +2,9 @@ package scheduler
 
 import (
     "fmt"
-    "log/slog"
     "github.com/go-co-op/gocron/v2"
     "github.com/losenmann/iptv-toolkit/setup"
+    "log/slog"
 )
 
 func Main(expression string) {

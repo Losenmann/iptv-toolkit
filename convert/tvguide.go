@@ -6,6 +6,7 @@ import (
     "encoding/xml"
     "encoding/binary"
     "compress/gzip"
+    
     "fmt"
     "os"
     "bytes"

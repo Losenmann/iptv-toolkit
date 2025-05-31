@@ -1,14 +1,13 @@
 package scheduler
 
 import (
-    "log/slog"
+    "github.com/losenmann/iptv-toolkit/convert"
     "github.com/losenmann/iptv-toolkit/setup"
     "github.com/losenmann/iptv-toolkit/util"
-    "github.com/losenmann/iptv-toolkit/convert"
+    "log/slog"
 )
 
 func Task() {
-    //convert.XmlToJtv()
     if *setup.Playlist != "" {
         if playlist, err := util.GetFile(*setup.Playlist); err != nil {
             if *setup.LogLVL <= 2 {

@@ -2,14 +2,14 @@ package convert
 
 import (
     "bufio"
-    "os"
-    "fmt"
-    "encoding/xml"
-    "log/slog"
-    "github.com/losenmann/iptv-toolkit/setup"
-    "regexp"
-    "github.com/gabriel-vasile/mimetype"
     "bytes"
+    "encoding/xml"
+    "fmt"
+    "github.com/gabriel-vasile/mimetype"
+    "github.com/losenmann/iptv-toolkit/setup"
+    "log/slog"
+    "os"
+    "regexp"
 )
 
 type Playlist struct {

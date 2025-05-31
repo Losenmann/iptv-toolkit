@@ -1,10 +1,10 @@
 package udpxy
 
 import (
-    "net"
-    "strings"
     "bufio"
     "github.com/gin-gonic/gin"
+    "net"
+    "strings"
 )
 
 const (

@@ -1,15 +1,15 @@
 package util
 
 import (
-    "os"
-    "net/http"
     "crypto/tls"
-    "log/slog"
-    "io"
-    "github.com/losenmann/iptv-toolkit/setup"
-    "fmt"
-    "regexp"
     "errors"
+    "fmt"
+    "github.com/losenmann/iptv-toolkit/setup"
+    "io"
+    "log/slog"
+    "net/http"
+    "os"
+    "regexp"
 )
 
 func GetFile(uri string) ([]byte, error) {
