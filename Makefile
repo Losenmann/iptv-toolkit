@@ -6,16 +6,25 @@ IMAGE_NAME ?= iptv-toolkit
 IMAGE_VERSION ?= ${VERSION}
 IMAGE_BIN_COMPRESS ?= true
 
+BIN_COMPRESS?=true
+
 MAKE_PATH_BUILD ?= ./build
-MAKE_DATE!=date
-MAKE_DATE_U!=date +%s -d "${MAKE_DATE}"
-MAKE_DATE_Y!=date +%Y -d "${MAKE_DATE}"
-MAKE_DATE_R!=date -R -d "${MAKE_DATE}"
-MAKE_DATE_C!=date '+%a %b %d %Y' -d "${MAKE_DATE}"
+MAKE_DATE!=date -u +%s
+MAKE_DATE_U!=date +%s -d @"${MAKE_DATE}"
+MAKE_DATE_Y!=date +%Y -d @"${MAKE_DATE}"
+MAKE_DATE_R!=date -R -d @"${MAKE_DATE}"
+MAKE_DATE_C!=date '+%a %b %d %Y' -d @"${MAKE_DATE}"
 MAKE_USER!=whoami
 MAKE_PWD!=pwd
+MAKE_GO_TMP!=echo `pwd`/_tmp
 HOME=${MAKE_PWD}/pkg
 
+ifeq ($(TARGETOS),)
+	TARGETOS!=go env GOOS
+endif
+ifeq ($(TARGETARCH),)
+	TARGETARCH!=go env GOARCH
+endif
 ifeq ($(PKG_VERSION),)
 	PKG_VERSION=0.0.1
 endif
@@ -52,6 +61,9 @@ PACKAGER=${MAINTAINER}
 .PHONY: realesae run docker testing
 
 all: build
+
+test:
+	@echo ${MAKE_GO_TMP}
 
 test-go-run:
 	@go run ./main.go ${RUN_ARG}
@@ -132,30 +144,32 @@ endif
 	@echo '\n -- ${PACKAGER}  ${MAKE_DATE_R}\n' >> ./pkg/debbuild/iptv-toolkit/debian/changelog
 	@cd ./pkg/debbuild/iptv-toolkit; dpkg-buildpackage -b -us -uc
 
-build-image:
+image:
 	@docker buildx build . \
 		-f Dockerfile \
-		--build-arg VERSION=${IMAGE_VERSION} \
-		--build-arg BIN_COMPRESS=${IMAGE_BIN_COMPRESS} \
-		-t ${IMAGE_REPO}/${IMAGE_NAME}:${IMAGE_VERSION} \
-		-t ${IMAGE_REPO}/${IMAGE_NAME}:latest --load
+		--build-arg BIN_COMPRESS=${BIN_COMPRESS} \
+		-t ${IMAGE_REPO}/${IMAGE_NAME}:latest \
+		--load
+
+bin:
+	@docker run \
+		--rm \
+		-w /opt/src \
+		-v .:/opt/src \
+		-e BIN_COMPRESS=${BIN_COMPRESS} \
+		-e TARGETOS=${TARGETOS} \
+		-e TARGETARCH=${TARGETARCH} \
+		-t golang:1.24.3-alpine \
+		sh -c "apk add make upx && make build-bin"
 
 build-bin:
-	@docker buildx build \
-		-f Dockerfile \
-		--build-arg VERSION=${IMAGE_VERSION} \
-		--build-arg BIN_COMPRESS=${IMAGE_BIN_COMPRESS} \
-		--output=type=local,dest=${MAKE_PATH_BUILD}/artifact/images \
-		.
-	@cp -p ./artifact/images/usr/bin/iptv-toolkit-* ./artifact/bin/
-
-build-bin-main:
-	@GOOS=${TARGETOS} GOARCH=${TARGETARCH} \
+	@go telemetry off
+	@GOPATH=${MAKE_GO_TMP}/gopath GOCACHE=${MAKE_GO_TMP}/gocache GOOS=${TARGETOS} GOARCH=${TARGETARCH} \
 		go build \
 		-ldflags "-s -w" \
 		-v \
 		-o ./artifact/bin/iptv-toolkit-${TARGETOS}-${TARGETARCH} \
-		./main.go
+		.
 ifeq (${BIN_COMPRESS},true)
 ifneq (${TARGETARCH},riscv64)
 ifneq (${TARGETARCH},s390x)
@@ -163,6 +177,8 @@ ifneq (${TARGETARCH},s390x)
 endif
 endif
 endif
+	@mkdir -p /tmp/app/www/{playlist,tvguide,tvrecord}
+	@cp -p ./artifact/bin/iptv-toolkit-${TARGETOS}-${TARGETARCH} /tmp/app/iptv-toolkit
 
 install:
 	@mkdir -p /www/iptv-toolkit/{playlist,tvguide,tvrecord}

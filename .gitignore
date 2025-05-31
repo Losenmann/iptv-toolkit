@@ -9,5 +9,9 @@ tv
 *.ndx
 *.pdt
 upx
-./gocache
+_*
+artifact
+pkg/.config
+pkg/.docker
+pkg/go
 iptv-toolkit

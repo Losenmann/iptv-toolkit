@@ -11,3 +11,4 @@
 !setup/
 !webserver/
 !convert/
+!Makefile
