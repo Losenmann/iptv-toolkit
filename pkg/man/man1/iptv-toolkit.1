@@ -1,0 +1,135 @@
+.TH "iptv-toolkit" 1 "04 Jun 2025" "1.0" "User Commands"
+
+.SH NAME
+iptv-toolkit - fast and convenient work with IPTV
+
+.SH SYNOPSIS
+iptv-toolkit [-a URL][-e FILE|URL][-E DIR][-p FILE|URL][-P DIR][-u URL_PATH][-f URL_PATH][-F DIR][-w PORT][-c CRONTAB][-d][-t][-U][-F][-S][-H]
+
+.SH DESCRIPTION
+iptv-toolkit allows you to download playlists and program guides on schedule, convert them into several different formats.
+It has built-in udp-to-http support and a small file server for downloading processed files.
+The service is just 1 binary file.
+All this makes working with IPTV convenient and fast.
+
+.SH OPTIONS
+.TP
+.B -a\fR [URL]
+The address at which the service will be available.
+.TP
+.B -e\fR [FILE|URL]
+Tvguide location.
+Can be either local or remote.
+For remote location, \fBhttp\fR and \fBhttps\fR protocols are supported.
+.TP
+.B -E\fR [DIR]
+The directory in which the TV programs will be placed.
+.TP
+.B -p\fR [FILE|URL]
+Playlist location.
+Can be either local or remote.
+For remote location, \fBhttp\fR and \fBhttps\fR protocols are supported.
+.TP
+.B -P\fR [DIR]
+The directory in which the playlists will be placed.
+.TP
+.B -f\fR [URL_PATH]
+URL path file server (default: \fI/files\fR).
+.TP
+.B -u\fR [URL_PATH]
+URL path udpxy (default: \fI/udp\fR).
+.TP
+.B -F\fR [DIR]
+Location on host files for web server (default: \fI./files\fR).
+.TP
+.B -w\fR [PORT]
+Set the listening port (default: 4022).
+.TP
+.B -c\fR [CRONTAB]
+Set a schedule for updating files in crontab format (default: 30 6 * * *).
+.TP
+.B -d
+Create an additional playlist in which links to the http stream point to this service.
+This is usually useful when the client does not have the functionality to access udpxy.
+For this function to work correctly, you must set the \fB-a\fR key or the \fBIPTVTOOLKIT_ADDRESS\fR variable.
+.TP
+.B -t
+Add the program guide to the playlist.
+This action will add the \fBurl-tvg\fR directive to the m3u files, pointing to the URL address of the program guide.
+For this function to work correctly, you must set the \fB-a\fR key or the \fBIPTVTOOLKIT_ADDRESS\fR variable.
+.TP
+.B -U
+Enable udpxy converter. \fRThe service will be available on the web path: \fB/udp/<mulicast_group:port>\fR.
+.TP
+.B -F
+Enable File Server.
+.TP
+.B -S
+Enable Scheduler.
+.TP
+.B -H
+Enable Healthcheck server.
+
+.SH ENVIRONMENT
+.TP
+.B IPTVTOOLKIT_ADDRESS
+The address at which the service will be available (example: \fIhttp://localhost.local:4022\fR).
+.TP
+.B IPTVTOOLKIT_EPG
+Tvguide location.
+Can be either local or remote.
+For remote location, \fBhttp\fR and \fBhttps\fR protocols are supported (example: \fIhttps://example.com/tvguide.zip\fR).
+.TP
+.B IPTVTOOLKIT_EPG_DIR
+The directory in which the TV programs will be placed (example: \fI./files/tvguide\fR).
+.TP
+.B IPTVTOOLKIT_PLAYLIST
+Playlist location.
+Can be either local or remote.
+For remote location, \fBhttp\fR and \fBhttps\fR protocols are supported (example: \fIhttps://example.com/playlist.m3u\fR).
+.TP
+.B IPTVTOOLKIT_PLAYLIST_DIR
+The directory in which the playlists will be placed (example: \fI./files/playlist\fR).
+.TP
+.B IPTVTOOLKIT_EMBED_EPG
+Add the program guide to the playlist.
+This action will add the \fBurl-tvg\fR directive to the m3u files, pointing to the URL address of the program guide.
+To generate links correctly, you need to set the \fB-a\fR key or the \fBIPTVTOOLKIT_ADDRESS\fR variable (example: true).
+.TP
+.B IPTVTOOLKIT_EMBED_UDPXY
+Create an additional playlist in which links to the http stream point to this service.
+This is usually useful when the client does not have the functionality to access udpxy.
+To generate links correctly, you need to set the \fB-a\fR key or the \fBIPTVTOOLKIT_ADDRESS\fR variable (example: true).
+.TP
+.B IPTVTOOLKIT_WEB_PATH_FILES
+URL path file server (example: \fI/files\fR).
+.TP
+.B IPTVTOOLKIT_WEB_PATH_UDXPY
+URL path udpxy (example: \fI/udp\fR).
+.TP
+.B IPTVTOOLKIT_WEB_DIR
+Location on host files for web server (example: \fI./files\fR).
+.TP
+.B IPTVTOOLKIT_WEB_PORT
+Set the listening port (example: 4022).
+.TP
+.B IPTVTOOLKIT_CRONTAB
+Set a schedule for updating files in crontab format (example: 30 6 * * *).
+
+.SH FILES
+.TP
+.I /usr/bin/iptv-toolkit
+Location of the executable file.
+.TP
+.I /var/www/iptv-toolkit/files
+Root directory for displaying processed files.
+
+.SH NOTES
+.nf
+CLI keys take precedence over environment variables.
+There is usually no need to install CLI keys, except for the following: \fB-e\fR, \fB-p\fR, \fB-U\fR, \fB-F\fR, \fB-S\fR, \fB-H\fR.
+The service running in an isolated docker environment has the following keys already installed: \fB-U\fR, \fB-F\fR, \fB-S\fR.
+If the service is launched in \fBDocker\fR, then through the \fBcommand\fR directive, you can reinstall the startup arguments.
+
+.SH AUTHOR
+Maxim Voynov (maximm.14@yandex.ru)
