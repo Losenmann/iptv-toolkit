@@ -88,12 +88,13 @@ jobs:
           tags: losenmann/iptv-toolkit:latest
           platforms: ${{ env.IMAGE_PLATFORM }}
           cache-to: type=local,dest=${{ env.ARTIFACTS_PATH }}/cache
-          outputs: type=local,dest=${{ env.ARTIFACTS_PATH }}/images
+#          outputs: type=local,dest=${{ env.ARTIFACTS_PATH }}/images
+          outputs: type=docker,dest=${{ env.ARTIFACTS_PATH }}/images/images.tar
       - name: 🧬 Extract executable file
         working-directory: ${{ env.ARTIFACTS_PATH }}/images
         run: |
-          cp -vf ./*/iptv-toolkit-* ../bin/
-          cp -vf ./*/iptv-toolkit-* ../asset/
+          tar -xvf ${{ env.ARTIFACTS_PATH }}/images/images.tar --wildcards iptv-toolkit-* -C ../bin/
+          cp -rvf ../bin/* ../asset/
       - name: 📦 Upload artifact
         uses: actions/upload-artifact@v4
         with:
@@ -167,13 +168,9 @@ jobs:
         with:
           name: artifact
           path: ${{ env.ARTIFACTS_PATH }}
-      - name: 🌀 Import image
-        uses: docker/build-push-action@ca877d9245402d1537745e0e356eab47c3520991
-        with:
-          cache-from: type=local,src=${{ env.ARTIFACTS_PATH }}/cache
-          load: true
       - name: ⚡️ Run container
         run: |
+          docker load --input ${{ env.ARTIFACTS_PATH }}/image.tar
           docker compose -f ./deploy/docker-compose.yaml --env-file ./testing/testing.env up -d
       - name: 🚀️ Run tests
         run: |
