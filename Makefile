@@ -163,13 +163,17 @@ endif
 endif
 endif
 	@chown -R ${PKG_USER}:${PKG_GROUP} ./artifact
-	@mkdir -p /tmp/app/files/{playlist,tvguide,tvrecord}
+	@mkdir -p /tmp/app/files/playlist/../tvguide/../tvrecord
 	@cp -p ./artifact/bin/iptv-toolkit-${TARGETOS}-${TARGETARCH} /tmp/app/
 	@ln -s /tmp/app/iptv-toolkit* /tmp/app/iptv-toolkit
 
 install:
-	@mkdir -p /www/iptv-toolkit/{playlist,tvguide,tvrecord}
+	@mkdir -p /var/www/iptv-toolkit/files/playlist/../tvguide/../tvrecord
 	@install -m755 -D ./artifact/bin/*linux-${TARGETARCH} /usr/bin/iptv-toolkit
 
 uninstall:
-	@rm -rvf /usr/bin/iptv-toolkit /www/iptv-toolkit
+	@rm -rvf /usr/bin/iptv-toolkit /var/www/iptv-toolkit
+
+
+test-test:
+	@mkdir -p ./test/playlist/../tvguide/../tvrecord
