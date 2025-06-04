@@ -119,6 +119,7 @@ bin:
 
 pkg:
 	@docker buildx build \
+		--build-arg PKG_VERSION=${PKG_VERSION} \
 		--build-arg PKG_USER=${PKG_USER} \
 		--build-arg PKG_GROUP=${PKG_GROUP} \
 		-t ${IMAGE_REPO}/${IMAGE_NAME}:latest \
@@ -140,7 +141,7 @@ ifneq (${TARGETARCH},s390x)
 endif
 endif
 endif
-	@mkdir -p /tmp/app/var/www/iptv-toolkit/{playlist,tvguide,tvrecord}
+	@mkdir -p /tmp/app/files/{playlist,tvguide,tvrecord}
 	@cp -p ./artifact/bin/iptv-toolkit-${TARGETOS}-${TARGETARCH} /tmp/app/
 	@ln -s /tmp/app/iptv-toolkit* -> /tmp/app/iptv-toolkit
 

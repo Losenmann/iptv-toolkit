@@ -128,6 +128,8 @@ jobs:
           outputs: |
             type=local,dest=./artifact/pkg
             type=local,dest=./artifact/asset
+          build-args: |
+            PKG_VERSION=${{ needs.init.outputs.version }}
       - name: 🌀 Build DEB package
         uses: docker/build-push-action@ca877d9245402d1537745e0e356eab47c3520991
         env:
@@ -141,6 +143,7 @@ jobs:
             type=local,dest=./artifact/pkg
             type=local,dest=./artifact/asset
           build-args: |
+            PKG_VERSION=${{ needs.init.outputs.version }}
             PKG_USER=${{ needs.init.outputs.user_id }}
             PKG_GROUP=${{ needs.init.outputs.group_id }}
       - name: 📦 Upload artifact

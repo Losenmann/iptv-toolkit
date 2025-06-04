@@ -1,6 +1,7 @@
 FROM debian:12.11 AS debian
 ARG TARGETOS \
-    TARGETARCH
+    TARGETARCH \
+    PKG_VERSION
 RUN apt update && apt install -y --no-install-recommends make build-essential dpkg-dev dh-make git
 WORKDIR /opt/src
 COPY . /opt/src

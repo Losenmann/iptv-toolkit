@@ -1,6 +1,7 @@
 FROM fedora:43 AS rhel
 ARG TARGETOS \
     TARGETARCH \
+    PKG_VERSION \
     PKG_USER \
     PKG_GROUP
 RUN dnf install -y make git rpmdevtools rpmlint rpm-sign pinentry hunspell-ru aspell-ru
