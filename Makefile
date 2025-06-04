@@ -83,6 +83,8 @@ testing-post-stage:
 	@docker compose -f ./deploy/docker-compose.yaml --env-file ./testing/testing.env down
 
 build-rpm:
+	@mkdir -p ./artifact/pkg
+	@chown -R ${PKG_USER}:${PKG_GROUP} ./artifact
 	@git config --global --add safe.directory /opt/src
 	@install -o ${PKG_USER} -g ${PKG_GROUP} -d ./pkg/rpmbuild/BUILD/../BUILDROOT/../RPMS/../SOURCES/../SPECS/../SRPMS/
 	@install -m755 -D ./artifact/bin/*linux-${TARGETARCH} ./pkg/rpmbuild/iptv-toolkit-${PKG_VERSION}/iptv-toolkit
@@ -93,14 +95,14 @@ build-rpm:
 			|sed -e 's/^[^*]/- /g' -e '/^*/s/ v/ /g' -e '/^*/s/$$/-1/g' -e 's/$$/\\\n/' |tr -d '\n'`|" \
 		./pkg/rpmbuild/SPECS/iptv-toolkit.spec
 	@rpmlint ./pkg/rpmbuild/SPECS/iptv-toolkit.spec
-	@LANG=en_US git --no-pager log --no-walk --tags --pretty="* %ad %an <%ae> - %S%n%B" --date=format:'%a %b %d %Y'
-	@LANG=en_US git --no-pager log --no-walk --tags --pretty="* %ad %an <%ae> - %S%n%B" --date=format:'%a %b %d %Y' |sed -e 's/^[^*]/- /g' -e '/^*/s/ v/ /g' -e '/^*/s/$$/-1/g' -e 's/$$/\\\n/' |tr -d '\n'
 	@rpmbuild --define "_topdir `pwd`/pkg/rpmbuild" -ba ./pkg/rpmbuild/SPECS/iptv-toolkit.spec
-	@cat ./pkg/rpmbuild/SPECS/iptv-toolkit.spec
-#	@rpmlint -r ./pkg/rpmbuild/.rpmlintrc ./pkg/rpmbuild/RPMS/*/*.rpm
+	@rpmlint -r ./pkg/rpmbuild/.rpmlintrc ./pkg/rpmbuild/RPMS/*/*.rpm
 	@install -o ${PKG_USER} -g ${PKG_GROUP} -m755 -D ./pkg/rpmbuild/RPMS/*/*.rpm -t ./artifact/pkg/
+	@chown -R ${PKG_USER}:${PKG_GROUP} ./artifact
 
 build-deb:
+	@mkdir -p ./artifact/pkg
+	@chown -R ${PKG_USER}:${PKG_GROUP} ./artifact
 	@git config --global --add safe.directory /opt/src
 	@install -m755 -D ./artifact/bin/*linux-${TARGETARCH} ./pkg/debbuild/iptv-toolkit/iptv-toolkit
 	@chmod +x ./pkg/debbuild/iptv-toolkit/debian/rules
@@ -112,10 +114,8 @@ build-deb:
 			|sed -e "/^[^ ]/s/^/  * /g" -e 's/$$/\\\n/' \
 			|tr -d '\n' \
 		`/" ./pkg/debbuild/iptv-toolkit/debian/changelog
-	@git --no-pager log -1 --no-walk --tags --pretty="%B -- %an <%ae>  %aD%n"
-	@git --no-pager log -1 --no-walk --tags --pretty="%B -- %an <%ae>  %aD%n" |sed -e "/^[^ ]/s/^/  * /g" -e 's/$$/\\\n/' |tr -d '\n'
-#	@cd ./pkg/debbuild/iptv-toolkit; dpkg-buildpackage -b -us -uc
-#	@install -o ${PKG_USER} -g ${PKG_GROUP} -m755 -D ./pkg/debbuild/*.deb -t ./artifact/pkg/
+	@cd ./pkg/debbuild/iptv-toolkit; dpkg-buildpackage -b -us -uc
+	@chown -R ${PKG_USER}:${PKG_GROUP} ./artifact
 
 image:
 	@docker buildx build . \
@@ -132,6 +132,8 @@ bin:
 		-e BIN_COMPRESS=${BIN_COMPRESS} \
 		-e TARGETOS=${TARGETOS} \
 		-e TARGETARCH=${TARGETARCH} \
+		-e PKG_USER=${PKG_USER} \
+		-e PKG_GROUP=${PKG_GROUP} \
 		-t golang:1.24.3-alpine \
 		sh -c "apk add make upx && make build-bin"
 
@@ -142,9 +144,10 @@ pkg:
 		--build-arg PKG_GROUP=${PKG_GROUP} \
 		-t ${IMAGE_REPO}/${IMAGE_NAME}:latest \
 		--output=type=local,dest=./artifact/pkg \
-		-f ./pkg/Dockerfile.debian .
+		-f ./pkg/Dockerfile.rhel .
 
 build-bin:
+	@mkdir -p ./artifact/bin
 	@go telemetry off
 	@GOPATH=${MAKE_GO_TMP}/gopath GOCACHE=${MAKE_GO_TMP}/gocache GOOS=${TARGETOS} GOARCH=${TARGETARCH} \
 		go build \
@@ -159,6 +162,7 @@ ifneq (${TARGETARCH},s390x)
 endif
 endif
 endif
+	@chown -R ${PKG_USER}:${PKG_GROUP} ./artifact
 	@mkdir -p /tmp/app/files/{playlist,tvguide,tvrecord}
 	@cp -p ./artifact/bin/iptv-toolkit-${TARGETOS}-${TARGETARCH} /tmp/app/
 	@ln -s /tmp/app/iptv-toolkit* /tmp/app/iptv-toolkit
