@@ -55,6 +55,9 @@ jobs:
           version=`gh repo view --json latestRelease -q '.latestRelease.tagName' |sed 's/v/version=/'`
           sed "s/master\|\/.*/$version/" <<< ${{ github.ref_name }} >> "$GITHUB_OUTPUT"
           echo "revision=1" >> "$GITHUB_OUTPUT"
+      - name: debug
+        run: |
+          ls -lah
 
   build:
     name: Build image and bin
