@@ -8,6 +8,6 @@ COPY . .
 RUN make build-bin
 
 FROM scratch AS app
-COPY --from=builder /opt/src/artifact/bin/iptv-toolkit* /tmp/app /
+COPY --from=builder /tmp/app /
 ENTRYPOINT ["/iptv-toolkit"]
 CMD ["-U", "-F", "-S"]

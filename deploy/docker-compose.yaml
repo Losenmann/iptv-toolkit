@@ -9,8 +9,8 @@ services:
       - /etc/localtime:/etc/localtime:ro
       - /etc/timezone:/etc/timezone:ro
     environment:
-      IPTVTOOLKIT_PLAYLIST: "http://example.com/playlist.m3u"
-      IPTVTOOLKIT_EPG: "http://example.com/epg.zip"
+      IPTVTOOLKIT_PLAYLIST: ${IPTVTOOLKIT_PLAYLIST:-http://example.com/playlist.m3u}
+      IPTVTOOLKIT_EPG: ${IPTVTOOLKIT_EPG:-http://example.com/epg.zip}
     labels:
       - traefik.enable=true
       - traefik.http.routers.iptv-toolkit.tls=true

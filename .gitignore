@@ -4,6 +4,7 @@ tmp
 tv
 *.zip
 *.xml
+*.xml.gz
 *.m3u
 *.m3u8
 *.ndx

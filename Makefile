@@ -1,7 +1,7 @@
 RUN_ARG ?=
 IMAGE_REPO ?= losenmann
 IMAGE_NAME ?= iptv-toolkit
-BIN_COMPRESS?=false
+BIN_COMPRESS?=true
 MAKE_GO_TMP!=echo `pwd`/_tmp
 
 ifeq ($(TARGETOS),)
