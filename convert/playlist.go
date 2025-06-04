@@ -32,7 +32,7 @@ type Track struct {
     Is_external string `xml:"is_external"`
 }
 
-func ConvertPlaylist(file []byte, udpxy string, epg string) {
+func ConvertPlaylist(file []byte, udpxy, epg bool) {
     var (
         path_playlist_m3u = *setup.PlaylistDir + "/playlist.m3u"
         path_playlist_udpxy_m3u = *setup.PlaylistDir + "/playlist_udpxy.m3u"
@@ -45,16 +45,30 @@ func ConvertPlaylist(file []byte, udpxy string, epg string) {
     case ".m3u", ".m3u8":
         playlist_m3u = file
         playlist_xml = M3uToXml(file)
-        if udpxy != "" {
-            playlist_udpxy_m3u = UdpToUdpxy(file, udpxy)
-            playlist_udpxy_xml = UdpToUdpxy(playlist_xml, udpxy)
+        if udpxy {
+            if epg {
+                playlist_udpxy_m3u = UdpToUdpxy(file, *setup.Address)
+                playlist_udpxy_xml = UdpToUdpxy(playlist_xml, *setup.Address)
+            } else {
+                playlist_udpxy_m3u = UdpToUdpxy(file, "")
+                playlist_udpxy_xml = UdpToUdpxy(playlist_xml, "")
+            }
         }
     case ".xml":
         playlist_xml = file
-        playlist_m3u = XmlToM3u(file, epg)
-        if udpxy != "" {
-            playlist_udpxy_xml = UdpToUdpxy(file, udpxy)
-            playlist_udpxy_m3u = UdpToUdpxy(playlist_m3u, udpxy)
+        if epg {
+            playlist_m3u = XmlToM3u(file, *setup.Address)
+        } else {
+            playlist_m3u = XmlToM3u(file, "")
+        }
+        if udpxy {
+            if epg {
+                playlist_udpxy_xml = UdpToUdpxy(file, *setup.Address)
+                playlist_udpxy_m3u = UdpToUdpxy(playlist_m3u, *setup.Address)
+            } else {
+                playlist_udpxy_xml = UdpToUdpxy(file, "")
+                playlist_udpxy_m3u = UdpToUdpxy(playlist_m3u, "")
+            }
         }
     default:
         if *setup.LogLVL <= 2 {

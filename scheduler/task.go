@@ -14,7 +14,7 @@ func Task() {
                 slog.Warn("playlist file not specified")
             }
         } else {
-            convert.ConvertPlaylist(playlist, *setup.PlaylistEmbedUdpxy, *setup.PlaylistEmbedEPG)
+            convert.ConvertPlaylist(playlist, *setup.EmbedUdpxy, *setup.EmbedEPG)
         }
     }
 

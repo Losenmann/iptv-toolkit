@@ -14,7 +14,7 @@ func init() {
 }
 
 func main() {
-    if err := os.MkdirAll(*setup.WebFilesDir, 0744); err != nil {
+    if err := os.MkdirAll(*setup.WebDir, 0744); err != nil {
         if *setup.LogLVL <= 2 {
             slog.Warn(fmt.Sprintf("%v", err))
         }
@@ -26,10 +26,10 @@ func main() {
         scheduler.Main(*setup.Crontab)
     }
     if *setup.Udpxy {
-        webserver.Udpxy(*setup.WebUdpxyPath)
+        webserver.Udpxy(*setup.WebPathUdpxy)
     }
     if *setup.Files {
-        webserver.Files(*setup.WebFilesPath, *setup.WebFilesDir)
+        webserver.Files(*setup.WebPathFiles, *setup.WebDir)
     }
     webserver.Run(*setup.WebPort)
 }
