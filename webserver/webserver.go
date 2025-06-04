@@ -3,6 +3,7 @@ package webserver
 import (
     "github.com/gin-gonic/gin"
     "github.com/losenmann/iptv-toolkit/udpxy"
+    "net/http"
     "strconv"
 )
 
@@ -17,7 +18,7 @@ func Udpxy(p string) {
 }
 
 func Files(p, d string) {
-    router.Static(p, d)
+    router.StaticFS(p, http.Dir(d))
 }
 
 func Run(p int) {
