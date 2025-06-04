@@ -1,0 +1,2 @@
+addFilter("E: statically-linked-binary")
+addFilter("W: position-independent-executable-suggested")
