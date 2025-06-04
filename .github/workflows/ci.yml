@@ -38,8 +38,6 @@ jobs:
     steps:
       - name: 🔍 Checkout repository
         uses: actions/checkout@v4.2.2
-        with:
-          fetch-depth: 0
       - name: Set version
         id: set-var
         env:
@@ -57,11 +55,6 @@ jobs:
           version=`gh repo view --json latestRelease -q '.latestRelease.tagName' |sed 's/v/version=/'`
           sed "s/master\|\/.*/$version/" <<< ${{ github.ref_name }} >> "$GITHUB_OUTPUT"
           echo "revision=1" >> "$GITHUB_OUTPUT"
-      - name: debug
-        run: |
-          git --no-pager log --no-walk --tags --pretty="* %ad %an <%ae> - %S%n%B" --date=format:"%a %b %d %Y" > file.tmp
-          ls -lah
-          cat file.tmp
 
   build:
     name: Build image and bin
@@ -122,6 +115,8 @@ jobs:
     steps:
       - name: 🔍 Checkout repository
         uses: actions/checkout@v4.2.2
+        with:
+          fetch-depth: 0
       - name: 📦 Download artifact
         uses: actions/download-artifact@v4
         with:
