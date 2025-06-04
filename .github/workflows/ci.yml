@@ -175,7 +175,7 @@ jobs:
           path: ${{ env.ARTIFACTS_PATH }}
       - name: ⚡️ Run container
         run: |
-          docker load --input ${{ env.ARTIFACTS_PATH }}/image.tar
+          docker load --input ${{ env.ARTIFACTS_PATH }}/images/image.tar
           docker compose -f ./deploy/docker-compose.yaml --env-file ./testing/testing.env up -d
       - name: 🚀️ Run tests
         run: |
