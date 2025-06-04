@@ -88,8 +88,8 @@ jobs:
       - name: 🧬 Extract executable file
         working-directory: ${{ env.ARTIFACTS_PATH }}/images
         run: |
-          cp -vf ./iptv-toolkit-* ../bin/
-          cp -vf ./iptv-toolkit-* ../asset/
+          cp -vf ./*/iptv-toolkit-* ../bin/
+          cp -vf ./*/iptv-toolkit-* ../asset/
       - name: 📦 Upload artifact
         uses: actions/upload-artifact@v4
         with:
