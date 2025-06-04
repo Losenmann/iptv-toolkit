@@ -1,0 +1,49 @@
+services:
+  iptv-toolkit:
+    image: losenmann/iptv-toolkit:latest
+    networks:
+      - macvlan
+    ports:
+      - 4022:4022/tcp
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
+    environment:
+      IPTVTOOLKIT_PLAYLIST: "http://example.com/playlist.m3u"
+      IPTVTOOLKIT_EPG: "http://example.com/epg.zip"
+    deploy:
+      endpoint_mode: vip
+      mode: replicated
+      replicas: 1
+      labels:
+        - traefik.enable=true
+        - traefik.http.routers.iptv-toolkit.tls=true
+        - traefik.http.routers.iptv-toolkit.entrypoints=https
+        - traefik.http.routers.iptv-toolkit.rule=Host(`iptv.foo.bar`)
+        - traefik.http.services.iptv-toolkit.loadbalancer.server.port=4022
+      resources:
+        reservations:
+          cpus: '0.15'
+          memory: 32M
+        limits:
+          cpus: '0.50'
+          memory: 48M
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 5
+        window: 0s
+      rollback_config:
+        parallelism: 1
+        delay: 3s
+        failure_action: pause
+        monitor: 0s
+        max_failure_ratio: 0
+        order: start-first
+      update_config:
+        parallelism: 1
+        delay: 3s
+        failure_action: rollback
+        monitor: 0s
+        max_failure_ratio: 0
+        order: start-first

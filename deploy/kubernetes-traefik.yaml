@@ -1,21 +1,37 @@
 ---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: iptv-toolkit-configmap
+  labels:
+    app.kubernetes.io/name: iptv-toolkit
+    app.kubernetes.io/instance: iptv-toolkit-static
+    app.kubernetes.io/managed-by: Manifest
+    app.kubernetes.io/component: main
+    app.kubernetes.io/part-of: iptv-toolkit
+data:
+  IPTVTOOLKIT_EPG: ""
+  IPTVTOOLKIT_PLAYLIST: ""
+
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: iptv-toolkit
   labels:
-    app: iptv-toolkit
-    name: iptv-toolkit
+    app.kubernetes.io/name: iptv-toolkit
+    app.kubernetes.io/instance: iptv-toolkit-static
+    app.kubernetes.io/managed-by: Manifest
+    app.kubernetes.io/component: application
+    app.kubernetes.io/part-of: iptv-toolkit
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: iptv-toolkit
       task: iptv-toolkit
   template:
     metadata:
       labels:
-        app: iptv-toolkit
         task: iptv-toolkit
     spec:
       hostNetwork: true
@@ -23,15 +39,9 @@ spec:
       containers:
         - name: iptv-toolkit
           image: losenmann/iptv-toolkit:latest
-          args:
-            - -S
-            - -U
-            - -W
           ports:
-            - name: udpxy
+            - name: main
               containerPort: 4022
-            - name: web
-              containerPort: 4023
           resources:
             requests:
               cpu: "50m"
@@ -64,31 +74,35 @@ apiVersion: v1
 kind: Service
 metadata:
   name: iptv-toolkit-service
+  labels:
+    app.kubernetes.io/name: iptv-toolkit
+    app.kubernetes.io/instance: iptv-toolkit-static
+    app.kubernetes.io/managed-by: Manifest
+    app.kubernetes.io/component: application
+    app.kubernetes.io/part-of: iptv-toolkit
 spec:
-  ports:
-    - name: web
-      port: 4023
-    - name: udpxy
-      port: 4022
   selector:
-    app: iptv-toolkit
-    task: iptv-toolkit
+    app.kubernetes.io/name: iptv-toolkit
+  ports:
+    - name: main
+      port: 4022
 
 ---
 apiVersion: traefik.io/v1alpha1
 kind: IngressRoute
 metadata:
-  name: iptv-toolkit-ingress
+  name: iptv-toolkit-traefik-route
+  labels:
+    app.kubernetes.io/name: iptv-toolkit
+    app.kubernetes.io/instance: iptv-toolkit-static
+    app.kubernetes.io/managed-by: Manifest
+    app.kubernetes.io/component: main
+    app.kubernetes.io/part-of: iptv-toolkit
 spec:
   entryPoints:
     - websecure
   routes:
-    - match: Host(`iptv.example.com`) && PathPrefix(`/files`)
-      kind: Rule
-      services:
-        - name: iptv-toolkit-service
-          port: 4023
-    - match: Host(`iptv.example.com`) && PathPrefix(`/udp`)
+    - match: Host(`iptv.foo.bar`)
       kind: Rule
       services:
         - name: iptv-toolkit-service

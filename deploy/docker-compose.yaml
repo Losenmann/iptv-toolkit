@@ -2,31 +2,20 @@ services:
   iptv-toolkit:
     container_name: "IPTV-Toolkit"
     image: losenmann/iptv-toolkit:latest
-    hostname: iptv-toolkit
-    command: ["-S", "-U", "-W"]
     network_mode: host
     expose:
       - 4022
-      - 4023
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - /etc/timezone:/etc/timezone:ro
     environment:
-      - IPTVTOOLKIT_EPG=${IPTVTOOLKIT_EPG:-}
-      - IPTVTOOLKIT_EPG_DST=${IPTVTOOLKIT_EPG_DST:-/www/iptv-toolkit/tvguide}
-      - IPTVTOOLKIT_PLAYLIST=${IPTVTOOLKIT_PLAYLIST:-}
-      - IPTVTOOLKIT_PLAYLIST_DST=${IPTVTOOLKIT_PLAYLIST_DST:-/www/iptv-toolkit/playlist}
-      - IPTVTOOLKIT_PLAYLIST_EMBED_EPG=${IPTVTOOLKIT_PLAYLIST_EMBED_EPG:-}
-      - IPTVTOOLKIT_PLAYLIST_UDPXY=${IPTVTOOLKIT_PLAYLIST_UDPXY:-}
-      - IPTVTOOLKIT_WEB_PORT=${IPTVTOOLKIT_WEB_PORT:-4023}
-      - IPTVTOOLKIT_WEB_PATH=${IPTVTOOLKIT_WEB_PATH:-/www/iptv-toolkit}
-      - IPTVTOOLKIT_CRONTAB=${IPTVTOOLKIT_CRONTAB:-30 6 * * *}
+      IPTVTOOLKIT_PLAYLIST: "http://example.com/playlist.m3u"
+      IPTVTOOLKIT_EPG: "http://example.com/epg.zip"
     labels:
       - traefik.enable=true
-      - traefik.http.routers.iptv-toolkit.entrypoints=https
-      - traefik.http.routers.iptv-toolkit.rule=Host(`${IPTVTOOLKIT_CTR_HOST:-}`)
       - traefik.http.routers.iptv-toolkit.tls=true
-      - traefik.http.services.iptv-toolkit.loadbalancer.server.port=4023
-      - traefik.docker.network=network-proxy
+      - traefik.http.routers.iptv-toolkit.entrypoints=https
+      - traefik.http.routers.iptv-toolkit.rule=Host(`${IPTVTOOLKIT_HOST:-iptv.foo.bar}`)
+      - traefik.http.services.iptv-toolkit.loadbalancer.server.port=4022
     tty: true
-    restart: on-failure:3
+    restart: always
