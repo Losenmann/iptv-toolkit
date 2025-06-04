@@ -83,6 +83,7 @@ build-rpm:
 		./pkg/rpmbuild/SPECS/iptv-toolkit.spec
 	@rpmlint ./pkg/rpmbuild/SPECS/iptv-toolkit.spec
 	@rpmbuild --define "_topdir `pwd`/pkg/rpmbuild" -ba ./pkg/rpmbuild/SPECS/iptv-toolkit.spec
+	@cat ./pkg/rpmbuild/SPECS/iptv-toolkit.spec
 	@rpmlint -r ./pkg/rpmbuild/.rpmlintrc ./pkg/rpmbuild/RPMS/*/*.rpm
 	@install -o ${PKG_USER} -g ${PKG_GROUP} -m755 -D ./pkg/rpmbuild/RPMS/*/*.rpm -t ./artifact/pkg/
 
@@ -143,7 +144,7 @@ endif
 endif
 	@mkdir -p /tmp/app/files/{playlist,tvguide,tvrecord}
 	@cp -p ./artifact/bin/iptv-toolkit-${TARGETOS}-${TARGETARCH} /tmp/app/
-	@ln -s /tmp/app/iptv-toolkit* -> /tmp/app/iptv-toolkit
+	@ln -s /tmp/app/iptv-toolkit* /tmp/app/iptv-toolkit
 
 install:
 	@mkdir -p /www/iptv-toolkit/{playlist,tvguide,tvrecord}
