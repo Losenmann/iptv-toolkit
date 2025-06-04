@@ -140,8 +140,9 @@ ifneq (${TARGETARCH},s390x)
 endif
 endif
 endif
-	@mkdir -p /tmp/app/www/{playlist,tvguide,tvrecord}
-	@cp -p ./artifact/bin/iptv-toolkit-${TARGETOS}-${TARGETARCH} /tmp/app/iptv-toolkit
+	@mkdir -p /tmp/app/var/www/iptv-toolkit/{playlist,tvguide,tvrecord}
+	@cp -p ./artifact/bin/iptv-toolkit-${TARGETOS}-${TARGETARCH} /tmp/app/
+	@ln -s /tmp/app/iptv-toolkit* -> /tmp/app/iptv-toolkit
 
 install:
 	@mkdir -p /www/iptv-toolkit/{playlist,tvguide,tvrecord}

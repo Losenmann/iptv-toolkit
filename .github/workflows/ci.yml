@@ -24,6 +24,8 @@ jobs:
     permissions:
       contents: read
     outputs:
+      user_id: ${{ steps.set-var.outputs.user_id }}
+      group_id: ${{ steps.set-var.outputs.group_id }}
       version: ${{ steps.set-var.outputs.version }}
       revision: ${{ steps.set-var.outputs.revision }}
       tag_url: ${{ steps.set-var.outputs.tag_url }}
@@ -41,6 +43,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          id -u |sed 's/^/user_id=/' >> "$GITHUB_OUTPUT"
+          id -g |sed 's/^/group_id=/' >> "$GITHUB_OUTPUT"
           gh api /users/${GITHUB_ACTOR} -q '. | "maintainer=\(.name)"' >> "$GITHUB_OUTPUT"
           gh api /users/${GITHUB_ACTOR} -q '. | "maintainer_email=\(.id)+\(.login)@users.noreply.github.com"' >> "$GITHUB_OUTPUT"
           gh repo view --json licenseInfo -q '.licenseInfo | "license=\(.name)"' >> "$GITHUB_OUTPUT"
@@ -124,14 +128,6 @@ jobs:
           outputs: |
             type=local,dest=./artifact/pkg
             type=local,dest=./artifact/asset
-          build-args: |
-            PKG_VERSION=${{ needs.init.outputs.version }}
-            PKG_LICENSE=${{ needs.init.outputs.license }}
-            PKG_DESCRIPTION=${{ needs.init.outputs.description }}
-            PKG_HOMEPAGE=${{ needs.init.outputs.homepage }}
-            PKG_HOMEGIT=${{ needs.init.outputs.url }}
-            PKG_MAINTAINER=${{ needs.init.outputs.maintainer }}
-            PKG_MAINTAINER_EMAIL=${{ needs.init.outputs.maintainer_email }}
       - name: 🌀 Build DEB package
         uses: docker/build-push-action@ca877d9245402d1537745e0e356eab47c3520991
         env:
@@ -145,14 +141,8 @@ jobs:
             type=local,dest=./artifact/pkg
             type=local,dest=./artifact/asset
           build-args: |
-            PKG_VERSION=${{ needs.init.outputs.version }}
-            PKG_LICENSE=${{ needs.init.outputs.license }}
-            PKG_DESCRIPTION=${{ needs.init.outputs.description }}
-            PKG_HOMEPAGE=${{ needs.init.outputs.homepage }}
-            PKG_HOMEGIT=${{ needs.init.outputs.url }}
-            PKG_MAINTAINER=${{ needs.init.outputs.maintainer }}
-            PKG_MAINTAINER_EMAIL=${{ needs.init.outputs.maintainer_email }}
-            PKG_REVISION=1
+            PKG_USER=${{ needs.init.outputs.user_id }}
+            PKG_GROUP=${{ needs.init.outputs.group_id }}
       - name: 📦 Upload artifact
         uses: actions/upload-artifact@v4
         with:
