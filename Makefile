@@ -82,6 +82,8 @@ build-rpm:
 			|sed -e 's/^[^*]/- /g' -e '/^*/s/ v/ /g' -e '/^*/s/$$/-1/g' -e 's/$$/\\\n/' |tr -d '\n'`|" \
 		./pkg/rpmbuild/SPECS/iptv-toolkit.spec
 	@rpmlint ./pkg/rpmbuild/SPECS/iptv-toolkit.spec
+	@LANG=en_US git --no-pager log --no-walk --tags --pretty="* %ad %an <%ae> - %S%n%B" --date=format:'%a %b %d %Y'
+	@LANG=en_US git --no-pager log --no-walk --tags --pretty="* %ad %an <%ae> - %S%n%B" --date=format:'%a %b %d %Y' |sed -e 's/^[^*]/- /g' -e '/^*/s/ v/ /g' -e '/^*/s/$$/-1/g' -e 's/$$/\\\n/' |tr -d '\n'
 	@rpmbuild --define "_topdir `pwd`/pkg/rpmbuild" -ba ./pkg/rpmbuild/SPECS/iptv-toolkit.spec
 	@cat ./pkg/rpmbuild/SPECS/iptv-toolkit.spec
 	@rpmlint -r ./pkg/rpmbuild/.rpmlintrc ./pkg/rpmbuild/RPMS/*/*.rpm
@@ -98,6 +100,8 @@ build-deb:
 			|sed -e "/^[^ ]/s/^/  * /g" -e 's/$$/\\\n/' \
 			|tr -d '\n' \
 		`/" ./pkg/debbuild/iptv-toolkit/debian/changelog
+	@git --no-pager log -1 --no-walk --tags --pretty="%B -- %an <%ae>  %aD%n"
+	@git --no-pager log -1 --no-walk --tags --pretty="%B -- %an <%ae>  %aD%n" |sed -e "/^[^ ]/s/^/  * /g" -e 's/$$/\\\n/' |tr -d '\n'
 	@cd ./pkg/debbuild/iptv-toolkit; dpkg-buildpackage -b -us -uc
 
 image:
@@ -125,7 +129,7 @@ pkg:
 		--build-arg PKG_GROUP=${PKG_GROUP} \
 		-t ${IMAGE_REPO}/${IMAGE_NAME}:latest \
 		--output=type=local,dest=./artifact/pkg \
-		-f ./pkg/Dockerfile.rhel .
+		-f ./pkg/Dockerfile.debian .
 
 build-bin:
 	@go telemetry off
