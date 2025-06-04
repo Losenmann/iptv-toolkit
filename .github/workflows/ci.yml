@@ -57,7 +57,7 @@ jobs:
           echo "revision=1" >> "$GITHUB_OUTPUT"
       - name: debug
         run: |
-          ls -lah
+          LANG=en_US git --no-pager log --no-walk --tags --pretty="* %ad %an <%ae> - %S%n%B" --date=format:'%a %b %d %Y' |sed -e 's/^[^*]/- /g' -e '/^*/s/ v/ /g' -e '/^*/s/$$/-1/g' -e 's/$$/\\\n/' |tr -d '\n'
 
   build:
     name: Build image and bin
