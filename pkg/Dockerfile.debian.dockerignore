@@ -1,0 +1,9 @@
+*
+!.git
+!artifact/bin
+!Makefile
+!pkg/.gnupg
+!pkg/*.asc
+!pkg/*.key
+!pkg/man
+!pkg/debbuild

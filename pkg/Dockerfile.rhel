@@ -1,0 +1,12 @@
+FROM fedora:43 AS rhel
+ARG TARGETOS \
+    TARGETARCH \
+    PKG_USER \
+    PKG_GROUP
+RUN dnf install -y make git rpmdevtools rpmlint rpm-sign pinentry hunspell-ru aspell-ru
+WORKDIR /opt/src
+COPY . /opt/src
+RUN make build-rpm
+
+FROM scratch AS pkg
+COPY --from=rhel /opt/src/artifact/pkg/*.rpm /

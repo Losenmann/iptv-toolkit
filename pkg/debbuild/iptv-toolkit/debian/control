@@ -5,11 +5,11 @@ Maintainer:
 Rules-Requires-Root: no
 Build-Depends: build-essential, debhelper, debhelper-compat (= 13)
 Standards-Version: 4.6.2
-Homepage: 
-Vcs-Browser: 
-Vcs-Git: 
+Homepage: https://github.com/Losenmann/iptv-toolkit
+Vcs-Browser: https://losenmann.github.io/iptv-toolkit
+Vcs-Git: https://github.com/Losenmann/iptv-toolkit.git
 
 Package: iptv-toolkit
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}
-Description: Toolkit for IPTV
+Description: Includes a playlist converter and tvguide
+ Has a built-in udpxy and a file server
