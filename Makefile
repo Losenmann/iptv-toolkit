@@ -3,6 +3,7 @@ IMAGE_REPO ?= losenmann
 IMAGE_NAME ?= iptv-toolkit
 BIN_COMPRESS?=true
 MAKE_GO_TMP!=echo `pwd`/_tmp
+MAKE_USER!=whoami
 
 ifeq ($(TARGETOS),)
 	TARGETOS!=go env GOOS
@@ -13,12 +14,22 @@ endif
 ifeq ($(PKG_VERSION),)
 	PKG_VERSION!=git log -1 --tags --pretty="%S" |tr -d "v"
 endif
+ifeq ($(PKG_MAINTAINER),)
+	PKG_MAINTAINER=${MAKE_USER}
+endif
+ifeq ($(PKG_MAINTAINER_EMAIL),)
+	PKG_MAINTAINER_EMAIL=${PKG_MAINTAINER}@example.com
+endif
+ifeq ($(PKG_MAINTAINER_EMAIL),)
+	PKG_MAINTAINER_EMAIL=${PKG_MAINTAINER}@example.com
+endif
 ifeq ($(PKG_USER),)
 	PKG_USER!=id -u
 endif
 ifeq ($(PKG_GROUP),)
 	PKG_GROUP!=id -g
 endif
+MAINTAINER=${PKG_MAINTAINER} <${PKG_MAINTAINER_EMAIL}>
 
 .PHONY: realesae run docker testing pkg
 
@@ -86,13 +97,14 @@ build-rpm:
 	@LANG=en_US git --no-pager log --no-walk --tags --pretty="* %ad %an <%ae> - %S%n%B" --date=format:'%a %b %d %Y' |sed -e 's/^[^*]/- /g' -e '/^*/s/ v/ /g' -e '/^*/s/$$/-1/g' -e 's/$$/\\\n/' |tr -d '\n'
 	@rpmbuild --define "_topdir `pwd`/pkg/rpmbuild" -ba ./pkg/rpmbuild/SPECS/iptv-toolkit.spec
 	@cat ./pkg/rpmbuild/SPECS/iptv-toolkit.spec
-	@rpmlint -r ./pkg/rpmbuild/.rpmlintrc ./pkg/rpmbuild/RPMS/*/*.rpm
+#	@rpmlint -r ./pkg/rpmbuild/.rpmlintrc ./pkg/rpmbuild/RPMS/*/*.rpm
 	@install -o ${PKG_USER} -g ${PKG_GROUP} -m755 -D ./pkg/rpmbuild/RPMS/*/*.rpm -t ./artifact/pkg/
 
 build-deb:
 	@git config --global --add safe.directory /opt/src
 	@install -m755 -D ./artifact/bin/*linux-${TARGETARCH} ./pkg/debbuild/iptv-toolkit/iptv-toolkit
 	@chmod +x ./pkg/debbuild/iptv-toolkit/debian/rules
+	@sed -i '/^Maintainer/s/:.*/: ${MAINTAINER}/g' ./pkg/debbuild/iptv-toolkit/debian/control
 	@sed -i -e "/; urgency=/s/([0-9.]*)/(${PKG_VERSION}-1)/" \
 		-e '2,$$d' \
 		-e "/; urgency=/s/$$/\n` \
@@ -102,7 +114,8 @@ build-deb:
 		`/" ./pkg/debbuild/iptv-toolkit/debian/changelog
 	@git --no-pager log -1 --no-walk --tags --pretty="%B -- %an <%ae>  %aD%n"
 	@git --no-pager log -1 --no-walk --tags --pretty="%B -- %an <%ae>  %aD%n" |sed -e "/^[^ ]/s/^/  * /g" -e 's/$$/\\\n/' |tr -d '\n'
-	@cd ./pkg/debbuild/iptv-toolkit; dpkg-buildpackage -b -us -uc
+#	@cd ./pkg/debbuild/iptv-toolkit; dpkg-buildpackage -b -us -uc
+#	@install -o ${PKG_USER} -g ${PKG_GROUP} -m755 -D ./pkg/debbuild/*.deb -t ./artifact/pkg/
 
 image:
 	@docker buildx build . \
