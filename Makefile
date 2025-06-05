@@ -175,7 +175,3 @@ install:
 
 uninstall:
 	@rm -rvf /usr/bin/iptv-toolkit /var/www/iptv-toolkit
-
-
-test-test:
-	@mkdir -p ./test/playlist/../tvguide/../tvrecord

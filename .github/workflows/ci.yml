@@ -63,13 +63,6 @@ jobs:
     permissions:
       contents: read
     steps:
-      - name: Test step
-        run:
-          echo ${{ needs.init.outputs.version }}
-          echo ${{ needs.init.outputs.tag_url }}
-          echo ${{ needs.init.outputs.description }}
-          echo ${{ needs.init.outputs.license }}
-          echo ${{ needs.init.outputs.url }}
       - name: 🔍 Checkout repository
         uses: actions/checkout@v4.2.2
       - name: ⚙️ Preparatory stage

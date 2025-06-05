@@ -13,14 +13,14 @@ Also, there is support for creating a playlist with a built-in udpxy link: from 
 Also in the background, the udpxy proxy server is launched, allowing you to convert Multicast traffic to HLS. Along with this, a simple file service is launched to download playlists and EPG.
 
 > [!NOTE]
-> Server file access endpoint: "/files/". For UDPXY: "/udp/" and "/status/".
+> Server file access endpoint: "/files/". For UDPXY: "/udp/".
 
 ### Supported tools
 + Playlist converter in 2 formats ([xspf](https://xspf.org), [m3u/m3u8](https://wikipedia.org/wiki/M3U))
 + EPG converter in 3 formats (jtv, [xmltv/xmltv.gz](https://xmltv.org))
 + Scheduler
 + Web server for converted files
-+ [UDPXY](https://github.com/pcherenkov/udpxy) proxy
++ UDP-to-HTTP
 
 ## Quick start
 + [Docker Compose](./deploy/docker-compose.yaml)
@@ -28,9 +28,14 @@ Also in the background, the udpxy proxy server is launched, allowing you to conv
   docker-compose up -d -f ./docker-compose.yaml
   ```
 
++ [Docker Swarm](./deploy/docker-stack.yaml)
+  ```bash
+  docker stack deploy -c ./docker-stack.yaml iptv -d --prune
+  ```
+
 + [Kubernetes](./deploy/kubernetes.yaml)
   ```bash
-  kubectl apply -n media -f https://raw.githubusercontent.com/Losenmann/iptv-toolkit/refs/heads/master/deploy/kubernetes.yaml
+  kubectl apply -n iptv -f https://raw.githubusercontent.com/Losenmann/iptv-toolkit/refs/heads/master/deploy/kubernetes.yaml
   ```
 > [!IMPORTANT]
 > For Docker, need to edit the [.env](./deploy/.env) file in place next to docker-compose.<br>
@@ -40,18 +45,21 @@ Also in the background, the udpxy proxy server is launched, allowing you to conv
 Environmental variables and key CLI applicable in all operating modes.
 | Variables | Key  | Default | Description |
 | :-------- | :--: | :-----: | :---------- |
-| `IPTVTOOLKIT_EPG` | `-e` | `none` | Link to tv guide |
-| `IPTVTOOLKIT_EPG_DST` | `-E` | `./files/tvguide` | Path of export of EPGs |
-| `IPTVTOOLKIT_PLAYLIST` | `-p` | `none` | Link to channels playlist |
-| `IPTVTOOLKIT_PLAYLIST_DST` | `-P` | `./files/playlist` | Path of export of Playlists |
-| `IPTVTOOLKIT_PLAYLIST_UDPXY` | `-u` | `none` | Create a playlist with a formatted<br> udp link in udpxy format |
-| `IPTVTOOLKIT_PLAYLIST_EMBED_EPG` | `-i` | `none` | Link to epg integrated into playlist |
-| `IPTVTOOLKIT_WEB_PATH` | `-f` | `./files` | Path to display files by web server |
-| `IPTVTOOLKIT_WEB_PORT` | `-P` | `4023` | Web server port |
-| `IPTVTOOLKIT_CRONTAB` | `-c` | `30 6 * * *` | Сrontab style task schedule |
-| `none` | `-S` | `false` | Start Schedule job |
-| `none` | `-U` | `false` | Start UDPXY proxy |
-| `none` | `-W` | `false` | Start Web Server |
+| `IPTVTOOLKIT_ADDRESS` | `-a` | `none` | The address at which the service will be available |
+| `IPTVTOOLKIT_EPG` | `-e` | `none` | Tvguide location |
+| `IPTVTOOLKIT_EPG_DIR` | `-E` | `./files/tvguide` | The directory in which the TV programs will be placed |
+| `IPTVTOOLKIT_PLAYLIST` | `-p` | `none` | Playlist location |
+| `IPTVTOOLKIT_PLAYLIST_DIR` | `-P` | `./files/playlist` | The directory in which the playlists will be placed |
+| `IPTVTOOLKIT_WEB_PATH_FILES` | `-f` | `/files` | URL path file server |
+| `IPTVTOOLKIT_WEB_PATH_UDXPY` | `-u` | `/udp` | URL path udpxy |
+| `IPTVTOOLKIT_WEB_DIR` | `-W` | `./files` | Location on host files for web server |
+| `IPTVTOOLKIT_WEB_PORT` | `-w` | `4022` | Listening port |
+| `IPTVTOOLKIT_CRONTAB` | `-c` | `30 6 * * *` | Set a schedule for updating files |
+| `IPTVTOOLKIT_EMBED_UDPXY` | `-d` | `false` | Create an additional playlist |
+| `IPTVTOOLKIT_EMBED_EPG` | `-t` | `false` | Add the program guide to the playlist |
+| `none` | `-U` | `false` | Enable udpxy converter |
+| `none` | `-F` | `false` | Enable File Server |
+| `none` | `-S` | `false` | Enable Scheduler |
 
 > [!IMPORTANT]
 > Environment variables repeat CLI.<br>
@@ -67,23 +75,15 @@ Docker build is done and installed by default.
 > [!IMPORTANT]
 > Before building locally, you need to install the [Golang](https://go.dev/dl) environment and install the [upx](https://github.com/upx/upx/releases) packager before building.
 
-#### Build using Docker
+#### Build bin using Docker
 1. Go to the project directory
 2. Run `make build` command
 3. Check catalog `./build`
 
-#### Build local
-1. Go to the project directory
-2. Run `make build-local` command
-3. Check catalog `./build`
-> [!NOTE]
-> You can pass the `ARCH_ALL=true` argument to the `make build-local` command for cross-compilation executable files.<br>
-> Example: `make build-local ARCH_ALL=true`
-
 ### Build Docker Image
 Build Docker Image Allows you to build a ready-to-deploy Docker image from sources.
 1. Go to the project directory
-2. Run `make docker` command
+2. Run `make image` command
 2. Check the repository `docker image ls`
 
 Once the image build is complete, you can deploy it by running the command: `make docker-up` or `make docker-down`
