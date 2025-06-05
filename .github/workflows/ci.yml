@@ -39,7 +39,7 @@ jobs:
         run: |
           id -u |sed 's/^/user_id=/' >> "$GITHUB_OUTPUT"
           id -g |sed 's/^/group_id=/' >> "$GITHUB_OUTPUT"
-          echo "version=${{ github.ref_name }}" >> "$GITHUB_OUTPUT"
+          sed "/v[0-9]*.[0-9]*.[0-9]*/s/=v/=/" <<< `echo "version=${{ github.ref_name }}"` >> "$GITHUB_OUTPUT"
 
   build:
     name: Build image and bin
