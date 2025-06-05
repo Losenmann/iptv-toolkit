@@ -134,7 +134,7 @@ jobs:
           provenance: false
           platforms: ${{ env.IMAGE_PLATFORM_PKG_DEB }}
           outputs: |
-            type=local,dest=${{ env.ARTIFACTS_PATH }}/images
+            type=local,dest=./artifact/images
           build-args: |
             PKG_VERSION=${{ needs.init.outputs.version }}
             PKG_USER=${{ needs.init.outputs.user_id }}
@@ -149,11 +149,11 @@ jobs:
           provenance: false
           platforms: ${{ env.IMAGE_PLATFORM_PKG_RPM }}
           outputs: |
-            type=local,dest=${{ env.ARTIFACTS_PATH }}/images
+            type=local,dest=./artifact/images
           build-args: |
             PKG_VERSION=${{ needs.init.outputs.version }}
       - name: 🧬 Extract packages
-        working-directory: ${{ env.ARTIFACTS_PATH }}/images
+        working-directory: ./artifact/images
         run: |
           ls -lah ../
           cp -vf ./*/*.deb ./*/*.rpm ../pkg/
