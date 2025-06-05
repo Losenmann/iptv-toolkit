@@ -67,21 +67,22 @@ Environmental variables and key CLI applicable in all operating modes.
 
 ## Build from source
 ### Build executable file from source
-There are two ways to build: with Docker or locally.<br>
-In Docker, everything you need is built into a container and then placed in the ./build directory.<br>
-Or you can build locally. The executables will also be located in the ./build directory.<br>
-Docker build is done and installed by default.
+The project provides several assembly options. The possible options are listed below:
++ [Bin](#build_bin)
++ [Docker Image](#build_docker_image)
++ [Distro Package](#build_distro_package)
 
 > [!IMPORTANT]
-> Before building locally, you need to install the [Golang](https://go.dev/dl) environment and install the [upx](https://github.com/upx/upx/releases) packager before building.
+> Before any build you need to install docker.
 
-#### Build bin using Docker
+### Build bin
 1. Go to the project directory
-2. Run `make build` command
+2. Run `make bin` command
 3. Check catalog `./build`
+After that, the image can be used as you wish.
 
 ### Build Docker Image
-Build Docker Image Allows you to build a ready-to-deploy Docker image from sources.
+The built image is placed in the local registry, similar to the `docker pull` command. After that, the image can be used as you wish.
 1. Go to the project directory
 2. Run `make image` command
 2. Check the repository `docker image ls`
