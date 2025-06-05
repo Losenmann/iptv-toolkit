@@ -11,10 +11,10 @@ env:
   REGISTRY_DOCKERHUB: registry.hub.docker.com
   REGISTRY_GITHUB: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
-  IMAGE_PLATFORM: linux/386,linux/amd64,linux/arm64,linux/ppc64le,linux/riscv64,linux/s390x
+  IMAGE_PLATFORM: linux/386,linux/amd64,linux/arm/v7,linux/arm64/v8,linux/mips64le,linux/ppc64le,linux/riscv64,linux/s390x
   IMAGE_PLATFORM_PKG_RPM: linux/amd64,linux/arm64,linux/ppc64le,linux/s390x
   IMAGE_PLATFORM_PKG_APK: linux/amd64
-  IMAGE_PLATFORM_PKG_DEB: linux/386,linux/amd64
+  IMAGE_PLATFORM_PKG_DEB: linux/386,linux/amd64,linux/arm/v7,linux/arm64/v8,linux/mips64le,linux/ppc64le,linux/riscv64,linux/s390x
   ARTIFACTS_PATH: /tmp/artifact
 
 jobs:
@@ -134,8 +134,7 @@ jobs:
           provenance: false
           platforms: ${{ env.IMAGE_PLATFORM_PKG_DEB }}
           outputs: |
-            type=local,dest=./artifact/pkg
-            type=local,dest=./artifact/asset
+            type=local,dest=${{ env.ARTIFACTS_PATH }}/images
           build-args: |
             PKG_VERSION=${{ needs.init.outputs.version }}
             PKG_USER=${{ needs.init.outputs.user_id }}
@@ -150,10 +149,14 @@ jobs:
           provenance: false
           platforms: ${{ env.IMAGE_PLATFORM_PKG_RPM }}
           outputs: |
-            type=local,dest=./artifact/pkg
-            type=local,dest=./artifact/asset
+            type=local,dest=${{ env.ARTIFACTS_PATH }}/images
           build-args: |
             PKG_VERSION=${{ needs.init.outputs.version }}
+      - name: 🧬 Extract packages
+        working-directory: ${{ env.ARTIFACTS_PATH }}/images
+        run: |
+          cp -vf ./*/*.deb ./*/*.rpm ../pkg/
+          cp -vf ./*/*.deb ./*/*.rpm ../asset/
       - name: 📦 Upload artifact
         uses: actions/upload-artifact@v4
         with:
