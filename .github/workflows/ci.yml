@@ -11,7 +11,7 @@ env:
   REGISTRY_DOCKERHUB: registry.hub.docker.com
   REGISTRY_GITHUB: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
-  IMAGE_PLATFORM: linux/amd64
+  IMAGE_PLATFORM: linux/386,linux/amd64
   IMAGE_PLATFORM_PKG_RPM: linux/amd64
   IMAGE_PLATFORM_PKG_APK: linux/amd64
   IMAGE_PLATFORM_PKG_DEB: linux/amd64
