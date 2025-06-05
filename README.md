@@ -68,9 +68,9 @@ Environmental variables and key CLI applicable in all operating modes.
 ## Build from source
 ### Build executable file from source
 The project provides several assembly options. The possible options are listed below:
-+ [Bin](#build_bin)
-+ [Docker Image](#build_docker_image)
-+ [Distro Package](#build_distro_package)
++ [Bin](#build-bin)
++ [Docker Image](#build-docker-image)
++ [Distro Package](#build-distro-package)
 
 > [!IMPORTANT]
 > Before any build you need to install docker.
