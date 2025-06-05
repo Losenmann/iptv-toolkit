@@ -5,7 +5,7 @@ on:
     branches: ['master']
     paths: ['**.go','go.sum','go.mod','Makefile','Dockerfile','.dockerignore','.github/workflows/ci.yml','pkg/**']
     tags:
-      - '*'
+      - 'v[0-9].[0-9]+.[0-9]+'
   pull_request:
     branches: ["master"]
 
@@ -29,14 +29,6 @@ jobs:
       user_id: ${{ steps.set-var.outputs.user_id }}
       group_id: ${{ steps.set-var.outputs.group_id }}
       version: ${{ steps.set-var.outputs.version }}
-      revision: ${{ steps.set-var.outputs.revision }}
-      tag_url: ${{ steps.set-var.outputs.tag_url }}
-      description: ${{ steps.set-var.outputs.description }}
-      homepage: ${{ steps.set-var.outputs.homepage }}
-      license: ${{ steps.set-var.outputs.license }}
-      url: ${{ steps.set-var.outputs.url }}
-      maintainer: ${{ steps.set-var.outputs.maintainer }}
-      maintainer_email: ${{ steps.set-var.outputs.maintainer_email }}
     steps:
       - name: 🔍 Checkout repository
         uses: actions/checkout@v4.2.2
@@ -47,16 +39,7 @@ jobs:
         run: |
           id -u |sed 's/^/user_id=/' >> "$GITHUB_OUTPUT"
           id -g |sed 's/^/group_id=/' >> "$GITHUB_OUTPUT"
-          gh api /users/${GITHUB_ACTOR} -q '. | "maintainer=\(.name)"' >> "$GITHUB_OUTPUT"
-          gh api /users/${GITHUB_ACTOR} -q '. | "maintainer_email=\(.id)+\(.login)@users.noreply.github.com"' >> "$GITHUB_OUTPUT"
-          gh repo view --json licenseInfo -q '.licenseInfo | "license=\(.name)"' >> "$GITHUB_OUTPUT"
-          gh repo view --json description -q '. | "description=\(.description)"' >> "$GITHUB_OUTPUT"
-          gh repo view --json homepageUrl -q '. | "homepage=\(.homepageUrl)"' >> "$GITHUB_OUTPUT"
-          gh repo view --json url -q '. | "url=\(.url)"' >> "$GITHUB_OUTPUT"
-          gh repo view --json latestRelease -q '.latestRelease | "tag_url=\(.url)"' >> "$GITHUB_OUTPUT"
-          version=`gh repo view --json latestRelease -q '.latestRelease.tagName' |sed 's/v/version=/'`
-          sed "s/master\|\/.*/$version/" <<< ${{ github.ref_name }} >> "$GITHUB_OUTPUT"
-          echo "revision=1" >> "$GITHUB_OUTPUT"
+          echo "version=${{ github.ref_name }}" >> "$GITHUB_OUTPUT"
 
   build:
     name: Build image and bin
