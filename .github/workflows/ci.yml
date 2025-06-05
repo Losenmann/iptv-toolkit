@@ -4,6 +4,8 @@ on:
   push:
     branches: ['master']
     paths: ['**.go','go.sum','go.mod','Makefile','Dockerfile','.dockerignore','.github/workflows/ci.yml','pkg/**']
+    tags:
+      - '*'
   pull_request:
     branches: ["master"]
 
