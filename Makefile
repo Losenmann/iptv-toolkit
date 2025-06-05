@@ -156,9 +156,11 @@ build-bin:
 		-o ./artifact/bin/iptv-toolkit-${TARGETOS}-${TARGETARCH} \
 		.
 ifeq (${BIN_COMPRESS},true)
+ifneq (${TARGETARCH},mips64le)
 ifneq (${TARGETARCH},riscv64)
 ifneq (${TARGETARCH},s390x)
 	@upx --best --lzma ./artifact/bin/iptv-toolkit-*
+endif
 endif
 endif
 endif
