@@ -91,7 +91,8 @@ build-rpm:
 	@tar -czvf ./pkg/rpmbuild/SOURCES/v${PKG_VERSION}.tar.gz -C ./pkg/rpmbuild/ iptv-toolkit-${PKG_VERSION} --remove-files
 	@sed -i -e '/^Version/s/:.*/: ${PKG_VERSION}/' \
 		-e "0,/%changelog/!d" \
-		-e "s|%changelog|%changelog\n`LANG=en_US git --no-pager log --no-walk --tags --pretty="* %ad %an <%ae> - %S%n%B" --date=format:'%a %b %d %Y' \
+		-e "s|%changelog|%changelog\n` \
+			LANG=en_US git tag --sort=-v:refname -l v[2]* --format='* %(*authordate:format:%a %b %d %Y) %(*authorname) %(*authoremail) - %(tag)%0a%(contents)' \
 			|sed -e 's/^[^*]/- /g' -e '/^*/s/ v/ /g' -e '/^*/s/$$/-1/g' -e 's/$$/\\\n/' |tr -d '\n'`|" \
 		./pkg/rpmbuild/SPECS/iptv-toolkit.spec
 	@rpmlint ./pkg/rpmbuild/SPECS/iptv-toolkit.spec
@@ -110,7 +111,7 @@ build-deb:
 	@sed -i -e "/; urgency=/s/([0-9.]*)/(${PKG_VERSION}-1)/" \
 		-e '2,$$d' \
 		-e "/; urgency=/s/$$/\n` \
-			git --no-pager log -1 --no-walk --tags --pretty="%B -- %an <%ae>  %aD%n" \
+			LANG=en_US git tag --sort=-v:refname -l v[2]* --format='%(contents) -- %(*authorname) %(*authoremail)  %(*authordate:rfc)' \
 			|sed -e "/^[^ ]/s/^/  * /g" -e 's/$$/\\\n/' \
 			|tr -d '\n' \
 		`/" ./pkg/debbuild/iptv-toolkit/debian/changelog
@@ -138,6 +139,13 @@ bin:
 		sh -c "apk add make upx && make build-bin"
 
 pkg:
+	@docker buildx build \
+		--build-arg PKG_VERSION=${PKG_VERSION} \
+		--build-arg PKG_USER=${PKG_USER} \
+		--build-arg PKG_GROUP=${PKG_GROUP} \
+		-t ${IMAGE_REPO}/${IMAGE_NAME}:latest \
+		--output=type=local,dest=./artifact/pkg \
+		-f ./pkg/Dockerfile.debian .
 	@docker buildx build \
 		--build-arg PKG_VERSION=${PKG_VERSION} \
 		--build-arg PKG_USER=${PKG_USER} \
