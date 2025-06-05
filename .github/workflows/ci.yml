@@ -155,10 +155,10 @@ jobs:
       - name: 🧬 Extract packages
         working-directory: ./artifact/images
         run: |
-          ls -lah ../
           mkdir ../pkg
-          cp -vf ./*/*.deb ./*/*.rpm ../pkg/
-          cp -vf ./*/*.deb ./*/*.rpm ../asset/
+          ls -lah ../
+          find ./ -type f -regex '.*.deb\|.*.rpm' -exec cp -v {} ../pkg \;
+          find ./ -type f -regex '.*.deb\|.*.rpm' -exec cp -v {} ../asset \;
       - name: 📦 Upload artifact
         uses: actions/upload-artifact@v4
         with:
