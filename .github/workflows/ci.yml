@@ -155,6 +155,7 @@ jobs:
       - name: 🧬 Extract packages
         working-directory: ${{ env.ARTIFACTS_PATH }}/images
         run: |
+          mkdir -p ${{ env.ARTIFACTS_PATH }}/pkg
           cp -vf ./*/*.deb ./*/*.rpm ../pkg/
           cp -vf ./*/*.deb ./*/*.rpm ../asset/
       - name: 📦 Upload artifact
