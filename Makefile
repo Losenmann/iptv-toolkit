@@ -82,26 +82,6 @@ testing-pre-stage:
 testing-post-stage:
 	@docker compose -f ./deploy/docker-compose.yaml --env-file ./testing/testing.env down
 
-build-rpm:
-	@mkdir -p ./artifact/pkg
-	@chown -R ${PKG_USER}:${PKG_GROUP} ./artifact
-	@git config --global --add safe.directory /opt/src
-	@install -o ${PKG_USER} -g ${PKG_GROUP} -d ./pkg/rpmbuild/BUILD/../BUILDROOT/../RPMS/../SOURCES/../SPECS/../SRPMS/
-	@install -m755 -D ./artifact/bin/*linux-${TARGETARCH} ./pkg/rpmbuild/iptv-toolkit-${PKG_VERSION}/iptv-toolkit
-	@tar -czvf ./pkg/rpmbuild/SOURCES/v${PKG_VERSION}.tar.gz -C ./pkg/rpmbuild/ iptv-toolkit-${PKG_VERSION} --remove-files
-	@sed -i -e '/^Version/s/:.*/: ${PKG_VERSION}/' \
-		-e "0,/%changelog/!d" \
-		-e "s|%changelog|%changelog\n` \
-			LANG=en_US git tag --sort=-v:refname -l v[2]* --format='* %(*authordate:format:%a %b %d %Y) %(*authorname) %(*authoremail) - %(tag)%0a%(contents)' \
-			|sed -e 's/^[^*]/- /g' -e '/^*/s/ v/ /g' -e '/^*/s/$$/-1/g' -e 's/$$/\\\n/' |tr -d '\n'`|" \
-		./pkg/rpmbuild/SPECS/iptv-toolkit.spec
-	@cat ./pkg/rpmbuild/SPECS/iptv-toolkit.spec
-	@rpmlint ./pkg/rpmbuild/SPECS/iptv-toolkit.spec
-	@rpmbuild --define "_topdir `pwd`/pkg/rpmbuild" -ba ./pkg/rpmbuild/SPECS/iptv-toolkit.spec
-	@rpmlint -r ./pkg/rpmbuild/.rpmlintrc ./pkg/rpmbuild/RPMS/*/*.rpm
-	@install -o ${PKG_USER} -g ${PKG_GROUP} -m755 -D ./pkg/rpmbuild/RPMS/*/*.rpm -t ./artifact/pkg/
-	@chown -R ${PKG_USER}:${PKG_GROUP} ./artifact
-
 build-deb:
 	@mkdir -p ./artifact/pkg
 	@chown -R ${PKG_USER}:${PKG_GROUP} ./artifact
@@ -112,11 +92,31 @@ build-deb:
 	@sed -i -e "/; urgency=/s/([0-9.]*)/(${PKG_VERSION}-1)/" \
 		-e '2,$$d' \
 		-e "/; urgency=/s/$$/\n` \
-			LANG=en_US git tag --sort=-v:refname -l v[2]* --format='%(contents) -- %(*authorname) %(*authoremail)  %(*authordate:rfc)' \
+			LANG=en_US git tag --sort=-v:refname -l --format='%(contents) -- %(*authorname) %(*authoremail)  %(*authordate:rfc)' \
 			|sed -e "/^[^ ]/s/^/  * /g" -e 's/$$/\\\n/' \
 			|tr -d '\n' \
 		`/" ./pkg/debbuild/iptv-toolkit/debian/changelog
 	@cd ./pkg/debbuild/iptv-toolkit; dpkg-buildpackage -b -us -uc
+	@chown -R ${PKG_USER}:${PKG_GROUP} ./artifact
+
+build-rpm:
+	@mkdir -p ./artifact/pkg
+	@chown -R ${PKG_USER}:${PKG_GROUP} ./artifact
+	@git config --global --add safe.directory /opt/src
+	@install -o ${PKG_USER} -g ${PKG_GROUP} -d ./pkg/rpmbuild/BUILD/../BUILDROOT/../RPMS/../SOURCES/../SPECS/../SRPMS/
+	@install -m755 -D ./artifact/bin/*linux-${TARGETARCH} ./pkg/rpmbuild/iptv-toolkit-${PKG_VERSION}/iptv-toolkit
+	@tar -czvf ./pkg/rpmbuild/SOURCES/v${PKG_VERSION}.tar.gz -C ./pkg/rpmbuild/ iptv-toolkit-${PKG_VERSION} --remove-files
+	@sed -i -e '/^Version/s/:.*/: ${PKG_VERSION}/' \
+		-e "0,/%changelog/!d" \
+		-e "s|%changelog|%changelog\n` \
+			LANG=en_US git tag --sort=-v:refname -l --format='* %(*authordate:format:%a %b %d %Y) %(*authorname) %(*authoremail) - %(tag)%0a%(contents)' \
+			|sed -e 's/^[^*]/- /g' -e '/^*/s/ v/ /g' -e '/^*/s/$$/-1/g' -e 's/$$/\\\n/' |tr -d '\n'`|" \
+		./pkg/rpmbuild/SPECS/iptv-toolkit.spec
+	@cat ./pkg/rpmbuild/SPECS/iptv-toolkit.spec
+	@rpmlint ./pkg/rpmbuild/SPECS/iptv-toolkit.spec
+	@rpmbuild --define "_topdir `pwd`/pkg/rpmbuild" -ba ./pkg/rpmbuild/SPECS/iptv-toolkit.spec
+	@rpmlint -r ./pkg/rpmbuild/.rpmlintrc ./pkg/rpmbuild/RPMS/*/*.rpm
+	@install -o ${PKG_USER} -g ${PKG_GROUP} -m755 -D ./pkg/rpmbuild/RPMS/*/*.rpm -t ./artifact/pkg/
 	@chown -R ${PKG_USER}:${PKG_GROUP} ./artifact
 
 image:
