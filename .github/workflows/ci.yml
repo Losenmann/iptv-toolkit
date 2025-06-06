@@ -246,8 +246,8 @@ jobs:
           VERSION: ${{ needs.init.outputs.version }}
         run: |
           gh release create \
-              --repo="$GITHUB_REPOSITORY" \
-              --title="${GITHUB_REPOSITORY#*/} ${VERSION}" \
-              --generate-notes \
-              "v$tag" \
-              ${{ env.ARTIFACTS_PATH }}/asset/*
+            -t v${VERSION} \
+            --notes-from-tag v${VERSION} \
+            --verify-tag \
+            --latest \
+            ${{ env.ARTIFACTS_PATH }}/asset/*

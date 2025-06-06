@@ -5,6 +5,10 @@
 [![Maintainer](https://img.shields.io/badge/MAINTAINER-%40Losenmann-red?style=for-the-badge)](https://github.com/Losenmann)
 [![GitHub License](https://img.shields.io/github/license/losenmann/iptv-toolkit?style=for-the-badge)](https://github.com/Losenmann/iptv-toolkit/blob/master/LICENSE)
 [![Docker Image Version](https://img.shields.io/docker/v/losenmann/iptv-toolkit?style=for-the-badge&label=Docker&color=%231D63ED)](https://hub.docker.com/r/losenmann/iptv-toolkit/tags)
+[![Workflow](https://img.shields.io/github/actions/workflow/status/losenmann/iptv-toolkit/ci.yml?style=for-the-badge&label=Workflow
+)](https://github.com/Losenmann/iptv-toolkit/actions/workflows/ci.yml)
+[![Docker Image Version](https://img.shields.io/docker/v/losenmann/iptv-toolkit?style=for-the-badge&label=Docker&color=%231D63ED)](https://hub.docker.com/r/losenmann/iptv-toolkit/tags)
+[![Docker Pulls](https://img.shields.io/docker/pulls/losenmann/iptv-toolkit?style=for-the-badge&label=Docker%20Pull&color=%231D63ED)](https://hub.docker.com/r/losenmann/iptv-toolkit)
 
 ## Overview
 The service allows you to convert iptv and epg playlists. For playlists, conversion is carried out in the following formats: m3u, m3u8, xml. EPG conversion is carried out in the following formats: jtv, xml, xml.gz.<br>
