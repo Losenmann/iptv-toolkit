@@ -14,9 +14,6 @@ env:
   REGISTRY_GITHUB: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
   IMAGE_PLATFORM: linux/386,linux/amd64,linux/arm,linux/arm64,linux/mips64le,linux/ppc64le,linux/riscv64,linux/s390x
-  IMAGE_PLATFORM_PKG_RPM: linux/amd64,linux/arm64,linux/ppc64le,linux/s390x
-  IMAGE_PLATFORM_PKG_APK: linux/amd64
-  IMAGE_PLATFORM_PKG_DEB: linux/386,linux/amd64,linux/arm,linux/arm64,linux/ppc64le,linux/s390x
   ARTIFACTS_PATH: /tmp/artifact
 
 jobs:
@@ -29,6 +26,9 @@ jobs:
       user_id: ${{ steps.set-var.outputs.user_id }}
       group_id: ${{ steps.set-var.outputs.group_id }}
       version: ${{ steps.set-var.outputs.version }}
+      arch_main: ${{ steps.set-var.outputs.arch_main }}
+      arch_deb: ${{ steps.set-var.outputs.arch_deb }}
+      arch_rpm: ${{ steps.set-var.outputs.arch_rpm }}
     steps:
       - name: 🔍 Checkout repository
         uses: actions/checkout@v4.2.2
@@ -41,6 +41,16 @@ jobs:
           id -g |sed 's/^/group_id=/' >> "$GITHUB_OUTPUT"
           version=`gh repo view --json latestRelease -q '.latestRelease.tagName' |sed 's/^v//'`
           sed -e "/v[0-9]*.[0-9]*.[0-9]*/s/=v/=/" -e "s/master/$version/" <<< `echo "version=${{ github.ref_name }}"` >> "$GITHUB_OUTPUT"
+          if [[ ${{ github.ref_name }} == master ]]; \
+          then \
+            echo arch_main=linux/amd64 >> "$GITHUB_OUTPUT"; \
+            echo arch_deb=linux/amd64 >> "$GITHUB_OUTPUT"; \
+            echo arch_rpm=linux/amd64 >> "$GITHUB_OUTPUT"; \
+          else \
+            echo arch_main=linux/386,linux/amd64,linux/arm,linux/arm64,linux/mips64le,linux/ppc64le,linux/riscv64,linux/s390x >> "$GITHUB_OUTPUT"; \
+            echo arch_deb=linux/386,linux/amd64,linux/arm,linux/arm64,linux/ppc64le,linux/s390x >> "$GITHUB_OUTPUT"; \
+            echo arch_rpm=linux/amd64,linux/arm64,linux/ppc64le,linux/s390x >> "$GITHUB_OUTPUT"; \
+          fi
 
   build:
     name: Build image and bin
@@ -65,7 +75,7 @@ jobs:
         with:
           provenance: false
           tags: losenmann/iptv-toolkit:latest
-          platforms: ${{ env.IMAGE_PLATFORM }}
+          platforms: ${{ needs.init.outputs.arch_main }}
           cache-to: type=local,dest=${{ env.ARTIFACTS_PATH }}/cache
           outputs: type=local,dest=${{ env.ARTIFACTS_PATH }}/images
       - name: 🌀 Build and export tarball
@@ -77,8 +87,8 @@ jobs:
       - name: 🧬 Extract executable file
         working-directory: ${{ env.ARTIFACTS_PATH }}/images
         run: |
-          cp -vf ./*/iptv-toolkit-* ../bin/
-          cp -vf ./*/iptv-toolkit-* ../asset/
+          find ./ -type f -regex '.*/iptv-toolkit-.*' -exec cp -v {} ../bin \;
+          find ./ -type f -regex '.*/iptv-toolkit-.*' -exec cp -v {} ../asset \;
       - name: 📦 Upload artifact
         uses: actions/upload-artifact@v4
         with:
@@ -115,7 +125,7 @@ jobs:
           context: .
           file: ./pkg/Dockerfile.debian
           provenance: false
-          platforms: ${{ env.IMAGE_PLATFORM_PKG_DEB }}
+          platforms: ${{ needs.init.outputs.arch_deb }}
           outputs: |
             type=local,dest=./artifact/images
           build-args: |
@@ -130,7 +140,7 @@ jobs:
           context: .
           file: ./pkg/Dockerfile.rhel
           provenance: false
-          platforms: ${{ env.IMAGE_PLATFORM_PKG_RPM }}
+          platforms: ${{ needs.init.outputs.arch_rpm }}
           outputs: |
             type=local,dest=./artifact/images
           build-args: |
@@ -251,6 +261,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           VERSION: ${{ needs.init.outputs.version }}
         run: |
+          git fetch --depth=1 origin +refs/tags/*:refs/tags/*
           gh release create \
             -t v${VERSION} \
             --notes-from-tag v${VERSION} \
