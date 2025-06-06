@@ -95,6 +95,7 @@ build-rpm:
 			LANG=en_US git tag --sort=-v:refname -l v[2]* --format='* %(*authordate:format:%a %b %d %Y) %(*authorname) %(*authoremail) - %(tag)%0a%(contents)' \
 			|sed -e 's/^[^*]/- /g' -e '/^*/s/ v/ /g' -e '/^*/s/$$/-1/g' -e 's/$$/\\\n/' |tr -d '\n'`|" \
 		./pkg/rpmbuild/SPECS/iptv-toolkit.spec
+	@cat ./pkg/rpmbuild/SPECS/iptv-toolkit.spec
 	@rpmlint ./pkg/rpmbuild/SPECS/iptv-toolkit.spec
 	@rpmbuild --define "_topdir `pwd`/pkg/rpmbuild" -ba ./pkg/rpmbuild/SPECS/iptv-toolkit.spec
 	@rpmlint -r ./pkg/rpmbuild/.rpmlintrc ./pkg/rpmbuild/RPMS/*/*.rpm
