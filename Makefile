@@ -92,7 +92,7 @@ build-deb:
 	@sed -i -e "/; urgency=/s/([0-9.]*)/(${PKG_VERSION}-1)/" \
 		-e '2,$$d' \
 		-e "/; urgency=/s/$$/\n` \
-			LANG=en_US git tag --sort=-v:refname -l --format='%(contents) -- %(*authorname) %(*authoremail)  %(*authordate:rfc)' \
+			LANG=en_US git tag $$(git describe --abbrev=0) --sort=-v:refname --format='%(contents) -- %(*authorname) %(*authoremail)  %(*authordate:rfc)' \
 			|sed -e "/^[^ ]/s/^/  * /g" -e 's/$$/\\\n/' \
 			|tr -d '\n' \
 		`/" ./pkg/debbuild/iptv-toolkit/debian/changelog
