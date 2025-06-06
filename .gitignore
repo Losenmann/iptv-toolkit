@@ -15,6 +15,7 @@ tv
 *.changes
 upx
 _*
+!.ghpages/*
 artifact
 pkg/.config
 pkg/.docker
