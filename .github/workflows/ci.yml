@@ -43,6 +43,7 @@ jobs:
           id -u |sed 's/^/user_id=/' >> "$GITHUB_OUTPUT"
           id -g |sed 's/^/group_id=/' >> "$GITHUB_OUTPUT"
           sed "/v[0-9]*.[0-9]*.[0-9]*/s/=v/=/" <<< `echo "version=${{ github.ref_name }}"` >> "$GITHUB_OUTPUT"
+          git fetch --depth=1 origin +refs/tags/*:refs/tags/*
           LANG=en_US git tag --sort=-v:refname -l v[2]* --format='* %(*authordate:format:%a %b %d %Y) %(*authorname) %(*authoremail) - %(tag)%0a%(contents)'
 
   build:
