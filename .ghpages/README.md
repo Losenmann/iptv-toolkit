@@ -14,7 +14,12 @@ A set of tools for working with IPTV. The set includes: playlist converter, prog
 ## Quick start
 + [Docker Compose](./deploy/docker-compose.yaml)
   ```bash
-  docker-compose up -d -f ./docker-compose.yaml
+  docker-compose -f ./docker-compose.yaml up -d
+  ```
+
++ [Docker Swarm](./deploy/docker-stack.yaml)
+  ```bash
+  docker stack deploy -c ./docker-stack.yaml iptv -d --prune
   ```
 
 + [Kubernetes](./deploy/kubernetes.yaml)
