@@ -13,7 +13,7 @@ tv
 *.rpm
 *.buildinfo
 *.changes
-upx
+iptv-toolkit
 _*
 !.ghpages/*
 artifact
@@ -24,4 +24,5 @@ pkg/rpmbuild/BUILDROOT
 pkg/rpmbuild/RPMS
 pkg/rpmbuild/SOURCES
 pkg/rpmbuild/SRPMS
-iptv-toolkit
+!pkg/apkbuild/*
+!pkg/debbuild/*

@@ -1,6 +1,8 @@
 FROM --platform=$BUILDPLATFORM golang:1.24.3-alpine AS builder
 ARG TARGETOS \
     TARGETARCH \
+    GOPATH=/opt/src/artifact/go/path \
+    GOCACHE=/opt/src/artifact/go/cache \
     BIN_COMPRESS=true \
     PKG_USER \
     PKG_GROUP

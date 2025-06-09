@@ -1,4 +1,4 @@
-FROM debian:12.11 AS debian
+FROM debian:sid-20250520-slim AS debian
 ARG TARGETOS \
     TARGETARCH \
     PKG_VERSION

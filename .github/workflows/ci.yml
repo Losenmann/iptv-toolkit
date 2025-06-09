@@ -1,6 +1,7 @@
 name: CI
 
 on:
+  workflow_dispatch:
   push:
     branches: ['master']
     paths: ['**.go','go.sum','go.mod','Makefile','Dockerfile','.dockerignore','.github/workflows/ci.yml','pkg/**']
@@ -13,7 +14,6 @@ env:
   REGISTRY_DOCKERHUB: registry.hub.docker.com
   REGISTRY_GITHUB: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
-  IMAGE_PLATFORM: linux/386,linux/amd64,linux/arm,linux/arm64,linux/mips64le,linux/ppc64le,linux/riscv64,linux/s390x
   ARTIFACTS_PATH: /tmp/artifact
 
 jobs:
@@ -47,8 +47,8 @@ jobs:
             echo arch_deb=linux/amd64 >> "$GITHUB_OUTPUT"; \
             echo arch_rpm=linux/amd64 >> "$GITHUB_OUTPUT"; \
           else \
-            echo arch_main=linux/386,linux/amd64,linux/arm,linux/arm64,linux/mips64le,linux/ppc64le,linux/riscv64,linux/s390x >> "$GITHUB_OUTPUT"; \
-            echo arch_deb=linux/386,linux/amd64,linux/arm,linux/arm64,linux/ppc64le,linux/s390x >> "$GITHUB_OUTPUT"; \
+            echo arch_main=linux/386,linux/amd64,linux/arm,linux/arm64,linux/mips64le,linux/ppc64le,linux/riscv64,linux/s390x,windows/386,windows/amd64,windows/arm,windows/arm64 >> "$GITHUB_OUTPUT"; \
+            echo arch_deb=linux/386,linux/amd64,linux/arm,linux/arm64,linux/mips64le,linux/ppc64le,linux/riscv64,linux/s390x >> "$GITHUB_OUTPUT"; \
             echo arch_rpm=linux/amd64,linux/arm64,linux/ppc64le,linux/s390x >> "$GITHUB_OUTPUT"; \
           fi
 
@@ -73,17 +73,15 @@ jobs:
       - name: 🌀 Build and export cache
         uses: docker/build-push-action@ca877d9245402d1537745e0e356eab47c3520991
         with:
+          context: .
+          file: ./Dockerfile
           provenance: false
           tags: losenmann/iptv-toolkit:latest
           platforms: ${{ needs.init.outputs.arch_main }}
           cache-to: type=local,dest=${{ env.ARTIFACTS_PATH }}/cache
-          outputs: type=local,dest=${{ env.ARTIFACTS_PATH }}/images
-      - name: 🌀 Build and export tarball
-        uses: docker/build-push-action@ca877d9245402d1537745e0e356eab47c3520991
-        with:
-          provenance: false
-          tags: losenmann/iptv-toolkit:latest
-          outputs: type=docker,dest=${{ env.ARTIFACTS_PATH }}/images/image.tar
+          outputs: |
+            type=local,dest=${{ env.ARTIFACTS_PATH }}/images
+            type=docker,dest=${{ env.ARTIFACTS_PATH }}/images/image.tar
       - name: 🧬 Extract executable file
         working-directory: ${{ env.ARTIFACTS_PATH }}/images
         run: |
@@ -229,7 +227,7 @@ jobs:
         uses: docker/build-push-action@ca877d9245402d1537745e0e356eab47c3520991
         with:
           tags: ${{ steps.meta.outputs.tags }}
-          platforms: ${{ env.IMAGE_PLATFORM }}
+          platforms: ${{ needs.init.outputs.arch_main }}
           cache-from: type=local,src=${{ env.ARTIFACTS_PATH }}/cache
           push: true
           provenance: false

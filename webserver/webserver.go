@@ -22,5 +22,6 @@ func Files(p, d string) {
 }
 
 func Run(p int) {
+    gin.SetMode(gin.ReleaseMode)
     router.Run(":" + strconv.Itoa(p))
 }

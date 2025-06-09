@@ -4,7 +4,6 @@
 [![Kubernetes](https://img.shields.io/badge/kubernetes-%23326ce5.svg?style=for-the-badge&logo=kubernetes&logoColor=white)](https://kubernetes.io)
 [![Maintainer](https://img.shields.io/badge/MAINTAINER-%40Losenmann-red?style=for-the-badge)](https://github.com/Losenmann)
 [![GitHub License](https://img.shields.io/github/license/losenmann/iptv-toolkit?style=for-the-badge)](https://github.com/Losenmann/iptv-toolkit/blob/master/LICENSE)
-[![Docker Image Version](https://img.shields.io/docker/v/losenmann/iptv-toolkit?style=for-the-badge&label=Docker&color=%231D63ED)](https://hub.docker.com/r/losenmann/iptv-toolkit/tags)
 [![Workflow](https://img.shields.io/github/actions/workflow/status/losenmann/iptv-toolkit/ci.yml?style=for-the-badge&label=Workflow
 )](https://github.com/Losenmann/iptv-toolkit/actions/workflows/ci.yml)
 [![Docker Image Version](https://img.shields.io/docker/v/losenmann/iptv-toolkit?style=for-the-badge&label=Docker&color=%231D63ED)](https://hub.docker.com/r/losenmann/iptv-toolkit/tags)
@@ -18,6 +17,9 @@ Also in the background, the udpxy proxy server is launched, allowing you to conv
 
 > [!NOTE]
 > Server file access endpoint: "/files/". For UDPXY: "/udp/".
+
+> [!WARNING]
+> Please use tags or releases, the master branch may contain unstable changes.
 
 ### Supported tools
 + Playlist converter in 2 formats ([xspf](https://xspf.org), [m3u/m3u8](https://wikipedia.org/wiki/M3U))
