@@ -1,0 +1,21 @@
+pkgname=iptv-toolkit
+pkgver=
+pkgrel=0
+pkgdesc="Includes a playlist converter and tvguide. Has a built-in udpxy and a file server"
+url="https://github.com/Losenmann/iptv-toolkit"
+giturl="https://github.com/Losenmann/iptv-toolkit.git"
+arch="all"
+license="Apache-2.0"
+subpackages="$pkgname-doc"
+source="$pkgname-$pkgver.tar.gz::$url/archive/refs/tags/v$pkgver.tar.gz"
+options="!check !strip"
+maintainer=""
+
+package() {
+	echo $startdir
+	mkdir -p "$pkgdir/usr/share/man/"
+	install -m755 -D "$startdir/iptv-toolkit" "$pkgdir/usr/bin/iptv-toolkit"
+	cp -r "$startdir/../man" "$pkgdir/usr/share/"
+}
+
+

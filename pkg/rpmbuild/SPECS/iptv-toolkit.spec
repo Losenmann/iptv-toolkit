@@ -2,7 +2,7 @@
 %define debug_package %{nil}
 Name: iptv-toolkit
 Version: 
-Release: 1
+Release: 0
 Summary: A set of tools for working with IPTV
 Summary(ru): Набор инструментов для работы с IPTV
 License: Apache-2.0

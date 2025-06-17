@@ -1,0 +1,13 @@
+FROM alpine:3.22.0 AS alpine
+ARG TARGETOS \
+    TARGETARCH \
+    PKG_VERSION \
+    PKG_USER \
+    PKG_GROUP
+RUN apk update && apk add make git alpine-sdk apkbuild-lint
+WORKDIR /opt/src
+COPY . /opt/src
+RUN make build-apk
+
+FROM scratch AS pkg
+COPY --from=alpine /opt/src/artifact/pkg/*.apk /

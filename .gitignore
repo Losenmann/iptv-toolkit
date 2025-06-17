@@ -13,6 +13,8 @@ tv
 *.rpm
 *.buildinfo
 *.changes
+*.rsa
+*.rsa.pub
 iptv-toolkit
 _*
 !.ghpages/*

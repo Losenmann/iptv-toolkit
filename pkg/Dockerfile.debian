@@ -1,11 +1,13 @@
 FROM debian:sid-20250520-slim AS debian
 ARG TARGETOS \
     TARGETARCH \
-    PKG_VERSION
-RUN apt update && apt install -y --no-install-recommends make build-essential dpkg-dev dh-make git
+    PKG_VERSION \
+    PKG_USER \
+    PKG_GROUP
+RUN apt update && apt install -y --no-install-recommends make git build-essential dpkg-dev dh-make
 WORKDIR /opt/src
 COPY . /opt/src
 RUN make build-deb
 
 FROM scratch AS pkg
-COPY --from=debian /opt/src/pkg/debbuild/*.deb /
+COPY --from=debian /opt/src/artifact/pkg/*.deb /
