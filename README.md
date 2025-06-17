@@ -46,18 +46,13 @@ Also in the background, the udpxy proxy server is launched, allowing you to conv
 
 + [MikroTik RoutesOS](./deploy/routeros-v7.rsc)
   ```rsc
-  :execute script=[([/tool/fetch url="https://raw.githubusercontent.com/Losenmann/iptv-toolkit/master/deploy/kubernetes.yaml" output=user as-value]->"data")]
-  ```
-
-+ [OpenWRT](./deploy/routeros-v7.rsc)
-  ```rsc
-  :execute script=[([/tool/fetch url="https://raw.githubusercontent.com/Losenmann/iptv-toolkit/master/deploy/kubernetes.yaml" output=user as-value]->"data")]
+  :execute script=[([/tool/fetch url="https://raw.githubusercontent.com/Losenmann/iptv-toolkit/master/deploy/routeros-v7.rsc" output=user as-value]->"data")]
   ```
 
 > [!WARNING]
 > **MikroTik RoutesOS**
 > If you are running a container on RouterOS devices, remember that the device resource is limited.
-> The service requires at least 24 MB of RAM.
+> The service requires at least 32 MB of RAM.
 > You also need to manually set the address on the [veth](https://help.mikrotik.com/docs/spaces/ROS/pages/84901929/Container#Container-ContainerinLayer2network) `veth-iptv-toolkit` interface and add the interface to the bridge.
 > You also need to enable [IGMP Proxy](https://help.mikrotik.com/docs/spaces/ROS/pages/128221386/IGMP+Proxy) and configure the firewall.
 
