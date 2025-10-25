@@ -4,7 +4,6 @@ import (
     "github.com/gin-gonic/gin"
     "github.com/losenmann/iptv-toolkit/udpxy"
     "net/http"
-    "strconv"
 )
 
 var router *gin.Engine
@@ -23,5 +22,5 @@ func Files(p, d string) {
 
 func Run(p int) {
     gin.SetMode(gin.ReleaseMode)
-    router.Run(":" + strconv.Itoa(p))
+    router.Run(":" + string(rune(p)))
 }

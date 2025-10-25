@@ -15,7 +15,6 @@ import (
     "time"
     "github.com/gabriel-vasile/mimetype"
     "log/slog"
-    "strconv"
 )
 
 type Epg struct {
@@ -271,7 +270,7 @@ func jtvCreateFileFromXml(epg Epg) ([]byte) {
 
     zipW := zip.NewWriter(&buff)
     for _, ch := range(epg.Channel) {
-        if id, _ := strconv.Atoi(ch.DisplayName); id <= 1154{
+        if id, _ := setup.StringToInt(ch.DisplayName); id <= 1154{
             pdt := jtv_headers[0]
             var ndx []byte
             var count int
