@@ -4,7 +4,6 @@ import (
     "bufio"
     "bytes"
     "encoding/xml"
-    "fmt"
     "github.com/gabriel-vasile/mimetype"
     "github.com/losenmann/iptv-toolkit/setup"
     "log/slog"
@@ -78,12 +77,12 @@ func ConvertPlaylist(file []byte, udpxy, epg bool) {
 
     if err := os.MkdirAll(*setup.PlaylistDir, 0777); err != nil {
         if *setup.LogLVL <= 2 {
-            slog.Warn(fmt.Sprintf("%v", err))
+            slog.Warn(err.Error())
         }
     } else {
         if err := os.WriteFile(path_playlist_m3u, playlist_m3u, 0644); err != nil {
             if *setup.LogLVL <= 2 {
-                slog.Warn(fmt.Sprintf("%v", err))
+                slog.Warn(err.Error())
             }
         } else {
             if *setup.LogLVL <= 1 {
@@ -92,7 +91,7 @@ func ConvertPlaylist(file []byte, udpxy, epg bool) {
         }
         if err := os.WriteFile(path_playlist_xml, playlist_xml, 0644); err != nil {
             if *setup.LogLVL <= 2 {
-                slog.Warn(fmt.Sprintf("%v", err))
+                slog.Warn(err.Error())
             }
         } else {
             if *setup.LogLVL <= 1 {
@@ -102,7 +101,7 @@ func ConvertPlaylist(file []byte, udpxy, epg bool) {
         if len(playlist_udpxy_m3u) > 0 {
             if err := os.WriteFile(path_playlist_udpxy_m3u, playlist_udpxy_m3u, 0644); err != nil {
                 if *setup.LogLVL <= 2 {
-                slog.Warn(fmt.Sprintf("%v", err))
+                slog.Warn(err.Error())
                 }
             } else {
                 if *setup.LogLVL <= 1 {
@@ -113,7 +112,7 @@ func ConvertPlaylist(file []byte, udpxy, epg bool) {
         if len(playlist_udpxy_xml) > 0 {
             if err := os.WriteFile(path_playlist_udpxy_xml, playlist_udpxy_xml, 0644); err != nil {
                 if *setup.LogLVL <= 2 {
-                    slog.Warn(fmt.Sprintf("%v", err))
+                    slog.Warn(err.Error())
                 }
             } else {
                 if *setup.LogLVL <= 1 {
@@ -201,7 +200,7 @@ func M3uToXml(file []byte) ([]byte) {
 
     if err := scanner.Err(); err != nil {
         if *setup.LogLVL <= 2 {
-            slog.Warn(fmt.Sprintf("%v", err))
+            slog.Warn(err.Error())
         }
     } else {
         if data, err := xml.MarshalIndent(playlist, "", "    "); err == nil {

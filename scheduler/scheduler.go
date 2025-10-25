@@ -1,7 +1,6 @@
 package scheduler
 
 import (
-    "fmt"
     "github.com/go-co-op/gocron/v2"
     "github.com/losenmann/iptv-toolkit/setup"
     "log/slog"
@@ -10,7 +9,7 @@ import (
 func Main(expression string) {
     if s, err := gocron.NewScheduler(); err != nil {
         if *setup.LogLVL <= 2 {
-            slog.Warn(fmt.Sprintf("%v", err))
+            slog.Warn(err.Error())
         }
     } else {
         _, err := s.NewJob(
@@ -19,7 +18,7 @@ func Main(expression string) {
         )
         if err != nil {
             if *setup.LogLVL <= 2 {
-                slog.Warn(fmt.Sprintf("%v", err))
+                slog.Warn(err.Error())
             }
         }
         //j.ID()

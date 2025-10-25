@@ -1,7 +1,6 @@
 package main
 
 import (
-    "fmt"
     "github.com/losenmann/iptv-toolkit/scheduler"
     "github.com/losenmann/iptv-toolkit/setup"
     "github.com/losenmann/iptv-toolkit/webserver"
@@ -16,7 +15,7 @@ func init() {
 func main() {
     if err := os.MkdirAll(*setup.WebDir, 0744); err != nil {
         if *setup.LogLVL <= 2 {
-            slog.Warn(fmt.Sprintf("%v", err))
+            slog.Warn(err.Error())
         }
         os.Exit(1)
     }

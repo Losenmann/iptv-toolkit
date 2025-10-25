@@ -6,8 +6,6 @@ import (
     "encoding/xml"
     "encoding/binary"
     "compress/gzip"
-    
-    "fmt"
     "os"
     "bytes"
     "regexp"
@@ -68,12 +66,12 @@ func ConvertEpg(file []byte) {
     }
     if err := os.MkdirAll(*setup.EpgDir, 0777); err != nil {
         if *setup.LogLVL <= 2 {
-            slog.Warn(fmt.Sprintf("%v", err))
+            slog.Warn(err.Error())
         }
     } else {
         if err := os.WriteFile(path_epg_jtv, epg_jtv, 0644); err != nil {
             if *setup.LogLVL <= 2 {
-                slog.Warn(fmt.Sprintf("%v", err))
+                slog.Warn(err.Error())
             }
         } else {
             if *setup.LogLVL <= 1 {
@@ -82,7 +80,7 @@ func ConvertEpg(file []byte) {
         }
         if err := os.WriteFile(path_epg_xml, epg_xml, 0644); err != nil {
             if *setup.LogLVL <= 2 {
-                slog.Warn(fmt.Sprintf("%v", err))
+                slog.Warn(err.Error())
             }
         } else {
             if *setup.LogLVL <= 1 {
@@ -91,7 +89,7 @@ func ConvertEpg(file []byte) {
         }
         if err := os.WriteFile(path_epg_xmlgz, epg_xmlgz, 0644); err != nil {
             if *setup.LogLVL <= 2 {
-                slog.Warn(fmt.Sprintf("%v", err))
+                slog.Warn(err.Error())
             }
         } else {
             if *setup.LogLVL <= 1 {
@@ -115,7 +113,7 @@ func JtvToXml(file []byte) ([]byte) {
     zipreader, err := zip.NewReader(reader, int64(len(file)))
     if err != nil {
         if *setup.LogLVL <= 2 {
-            slog.Warn(fmt.Sprintf("%v", err))
+            slog.Warn(err.Error())
         }
         return []byte{}
     }
@@ -124,7 +122,7 @@ func JtvToXml(file []byte) ([]byte) {
         if ch_name := regexp.MustCompile(`\.pdt$`).ReplaceAllString(fpdt.Name, ""); ch_name != fpdt.Name {
             if rc, err := zipreader.Open(ch_name + ".pdt"); err != nil {
                 if *setup.LogLVL <= 2 {
-                    slog.Warn(fmt.Sprintf("%v", err))
+                    slog.Warn(err.Error())
                 }
                 continue
             } else {
@@ -134,7 +132,7 @@ func JtvToXml(file []byte) ([]byte) {
             }
             if rc, err := zipreader.Open(ch_name + ".ndx"); err != nil {
                 if *setup.LogLVL <= 2 {
-                    slog.Warn(fmt.Sprintf("%v", err))
+                    slog.Warn(err.Error())
                 }
                 continue
             } else {
@@ -189,12 +187,12 @@ func XmlGzToXml(data []byte) ([]byte) {
     reader := bytes.NewReader(data)
     if gzreader, err := gzip.NewReader(reader); err != nil {
         if *setup.LogLVL <= 2 {
-            slog.Warn(fmt.Sprintf("%v", err))
+            slog.Warn(err.Error())
         }
     } else {
         if data, err := io.ReadAll(gzreader); err != nil {
             if *setup.LogLVL <= 2 {
-                slog.Warn(fmt.Sprintf("%v", err))
+                slog.Warn(err.Error())
             }
         } else {
             return data
@@ -297,25 +295,25 @@ func jtvCreateFileFromXml(epg Epg) ([]byte) {
 
             if f, err := zipW.Create(ch.DisplayName + ".pdt"); err != nil {
                 if *setup.LogLVL <= 2 {
-                    slog.Warn(fmt.Sprintf("%v", err))
+                    slog.Warn(err.Error())
                 }
                 continue
             } else {
                 if _, err := f.Write(pdt); err != nil {
                     if *setup.LogLVL <= 2 {
-                        slog.Warn(fmt.Sprintf("%v", err))
+                        slog.Warn(err.Error())
                     }
                     continue
                 }
                 if f, err := zipW.Create(ch.DisplayName + ".ndx"); err != nil {
                     if *setup.LogLVL <= 2 {
-                        slog.Warn(fmt.Sprintf("%v", err))
+                        slog.Warn(err.Error())
                     }
                     continue
                 } else {
                     if _, err := f.Write(ndx); err != nil {
                         if *setup.LogLVL <= 2 {
-                            slog.Warn(fmt.Sprintf("%v", err))
+                            slog.Warn(err.Error())
                         }
                         continue
                     }
@@ -327,7 +325,7 @@ func jtvCreateFileFromXml(epg Epg) ([]byte) {
     err := zipW.Close()
     if err != nil {
         if *setup.LogLVL <= 2 {
-            slog.Warn(fmt.Sprintf("%v", err))
+            slog.Warn(err.Error())
         }
     } else {
         return buff.Bytes()

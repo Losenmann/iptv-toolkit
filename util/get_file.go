@@ -3,7 +3,6 @@ package util
 import (
     "crypto/tls"
     "errors"
-    "fmt"
     "github.com/losenmann/iptv-toolkit/setup"
     "io"
     "log/slog"
@@ -29,7 +28,7 @@ func getFileLocal(file string) ([]byte, error) {
     f, err := os.Open(file)
     if err != nil {
         if *setup.LogLVL <= 2 {
-            slog.Warn(fmt.Sprintf("%v", err))
+            slog.Warn(err.Error())
         }
         return nil, err
     }
@@ -38,7 +37,7 @@ func getFileLocal(file string) ([]byte, error) {
     data, err := io.ReadAll(f)
     if err != nil {
         if *setup.LogLVL <= 2 {
-            slog.Warn(fmt.Sprintf("%v", err))
+            slog.Warn(err.Error())
         }
         return nil, err
     }
@@ -54,7 +53,7 @@ func getFileRemote(url string) ([]byte, error) {
         res, err = client.Get(url)
         if err != nil {
             if *setup.LogLVL <= 2 {
-                slog.Warn(fmt.Sprintf("%v", err))
+                slog.Warn(err.Error())
             }
             return nil, err
         }
@@ -64,7 +63,7 @@ func getFileRemote(url string) ([]byte, error) {
     data, err := io.ReadAll(res.Body)
     if err != nil {
         if *setup.LogLVL <= 2 {
-            slog.Warn(fmt.Sprintf("%v", err))
+            slog.Warn(err.Error())
         }
         return nil, err
     }
